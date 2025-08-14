@@ -1,0 +1,51 @@
+name: build
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  export:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    name: Monologue export
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Install wine
+        id: wine_install
+        run: |
+          sudo apt-get update
+          sudo apt install wine64
+          echo "WINE_PATH=$(which wine64)" >> $GITHUB_OUTPUT
+      
+      - name: Export game
+        id: export
+        uses: firebelley/godot-export@v6.0.0
+        with:
+          godot_executable_download_url: https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_mono_linux_x86_64.zip
+          godot_export_templates_download_url: https://github.com/godotengine/godot-builds/releases/download/4.4.1-stable/Godot_v4.4.1-stable_mono_export_templates.tpz
+          relative_project_path: ./
+          relative_export_path: ./builds/
+          wine_path: ${{ steps.wine_install.outputs.WINE_PATH }}
+          verbose: true
+          export_debug: true
+      
+      - name: Create release
+        uses: ncipollo/release-action@v1.13.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generateReleaseNotes: true
+          name: Monologue ${{ github.ref_name }}
+          tag: ${{ github.ref_name }}
+          artifacts: ${{ steps.export.outputs.build_directory }}/**/*
+          replacesArtifacts: true
+          prerelease: ${{ contains(fromJSON('["dev", "pre", "alpha", "beta", "rc"]'), github.event_name) }}
+
+      - name: Upload Artifact for publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: ${{ steps.export.outputs.build_directory }}
