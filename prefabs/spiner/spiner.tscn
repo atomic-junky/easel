@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://woqndv04cswq"]
+
+[ext_resource type="Texture2D" uid="uid://njpx8x3f2j5i" path="res://assets/icons/spiner.svg" id="1_acjec"]
+[ext_resource type="Script" uid="uid://do286tpountq3" path="res://prefabs/spiner/spiner.gd" id="2_u4u5m"]
+
+[node name="Spiner" type="TextureRect"]
+custom_minimum_size = Vector2(30, 30)
+anchors_preset = -1
+anchor_right = 0.026
+anchor_bottom = 0.046
+offset_right = 0.0480003
+offset_bottom = 0.191998
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_acjec")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("2_u4u5m")

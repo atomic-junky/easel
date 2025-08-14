@@ -1,0 +1,62 @@
+[gd_scene load_steps=4 format=3 uid="uid://b1aojj4xhoae5"]
+
+[ext_resource type="Script" uid="uid://cyhx71dp7v8qk" path="res://prefabs/pack/pack.gd" id="1_nhums"]
+[ext_resource type="Texture2D" uid="uid://b8ndl4nn7l3tf" path="res://assets/icons/folder.svg" id="2_nhums"]
+[ext_resource type="Texture2D" uid="uid://d1thixkvuxux4" path="res://assets/icons/trash.svg" id="3_psi4j"]
+
+[node name="Pack" type="PanelContainer"]
+theme_type_variation = &"PackPanelContainer"
+script = ExtResource("1_nhums")
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CheckBoxContainer" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="CheckBox" type="CheckBox" parent="HBox/CheckBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBox" type="HBoxContainer" parent="HBox/VBox"]
+layout_mode = 2
+
+[node name="IconRect" type="TextureRect" parent="HBox/VBox/HBox"]
+unique_name_in_owner = true
+modulate = Color(0.113725, 0.113725, 0.113725, 1)
+custom_minimum_size = Vector2(17, 0)
+layout_mode = 2
+texture = ExtResource("2_nhums")
+expand_mode = 1
+
+[node name="Title" type="Label" parent="HBox/VBox/HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"LabelPackTitle"
+text = "Poses"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Description" type="Label" parent="HBox/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"LabelPackInfos"
+text = "66 Images"
+
+[node name="DeleteButtonContainer" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="Button" type="Button" parent="HBox/DeleteButtonContainer"]
+layout_mode = 2
+icon = ExtResource("3_psi4j")
+
+[connection signal="toggled" from="HBox/CheckBoxContainer/CheckBox" to="." method="_on_check_box_toggled"]
+[connection signal="pressed" from="HBox/DeleteButtonContainer/Button" to="." method="_on_button_pressed"]

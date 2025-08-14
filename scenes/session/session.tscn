@@ -1,0 +1,400 @@
+[gd_scene load_steps=31 format=3 uid="uid://dw8kaspnoi0sw"]
+
+[ext_resource type="Script" uid="uid://bfd5fhqweur3r" path="res://scenes/session/session.gd" id="1_qm4ye"]
+[ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="2_5d8hc"]
+[ext_resource type="Shader" uid="uid://08xit4vciyir" path="res://shaders/grid.gdshader" id="2_r1u5e"]
+[ext_resource type="Texture2D" uid="uid://dbeuaxl54l35o" path="res://assets/icons/play.svg" id="3_x4b3v"]
+[ext_resource type="Script" uid="uid://b08vxne14bjfa" path="res://prefabs/responsive_margin_container.gd" id="4_0dsos"]
+[ext_resource type="Shader" uid="uid://c4ax77h6bdpy2" path="res://shaders/greyscale.gdshader" id="4_7mwt7"]
+[ext_resource type="Texture2D" uid="uid://byatp0dfiw56i" path="res://assets/icons/arrow_previous.svg" id="4_8efxp"]
+[ext_resource type="Texture2D" uid="uid://beu1igwywo15u" path="res://assets/icons/arrow_next.svg" id="4_r1u5e"]
+[ext_resource type="Texture2D" uid="uid://bf7s0b2sb5w7u" path="res://assets/icons/grid.svg" id="7_mvl4h"]
+[ext_resource type="Texture2D" uid="uid://dvxemflsyhjgi" path="res://assets/icons/rotate_left.svg" id="8_qvbex"]
+[ext_resource type="Texture2D" uid="uid://c6881wbqm3o3c" path="res://assets/icons/exit.svg" id="8_vboup"]
+[ext_resource type="Texture2D" uid="uid://cs7bsfby7yio7" path="res://assets/icons/rotate_right.svg" id="9_vboup"]
+[ext_resource type="Texture2D" uid="uid://c081p8nxnfss0" path="res://assets/icons/greyscale.svg" id="10_mwp7v"]
+[ext_resource type="Texture2D" uid="uid://dkmeh6y44pxr6" path="res://assets/icons/colors/draw.svg" id="11_d6r8s"]
+[ext_resource type="Script" uid="uid://djmfis3yxwyao" path="res://prefabs/drawing/canvas/paint_canvas.gd" id="11_qm4ye"]
+[ext_resource type="Script" uid="uid://dobtye2vh0nao" path="res://scenes/session/drawing_tool_bar.gd" id="12_d6r8s"]
+[ext_resource type="PackedScene" uid="uid://dwennv2xbanag" path="res://prefabs/drawing/tool_bar/brush_size_slider/brush_size_slider.tscn" id="13_d6r8s"]
+[ext_resource type="Shader" uid="uid://d066f3yvy06y6" path="res://shaders/blur.gdshader" id="14_n84ho"]
+[ext_resource type="Texture2D" uid="uid://bbj3352wn216h" path="res://assets/icons/undo.svg" id="14_qvbex"]
+[ext_resource type="Texture2D" uid="uid://dses3wc1o1ssn" path="res://assets/icons/redo.svg" id="15_vboup"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0dsos"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ux0ol"]
+shader = ExtResource("4_7mwt7")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qnfa4"]
+shader = ExtResource("2_r1u5e")
+shader_parameter/columns = 3
+shader_parameter/rows = 3
+shader_parameter/line_thickness_px = 1.0
+shader_parameter/bg_color = Color(0, 0, 0, 0)
+shader_parameter/bright_line_color = Color(0, 0, 0, 1)
+shader_parameter/dark_line_color = Color(1, 1, 1, 1)
+shader_parameter/rect_size = Vector2(100, 100)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mwp7v"]
+shader = ExtResource("14_n84ho")
+shader_parameter/lod = 2.5
+shader_parameter/mix_percentage = 0.3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n84ho"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kaxoj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d6r8s"]
+content_margin_left = 5.0
+bg_color = Color(0.113725, 0.113725, 0.113725, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5jwwt"]
+content_margin_bottom = 5.0
+bg_color = Color(0.113725, 0.113725, 0.113725, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+expand_margin_left = 5.0
+expand_margin_right = 5.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qvbex"]
+content_margin_top = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.113725, 0.113725, 0.113725, 1)
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 5.0
+expand_margin_right = 5.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vboup"]
+content_margin_left = 5.0
+bg_color = Color(0.113725, 0.113725, 0.113725, 1)
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+
+[node name="SessionView" type="Control" node_paths=PackedStringArray("invisible_element")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_qm4ye")
+invisible_element = [NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/RotateLeftButton"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer/FileLocationButton"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/CountLabel"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/ExitButton")]
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer2"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.498039, 0.498039, 0.498039, 1)
+
+[node name="SafeMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_0dsos")
+metadata/_custom_type_script = "uid://b08vxne14bjfa"
+
+[node name="PanelContainer" type="PanelContainer" parent="SafeMarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_0dsos")
+
+[node name="SpinerContainer" type="CenterContainer" parent="SafeMarginContainer/PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Spiner" parent="SafeMarginContainer/PanelContainer/SpinerContainer" instance=ExtResource("2_5d8hc")]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TextureContainer" type="TextureRect" parent="SafeMarginContainer/PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Greyscale" type="ColorRect" parent="SafeMarginContainer/PanelContainer"]
+unique_name_in_owner = true
+visible = false
+material = SubResource("ShaderMaterial_ux0ol")
+layout_mode = 2
+mouse_filter = 2
+
+[node name="GridContainer" type="AspectRatioContainer" parent="SafeMarginContainer/PanelContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Grid" type="ColorRect" parent="SafeMarginContainer/PanelContainer/GridContainer"]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_qnfa4")
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0)
+
+[node name="PaintCanvas" type="Control" parent="SafeMarginContainer/PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("11_qm4ye")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="SafeMarginContainer" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_0dsos")
+metadata/_custom_type_script = "uid://b08vxne14bjfa"
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SafeMarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="NavigationContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="ButtonPrevious" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("4_8efxp")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+alignment = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer2"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="ButtonNext" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("4_r1u5e")
+
+[node name="HBox" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+mouse_filter = 2
+alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="FileLocationButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="RotateLeftButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+layout_mode = 2
+icon = ExtResource("8_qvbex")
+
+[node name="RotateRightButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+layout_mode = 2
+icon = ExtResource("9_vboup")
+
+[node name="GreyscaleButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+layout_mode = 2
+toggle_mode = true
+icon = ExtResource("10_mwp7v")
+
+[node name="PaintButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+icon = ExtResource("11_d6r8s")
+
+[node name="GridButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+icon = ExtResource("7_mvl4h")
+
+[node name="PauseButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_constants/icon_max_width = 18
+toggle_mode = true
+text = "19:58"
+icon = ExtResource("3_x4b3v")
+alignment = 2
+
+[node name="ExitButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+icon = ExtResource("8_vboup")
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+visible = false
+material = SubResource("ShaderMaterial_mwp7v")
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_n84ho")
+
+[node name="Label" type="Label" parent="CanvasLayer/SafeMarginContainer/MarginContainer/PanelContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "blablabla"
+
+[node name="CountLabel" type="Label" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_type_variation = &"HeaderSmall"
+theme_override_constants/outline_size = 3
+text = "0/0"
+
+[node name="DrawingToolBar" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_kaxoj")
+script = ExtResource("12_d6r8s")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HBoxColors" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 0
+
+[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_d6r8s")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_5jwwt")
+
+[node name="BrushSizeSlider" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource("13_d6r8s")]
+layout_mode = 2
+min_value = 1.0
+max_value = 30.0
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qvbex")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="UndoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+icon = ExtResource("14_qvbex")
+flat = true
+
+[node name="RedoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+icon = ExtResource("15_vboup")
+flat = true
+
+[node name="PanelContainer3" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vboup")
+
+[node name="Timer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 3.0
+
+[node name="MouseMovetimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 5.0
+one_shot = true
+
+[node name="GestureTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 0.07
+one_shot = true
+
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer/VBoxContainer/ButtonPrevious" to="." method="_on_button_previous_pressed"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer2/VBoxContainer/ButtonNext" to="." method="_on_button_next_pressed"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer/FileLocationButton" to="." method="_on_file_location_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/RotateLeftButton" to="." method="_on_rotate_left_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/RotateRightButton" to="." method="_on_rotate_right_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/GreyscaleButton" to="." method="_on_greyscale_button_toggled"]
+[connection signal="toggled" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/PaintButton" to="." method="_on_paint_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/GridButton" to="." method="_on_grid_button_pressed"]
+[connection signal="toggled" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/PauseButton" to="." method="_on_pause_button_toggled"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="value_changed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/BrushSizeSlider" to="." method="_on_brush_size_slider_value_changed"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer/UndoButton" to="SafeMarginContainer/PanelContainer/PaintCanvas" method="undo"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer/RedoButton" to="SafeMarginContainer/PanelContainer/PaintCanvas" method="redo"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="MouseMovetimer" to="." method="_on_mouse_movetimer_timeout"]
+[connection signal="timeout" from="GestureTimer" to="." method="_on_mouse_movetimer_timeout"]

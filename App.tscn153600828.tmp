@@ -1,0 +1,197 @@
+[gd_scene load_steps=5 format=3 uid="uid://jamydh4eyklu"]
+
+[ext_resource type="PackedScene" path="res://Menu.tscn" id="1"]
+[ext_resource type="Script" uid="uid://cre2ihwsn0wok" path="res://App.gd" id="2"]
+[ext_resource type="PackedScene" path="res://Session.tscn" id="3"]
+[ext_resource type="Script" uid="uid://unqstr04sqip" path="res://ZoomingCamera2D.gd" id="4"]
+
+[node name="App" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("2")
+
+[node name="MenuView" parent="." instance=ExtResource("1")]
+anchors_preset = 0
+
+[node name="MenuNode" parent="MenuView" index="0"]
+layout_mode = 0
+
+[node name="MarginContainer2" parent="MenuView/MenuNode" index="0"]
+layout_mode = 2
+
+[node name="Title" parent="MenuView/MenuNode" index="1"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="MarginContainer" parent="MenuView/MenuNode" index="2"]
+layout_mode = 2
+
+[node name="HBoxContainer" parent="MenuView/MenuNode" index="3"]
+layout_mode = 2
+
+[node name="SetFolderButton" parent="MenuView/MenuNode/HBoxContainer" index="0"]
+layout_mode = 2
+
+[node name="MarginContainer3" parent="MenuView/MenuNode" index="4"]
+layout_mode = 2
+
+[node name="FolderInfo" parent="MenuView/MenuNode" index="5"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="MarginContainer4" parent="MenuView/MenuNode" index="6"]
+layout_mode = 2
+
+[node name="Label3" parent="MenuView/MenuNode" index="7"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="MarginContainer5" parent="MenuView/MenuNode" index="8"]
+layout_mode = 2
+
+[node name="HBoxContainer3" parent="MenuView/MenuNode" index="9"]
+layout_mode = 2
+
+[node name="15s" parent="MenuView/MenuNode/HBoxContainer3" index="0"]
+layout_mode = 2
+
+[node name="30s" parent="MenuView/MenuNode/HBoxContainer3" index="1"]
+layout_mode = 2
+
+[node name="1m" parent="MenuView/MenuNode/HBoxContainer3" index="2"]
+layout_mode = 2
+
+[node name="2m" parent="MenuView/MenuNode/HBoxContainer3" index="3"]
+layout_mode = 2
+
+[node name="5m" parent="MenuView/MenuNode/HBoxContainer3" index="4"]
+layout_mode = 2
+
+[node name="10m" parent="MenuView/MenuNode/HBoxContainer3" index="5"]
+layout_mode = 2
+
+[node name="MarginContainer6" parent="MenuView/MenuNode" index="10"]
+layout_mode = 2
+
+[node name="HBoxContainer2" parent="MenuView/MenuNode" index="11"]
+layout_mode = 2
+
+[node name="NumofPhotos" parent="MenuView/MenuNode/HBoxContainer2" index="0"]
+layout_mode = 2
+
+[node name="SpinBox" parent="MenuView/MenuNode/HBoxContainer2" index="1"]
+layout_mode = 2
+
+[node name="MarginContainer7" parent="MenuView/MenuNode" index="12"]
+layout_mode = 2
+
+[node name="HBoxContainer4" parent="MenuView/MenuNode" index="13"]
+layout_mode = 2
+
+[node name="Shuffle" parent="MenuView/MenuNode/HBoxContainer4" index="0"]
+layout_mode = 2
+
+[node name="CheckButton" parent="MenuView/MenuNode/HBoxContainer4" index="1"]
+layout_mode = 2
+
+[node name="VBoxContainer" parent="MenuView" index="1"]
+layout_mode = 0
+
+[node name="StartSessionButton" parent="MenuView/VBoxContainer" index="0"]
+layout_mode = 2
+
+[node name="CenterContainer" parent="MenuView" index="2"]
+layout_mode = 0
+offset_left = 1.01831
+offset_right = 1.01831
+
+[node name="SessionView" parent="." instance=ExtResource("3")]
+visible = false
+anchors_preset = 0
+
+[node name="Image" parent="SessionView" index="0"]
+layout_mode = 0
+expand_mode = 1
+
+[node name="Greyscale" parent="SessionView" index="1"]
+layout_mode = 0
+
+[node name="HBoxContainer" parent="SessionView" index="3"]
+layout_mode = 0
+
+[node name="Remaining" parent="SessionView/HBoxContainer" index="0"]
+layout_mode = 2
+
+[node name="Label" parent="SessionView/HBoxContainer" index="1"]
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="ItemList" parent="SessionView" index="4"]
+layout_mode = 0
+fixed_icon_size = Vector2i(256, 256)
+
+[node name="Toolbar" parent="SessionView" index="5"]
+layout_mode = 0
+
+[node name="btnPin" parent="SessionView/Toolbar" index="0"]
+layout_mode = 2
+
+[node name="btnPrev" parent="SessionView/Toolbar" index="1"]
+layout_mode = 2
+
+[node name="btnPlay" parent="SessionView/Toolbar" index="2"]
+layout_mode = 2
+
+[node name="btnNext" parent="SessionView/Toolbar" index="3"]
+layout_mode = 2
+
+[node name="btnFlipH" parent="SessionView/Toolbar" index="4"]
+layout_mode = 2
+
+[node name="btnFilter" parent="SessionView/Toolbar" index="5"]
+layout_mode = 2
+
+[node name="btnList" parent="SessionView/Toolbar" index="6"]
+layout_mode = 2
+
+[node name="btnEmpty" parent="SessionView/Toolbar" index="7"]
+layout_mode = 2
+
+[node name="btnExit" parent="SessionView/Toolbar" index="8"]
+layout_mode = 2
+
+[node name="ZoomingCamera2D" type="Camera2D" parent="."]
+visible = false
+script = ExtResource("4")
+
+[node name="Tween" type="Tween" parent="ZoomingCamera2D"]
+_import_path = NodePath("")
+unique_name_in_owner = false
+process_mode = 0
+process_priority = 0
+process_physics_priority = 0
+process_thread_group = 0
+physics_interpolation_mode = 0
+auto_translate_mode = 0
+editor_description = ""
+script = null
+
+[connection signal="resized" from="." to="ZoomingCamera2D" method="_on_App_resized"]
+[connection signal="pressed" from="MenuView/MenuNode/HBoxContainer/SetFolderButton" to="." method="_on_SetFolderButton_pressed"]
+[connection signal="pressed" from="MenuView/VBoxContainer/StartSessionButton" to="." method="_on_StartSessionButton_pressed"]
+[connection signal="dir_selected" from="MenuView/CenterContainer/FileDialog" to="." method="_on_FileDialog_dir_selected"]
+[connection signal="timeout" from="SessionView/Timer" to="." method="_on_Timer_timeout"]
+[connection signal="item_activated" from="SessionView/ItemList" to="." method="_on_ItemList_item_activated"]
+[connection signal="pressed" from="SessionView/Toolbar/btnPin" to="." method="_on_btnPin_pressed"]
+[connection signal="pressed" from="SessionView/Toolbar/btnPrev" to="." method="_on_btnPrev_pressed"]
+[connection signal="pressed" from="SessionView/Toolbar/btnPlay" to="." method="_on_btnPlay_pressed"]
+[connection signal="pressed" from="SessionView/Toolbar/btnNext" to="." method="_on_btnNext_pressed"]
+[connection signal="pressed" from="SessionView/Toolbar/btnFlipH" to="." method="_on_btnFlipH_pressed"]
+[connection signal="pressed" from="SessionView/Toolbar/btnFilter" to="." method="_on_btnFilter_pressed"]
+[connection signal="pressed" from="SessionView/Toolbar/btnList" to="." method="_on_btnList_pressed"]
+[connection signal="pressed" from="SessionView/Toolbar/btnExit" to="." method="_on_btnExit_pressed"]
+
+[editable path="MenuView"]
+[editable path="SessionView"]

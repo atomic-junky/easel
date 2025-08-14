@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://chvpqk2heieyt"]
+
+[ext_resource type="Shader" uid="uid://d066f3yvy06y6" path="res://shaders/blur.gdshader" id="1_o4k7v"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8efxp"]
+shader = ExtResource("1_o4k7v")
+shader_parameter/lod = 5.0
+shader_parameter/mix_percentage = 0.3
+
+[node name="Dimmer" type="ColorRect"]
+visible = false
+material = SubResource("ShaderMaterial_8efxp")

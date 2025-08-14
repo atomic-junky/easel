@@ -1,0 +1,46 @@
+[gd_scene load_steps=8 format=3 uid="uid://dwennv2xbanag"]
+
+[ext_resource type="Texture2D" uid="uid://dh3ciw6v7ml7y" path="res://assets/icons/grabber.svg" id="1_1txqm"]
+[ext_resource type="Script" uid="uid://dducpnuhs3b6h" path="res://prefabs/drawing/tool_bar/brush_size_slider/brush_size_slider.gd" id="2_6diig"]
+
+[sub_resource type="Texture2DRD" id="Texture2DRD_6diig"]
+
+[sub_resource type="Texture2DRD" id="Texture2DRD_ds2on"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmhpn"]
+content_margin_left = 19.0
+content_margin_right = 19.0
+bg_color = Color(0.156863, 0.14902, 0.141176, 0.498039)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.113725, 0.113725, 0.113725, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6diig"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ds2on"]
+
+[node name="BrushSizeSlider" type="VSlider"]
+custom_minimum_size = Vector2(38, 200)
+offset_right = 38.0
+offset_bottom = 200.0
+theme_override_constants/grabber_offset = 0
+theme_override_icons/grabber = ExtResource("1_1txqm")
+theme_override_icons/grabber_highlight = ExtResource("1_1txqm")
+theme_override_icons/grabber_disabled = SubResource("Texture2DRD_6diig")
+theme_override_icons/tick = SubResource("Texture2DRD_ds2on")
+theme_override_styles/slider = SubResource("StyleBoxFlat_mmhpn")
+theme_override_styles/grabber_area = SubResource("StyleBoxEmpty_6diig")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxEmpty_ds2on")
+max_value = 113.35
+value = 4.0
+script = ExtResource("2_6diig")
