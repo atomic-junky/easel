@@ -1,0 +1,306 @@
+[gd_scene load_steps=12 format=3 uid="uid://c324hect6sylf"]
+
+[ext_resource type="Script" uid="uid://b805udtrxhmnd" path="res://scenes/menu_v2/menu.gd" id="1_0rb32"]
+[ext_resource type="Script" uid="uid://b08vxne14bjfa" path="res://prefabs/responsive_margin_container.gd" id="1_nvwcl"]
+[ext_resource type="FontFile" uid="uid://dci5hf6p3f7m" path="res://assets/fonts/InterDisplay-Black.ttf" id="2_fkryp"]
+[ext_resource type="PackedScene" uid="uid://dyxpp3gldlg8y" path="res://prefabs/option_switcher/option_switcher.tscn" id="3_fkryp"]
+[ext_resource type="Script" uid="uid://bjirgrn1kbejr" path="res://scenes/menu_v2/standard.gd" id="5_i1lnr"]
+[ext_resource type="PackedScene" uid="uid://b0o6y7yo7x5ge" path="res://scenes/menu_v2/image_order_container.tscn" id="6_qkn2v"]
+[ext_resource type="Script" uid="uid://by3nb5xv0w4an" path="res://scenes/menu_v2/relaxed.gd" id="7_5n576"]
+[ext_resource type="PackedScene" uid="uid://d1pq0dja3bw03" path="res://prefabs/packv2/pack.tscn" id="9_bk4j0"]
+[ext_resource type="Texture2D" uid="uid://7iashyxj0ocr" path="res://assets/icons/clear.svg" id="9_h8ew4"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nvwcl"]
+bg_color = Color(0.109804, 0.109804, 0.109804, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0m5w4"]
+content_margin_left = 15.0
+content_margin_top = 15.0
+content_margin_right = 15.0
+content_margin_bottom = 15.0
+bg_color = Color(0.141176, 0.141176, 0.141176, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0rb32")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_nvwcl")
+
+[node name="SafeMarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_bottom = 20
+script = ExtResource("1_nvwcl")
+metadata/_custom_type_script = "uid://b08vxne14bjfa"
+
+[node name="VBox" type="VBoxContainer" parent="SafeMarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 40
+
+[node name="Label" type="Label" parent="SafeMarginContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_fkryp")
+theme_override_font_sizes/font_size = 38
+text = "Gesture
+Companion"
+horizontal_alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="SafeMarginContainer/VBox"]
+custom_minimum_size = Vector2(434, 0)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="Button" type="Button" parent="SafeMarginContainer/VBox/VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Select packs"
+
+[node name="SessionTypeSwitcher" parent="SafeMarginContainer/VBox/VBox" instance=ExtResource("3_fkryp")]
+layout_mode = 2
+title = "Session Type"
+first_label = "Standard"
+second_label = "Class"
+third_label = "Relaxed"
+fourth_label = "Custom"
+
+[node name="Panel" type="PanelContainer" parent="SafeMarginContainer/VBox/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_0m5w4")
+
+[node name="VBox" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Standard" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 15
+script = ExtResource("5_i1lnr")
+
+[node name="NOISwitcher" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" instance=ExtResource("3_fkryp")]
+layout_mode = 2
+use_custom_button = true
+title = "Numbers of Images"
+first_label = "10"
+first_value = 10
+second_label = "25"
+second_value = 25
+third_label = "50"
+third_value = 50
+fourth_label = "all"
+fourth_value = -1
+
+[node name="TPISwitcher" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" instance=ExtResource("3_fkryp")]
+layout_mode = 2
+use_custom_button = true
+title = "Time per Images"
+custom_suffix = "sec"
+custom_step = 5
+first_label = "30sec"
+first_value = 30
+second_label = "1min"
+second_value = 60
+third_label = "2min"
+third_value = 120
+fourth_label = "5min"
+fourth_value = 300
+
+[node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" instance=ExtResource("6_qkn2v")]
+layout_mode = 2
+
+[node name="CommingSoon" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/CommingSoon"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "This session type is comming soon."
+
+[node name="Relaxed" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+script = ExtResource("7_5n576")
+
+[node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Relaxed" instance=ExtResource("6_qkn2v")]
+layout_mode = 2
+
+[node name="DoneButtonContiainer" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 2
+
+[node name="DoneButton" type="Button" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/DoneButtonContiainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Let's draw!"
+
+[node name="Control" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_nvwcl")
+
+[node name="SafeMarginContainer" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_bottom = 20
+script = ExtResource("1_nvwcl")
+metadata/_custom_type_script = "uid://b08vxne14bjfa"
+
+[node name="Panel" type="PanelContainer" parent="Control/SafeMarginContainer"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_0m5w4")
+
+[node name="VBox" type="VBoxContainer" parent="Control/SafeMarginContainer/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/SafeMarginContainer/Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 15
+
+[node name="VBox2" type="VBoxContainer" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Sources"
+
+[node name="ClearButton" type="Button" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/HBoxContainer"]
+visible = false
+layout_mode = 2
+icon = ExtResource("9_h8ew4")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Button" type="Button" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer"]
+layout_mode = 2
+text = "Folder"
+
+[node name="Button2" type="Button" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer"]
+layout_mode = 2
+text = "Images"
+
+[node name="Button3" type="Button" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer"]
+layout_mode = 2
+text = "Pinterest"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 2
+
+[node name="Button4" type="Button" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+text = "Library"
+
+[node name="VSeparator" type="VSeparator" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Packs"
+
+[node name="ClearButton" type="Button" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox/HBoxContainer"]
+layout_mode = 2
+icon = ExtResource("9_h8ew4")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PacksContainer" type="VBoxContainer" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Pack" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox/ScrollContainer/PacksContainer" instance=ExtResource("9_bk4j0")]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/SafeMarginContainer/Panel/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="Button3" type="Button" parent="Control/SafeMarginContainer/Panel/VBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Done"
+
+[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/SessionTypeSwitcher" to="." method="_on_session_type_switcher_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard/NOISwitcher" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" method="_on_noi_switcher_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard/TPISwitcher" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" method="_on_tpi_switcher_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard/ImageOrderContainer" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" method="_on_image_order_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Relaxed/ImageOrderContainer" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Relaxed" method="_on_image_order_value_changed"]
+[connection signal="pressed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/DoneButtonContiainer/DoneButton" to="." method="_on_done_button_pressed"]

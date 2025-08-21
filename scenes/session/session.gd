@@ -23,6 +23,7 @@ var _swipe_start := Vector2.ZERO
 var _swipe_min_distance := 50
 
 var is_drawing: bool = false
+var no_timer: bool = false
 
 
 func load_args(args: SessionContext) -> void:
@@ -49,8 +50,12 @@ func start_session(context: SessionContext) -> void:
 	if OS.get_name() in ["Android", "iOS"]:
 		navigation_container.hide()
 		file_location_button.hide()
-		
-	timer.wait_time = context.time_per_image
+	
+	if context.time_per_image <= 0:
+		no_timer = true
+		pause_button.hide()
+	else:
+		timer.wait_time = context.time_per_image
 	
 	_context = context
 	var _queue: Array = context.get_images_path()
@@ -88,7 +93,8 @@ func _input(event: InputEvent) -> void:
 		tween.set_parallel()
 		for element in invisible_element:
 			tween.tween_property(element, "modulate:a", 1.0, 0.25)
-		
+	
+	if event is InputEventMouse or event is InputEventScreenTouch:
 		mouse_move_timer.start()
 	
 	if Input.is_action_just_pressed("ui_right"):
@@ -157,7 +163,8 @@ func _update() -> void:
 	var file_name: String = queue.get_current_location().get_file()
 	file_location_button.text = file_name
 	
-	timer.start()
+	if not no_timer:
+		timer.start()
 	
 	var canvas_idx: String = _get_canvas_index(queue._queue_idx)
 	paint_canvas.create_canvas(canvas_idx)
@@ -167,7 +174,8 @@ func _update() -> void:
 
 
 func _on_timer_timeout() -> void:
-	next_image()
+	if not no_timer:
+		next_image()
 
 
 func _on_button_next_pressed() -> void:
@@ -250,6 +258,9 @@ func _on_rotate_right_button_pressed() -> void:
 
 
 func _on_pause_button_toggled(toggled_on: bool) -> void:
+	if no_timer:
+		return
+	
 	timer.paused = toggled_on
 	if toggled_on:
 		pause_button.icon = icon_pause

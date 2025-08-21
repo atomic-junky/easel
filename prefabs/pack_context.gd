@@ -7,37 +7,36 @@ var source: Constants.Source = Constants.Source.FOLDER
 var pack_name: String = "Invalid"
 var path: String = ""
 var image_paths: Array = []
-var image_count: int = 0
+var image_count: int : 
+	get():
+		return image_paths.size()
 
 
 static func create_from_path(path: String) -> Array[PackContext]:
-	var packs: Array[PackContext] = []
+	var pack := PackContext.new()
+	var dir_name: String = path.replace("\\", "/").split("/")[-1]
 	
-	var base_path: String = path
-	var directories: Array = []
-	if DirAccess.get_files_at(path).size() > 0:
-		var dir_name: String = path.replace("\\", "/").get_slice("/", -1)
-		directories.append(dir_name)
-		base_path = path.trim_suffix(dir_name)
-	else:
-		var dir_access: DirAccess = DirAccess.open(path)
-		directories.append_array(dir_access.get_directories())
+	pack.path = path
+	pack.enabled = true
+	pack.source = Constants.Source.FOLDER
+	pack.pack_name = dir_name
+	pack.image_paths = PackContext._recursive_load_dir(path)
+	return [pack]
+
+
+static func create_from_paths(paths: Array) -> Array[PackContext]:
+	var pack := PackContext.new()
 	
-	for dir_name: String in directories:
-		var pack := PackContext.new()
-		var dir_path: String = base_path.path_join(dir_name)
-		
-		pack.path = path
-		pack.enabled = true
-		pack.source = Constants.Source.FOLDER
-		pack.pack_name = dir_name
-		pack.image_paths = PackContext._recursive_load_dir(dir_path)
-		pack.image_count = pack.image_paths.size()
-		
-		if pack.image_paths.size() > 0:
-			packs.append(pack)
+	for path in paths:
+		if path.get_extension() not in SUPPORTED_EXTENSIONS:
+			paths.erase(path)
 	
-	return packs
+	pack.path = paths[0]
+	pack.enabled = true
+	pack.source = Constants.Source.IMAGES
+	pack.pack_name = "Image pack"
+	pack.image_paths = paths
+	return [pack]
 
 
 static func create_from_urls(data: Dictionary) -> PackContext:
@@ -48,7 +47,6 @@ static func create_from_urls(data: Dictionary) -> PackContext:
 	pack.source = Constants.Source.PINTEREST
 	pack.pack_name = board_name
 	pack.image_paths = urls
-	pack.image_count = pack.image_paths.size()
 	return pack
 
 

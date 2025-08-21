@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://jamydh4eyklu"]
 
 [ext_resource type="Script" uid="uid://cre2ihwsn0wok" path="res://scenes/app/app.gd" id="1_nbc7o"]
-[ext_resource type="PackedScene" uid="uid://ot4px72g8cq1" path="res://scenes/menu/menu.tscn" id="2_hesep"]
+[ext_resource type="PackedScene" uid="uid://c324hect6sylf" path="res://scenes/menu/menu.tscn" id="2_38mom"]
 
 [node name="App" type="Control"]
 layout_mode = 3
@@ -21,8 +21,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MenuView" parent="AspectRatioContainer" instance=ExtResource("2_hesep")]
-unique_name_in_owner = true
+[node name="Menu" parent="AspectRatioContainer" instance=ExtResource("2_38mom")]
 layout_mode = 2
 
 [connection signal="resized" from="." to="." method="_on_resized"]

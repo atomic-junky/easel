@@ -1,6 +1,7 @@
 extends Node
 
 var http_request: AwaitableHTTPRequest = AwaitableHTTPRequest.new()
+var _progress_callback: Callable
 
 func _ready():
 	add_child(http_request)
@@ -127,6 +128,9 @@ func get_board_info(board_url: String) -> Dictionary:
 	var url: String = ""
 	var domain: String = ""
 	
+	var _debug_initialReduxState_found: bool = false
+	var _debug_resources: Dictionary = {}
+	
 	var result: HTTPResult = await http_request.async_request(board_url)
 	var body = result.body_as_string()
 	var page_file: FileAccess = FileAccess.open("C:\\Users\\holyt\\Desktop\\log\\page.html", FileAccess.WRITE)
@@ -146,11 +150,8 @@ func get_board_info(board_url: String) -> Dictionary:
 		if data is not Dictionary:
 			continue
 		
-		
-		var file: FileAccess = FileAccess.open("C:\\Users\\holyt\\Desktop\\log\\log.json", FileAccess.WRITE)
-		file.store_string(JSON.stringify(data))
-		
 		if data.has("initialReduxState"):
+			_debug_initialReduxState_found = true
 			var resources: Dictionary = data["initialReduxState"].get("resources", {})
 			if not resources.has("BoardResource"):
 				continue
@@ -161,7 +162,21 @@ func get_board_info(board_url: String) -> Dictionary:
 			board_name = board_res["data"]["name"]
 			url = board_res["data"]["url"]
 			domain = board_res["data"]["seo_canonical_domain"]
-		
+			
+			if board_id.is_empty():
+				_debug_resources = resources
+	
+	if board_id.is_empty():
+		print("DEBUG board id not found")
+		if _debug_initialReduxState_found:
+			print("DEBUG initialReduxState found")
+			print("DEBUG resources:")
+			print(_debug_resources)
+		else:
+			print("DEBUG initialReduxState not found")
+			print("DEBUG page body:")
+			print(body)
+	
 	return {"board_id": board_id, "board_name": board_name, "url": url, "domain": domain}
 
 
@@ -190,6 +205,7 @@ func fetch_redirect_url(url: String) -> String:
 
 
 func fetch_board(board_url: String):
+	_progress_callback.call("Searching...")
 	var infos: Dictionary = await get_board_info(board_url)
 	var url: String = infos.get("url", "")
 	var board_id: String = infos.get("board_id", "")
@@ -199,12 +215,15 @@ func fetch_board(board_url: String):
 	var image_urls: Array = []
 	
 	if board_id.is_empty():
+		_progress_callback.call("Board not found...")
 		printerr("Empty board_id!")
 		return _build_result("fail", "Can't find board_id")
 	if url.is_empty():
+		_progress_callback.call("Board not found...")
 		printerr("Empty url!")
 		return _build_result("fail", "Can't find username")
 	
+	_progress_callback.call("Collecting pins...")
 	for i in range(64):
 		if bookmarks.find("-end-") != -1:
 			break
@@ -239,11 +258,14 @@ func fetch_board(board_url: String):
 				var url_image = image.get("images", {}).get("orig", {}).get("url", "")
 				if url_image != "":
 					image_urls.append(url_image)
+		_progress_callback.call("Collecting pins (%s found)..." % [image_urls.size()])
 	
 	return _build_result("success", {"urls": image_urls, "board_name": board_name})
 
 
-func fetch(url: String) -> Dictionary:
+func fetch(url: String, progress_callback: Callable = _empty_progress_callback) -> Dictionary:
+	_progress_callback = progress_callback
+	
 	if url.is_empty() or url.get_slice_count("/") <= 0:
 		return {}
 	
@@ -275,6 +297,10 @@ func _query_string(arr: Array) -> String:
 					query += "&" + encoded_key + "=" + str(value).uri_encode()
 		
 	return query.substr(1)
+
+
+func _empty_progress_callback(_message: String) -> void:
+	return
 
 
 func _build_result(status: String, data: Variant) -> Dictionary:

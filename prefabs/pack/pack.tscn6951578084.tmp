@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://d1pq0dja3bw03"]
+[gd_scene load_steps=4 format=3 uid="uid://d1pq0dja3bw03"]
 
 [ext_resource type="Script" uid="uid://pf4jayk64oi6" path="res://prefabs/pack/pack.gd" id="1_nhums"]
 [ext_resource type="Texture2D" uid="uid://b8ndl4nn7l3tf" path="res://assets/icons/folder.svg" id="2_nhums"]
-[ext_resource type="Texture2D" uid="uid://cn51e1voued6q" path="res://assets/icons/bookmark-add.svg" id="3_iauwq"]
 [ext_resource type="Texture2D" uid="uid://d1thixkvuxux4" path="res://assets/icons/trash.svg" id="3_psi4j"]
 
 [node name="Pack" type="PanelContainer"]
@@ -50,20 +49,13 @@ layout_mode = 2
 theme_type_variation = &"LabelPackInfos"
 text = "66 Images"
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="HBox"]
+[node name="DeleteButtonContainer" type="VBoxContainer" parent="HBox"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+alignment = 1
 
-[node name="SaveButton" type="Button" parent="HBox/ButtonsContainer"]
-visible = false
-layout_mode = 2
-icon = ExtResource("3_iauwq")
-
-[node name="DeleteButton" type="Button" parent="HBox/ButtonsContainer"]
+[node name="Button" type="Button" parent="HBox/DeleteButtonContainer"]
 layout_mode = 2
 icon = ExtResource("3_psi4j")
 
 [connection signal="toggled" from="HBox/CheckBoxContainer/CheckBox" to="." method="_on_check_box_toggled"]
-[connection signal="pressed" from="HBox/ButtonsContainer/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="pressed" from="HBox/ButtonsContainer/DeleteButton" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="HBox/DeleteButtonContainer/Button" to="." method="_on_button_pressed"]

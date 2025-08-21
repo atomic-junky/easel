@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0o6y7yo7x5ge"]
+
+[ext_resource type="PackedScene" uid="uid://cje6cnv0sdjgd" path="res://prefabs/check_button/check_button.tscn" id="1_hktry"]
+[ext_resource type="Script" uid="uid://cackjr814hdkj" path="res://scenes/menu/image_order_container.gd" id="1_u00mr"]
+
+[node name="ImageOrderContainer" type="HBoxContainer"]
+theme_override_constants/separation = 15
+script = ExtResource("1_u00mr")
+
+[node name="ShuffleContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="ShuffleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Shuffle"
+
+[node name="ShuffleButton" parent="ShuffleContainer" instance=ExtResource("1_hktry")]
+layout_mode = 2
+
+[node name="OrderContainer" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="OrderContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Reverse"
+
+[node name="OrderButton" parent="OrderContainer" instance=ExtResource("1_hktry")]
+layout_mode = 2
+
+[connection signal="toggled" from="ShuffleContainer/ShuffleButton" to="." method="_on_shuffle_button_toggled"]
+[connection signal="toggled" from="OrderContainer/OrderButton" to="." method="_on_order_button_toggled"]
