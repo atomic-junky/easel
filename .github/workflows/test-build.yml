@@ -41,20 +41,20 @@ jobs:
       - name: Windows Build 🔧
         run: |
           godot --headless -v --export-release "Windows Desktop 64-bit" ./build/${EXPORT_NAME}-Windows-64bit/${EXPORT_NAME}.exe
-          godot --headless -v --export-release "Windows Desktop 32-bit" ./build/${EXPORT_NAME}-Windows-32bit/${EXPORT_NAME}.exe
+          godot --headless -v --export-release "Windows Desktop arm64" ./build/${EXPORT_NAME}-Windows-arm64/${EXPORT_NAME}.exe
 
       - name: Copy gesture_companion_data folder 📁
         run: |
           rm ./gesture_companion_data/.gdignore
           cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Windows-64bit
-          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Windows-32bit
+          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Windows-arm64
           cp -R ./gesture_companion_data ./build
 
       - name: Zip 🗜️
         working-directory: ./build
         run: |
           zip -r ${EXPORT_NAME}-Windows-64bit.zip ${EXPORT_NAME}-Windows-64bit
-          zip -r ${EXPORT_NAME}-Windows-32bit.zip ${EXPORT_NAME}-Windows-32bit
+          zip -r ${EXPORT_NAME}-Windows-arm64.zip ${EXPORT_NAME}-Windows-arm64
 
       - name: Build installer 🔧
         run: |
