@@ -5,7 +5,7 @@
 
 ; Helper variables so that we don't change 20 instances of the version for every update
 
-  !define APPNAME "Gesture Companion"
+  !define APPNAME "GestureCompanion"
   !define APPVERSION "alpha"
   !define COMPANYNAME "Atomic Junky"
 
@@ -108,8 +108,8 @@
         File "..\build\${APPNAME}-Windows-64bit\${APPNAME}.exe"
         File "..\build\${APPNAME}-Windows-64bit\${APPNAME}.pck"
       ${Else}
-        File "..\build\${APPNAME}-Windows-32bit\${APPNAME}.exe"
-        File "..\build\${APPNAME}-Windows-32bit\${APPNAME}.pck"
+        File "..\build\${APPNAME}-Windows-arm64\${APPNAME}.exe"
+        File "..\build\${APPNAME}-Windows-arm64\${APPNAME}.pck"
       ${EndIf}
       File "..\assets\graphics\icons\gc.ico"
 
