@@ -5,6 +5,11 @@ on:
     branches: '**'
   pull_request:
 
+env:
+  GODOT_VERSION: 4.4.1
+  EXPORT_NAME: GestureCompanion
+  TAG: alpha
+
 jobs:
   export-windows:
     name: Windows Export 🪟
