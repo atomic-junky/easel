@@ -1,0 +1,69 @@
+name: Dev build
+
+on: 
+  push:
+    branches: '**'
+  pull_request:
+
+jobs:
+  export-windows:
+    name: Windows Export 🪟
+    runs-on: ubuntu-latest
+    container:
+      image: docker://barichello/godot-ci:4.4.1
+    steps:
+      - name: Setup WINE and rcedit 🍷
+        run: |
+          chown root:root -R ~
+          godot --headless --quit
+          echo 'export/windows/wine = "/usr/bin/wine64-stable"' >> ~/.config/godot/editor_settings-4.4.tres
+          echo 'export/windows/rcedit = "/opt/rcedit.exe"' >> ~/.config/godot/editor_settings-4.4.tres
+
+      - name: Checkout 🛎️
+        uses: actions/checkout@v5
+        with:
+          submodules: true
+
+      - name: Setup 💻
+        run: |
+          mkdir -v -p build/${EXPORT_NAME}-Windows-64bit build/${EXPORT_NAME}-Windows-32bit ~/.local/share/godot/export_templates
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+
+      - name: Import resources once 📦
+        continue-on-error: true
+        run: godot --headless -v --import
+
+      - name: Windows Build 🔧
+        run: |
+          godot --headless -v --export-release "Windows Desktop 64-bit" ./build/${EXPORT_NAME}-Windows-64bit/${EXPORT_NAME}.exe
+          godot --headless -v --export-release "Windows Desktop 32-bit" ./build/${EXPORT_NAME}-Windows-32bit/${EXPORT_NAME}.exe
+
+      - name: Copy gesture_companion_data folder 📁
+        run: |
+          rm ./gesture_companion_data/.gdignore
+          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Windows-64bit
+          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Windows-32bit
+          cp -R ./gesture_companion_data ./build
+
+      - name: Zip 🗜️
+        working-directory: ./build
+        run: |
+          zip -r ${EXPORT_NAME}-Windows-64bit.zip ${EXPORT_NAME}-Windows-64bit
+          zip -r ${EXPORT_NAME}-Windows-32bit.zip ${EXPORT_NAME}-Windows-32bit
+
+      - name: Build installer 🔧
+        run: |
+          apt-get update && apt-get install -y python3 && apt-get install -y nsis
+          python3 ./installer/utils/po2nsi.py -i ./installer/gesture-companion.nsi -o ./installer/gesture-companion_loc.nsi -p ./installer/po -l "English" -v
+          makensis ./installer/gesture-companion_loc.nsi
+          mkdir ./build/installer
+          mv ./installer/${EXPORT_NAME}_${TAG}_setup.exe ./build
+
+      # - name: Upload Release Asset 🚀
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ./build/*
+      #     tag: ${{env.TAG}}
+      #     overwrite: true
+      #     file_glob: true
