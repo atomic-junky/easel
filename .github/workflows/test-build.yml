@@ -31,7 +31,7 @@ jobs:
 
       - name: Setup 💻
         run: |
-          mkdir -v -p build/${EXPORT_NAME}-Windows-64bit build/${EXPORT_NAME}-Windows-32bit ~/.local/share/godot/export_templates
+          mkdir -v -p build/${EXPORT_NAME}-Windows-64bit build/${EXPORT_NAME}-Windows-arm64 ~/.local/share/godot/export_templates
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
       - name: Import resources once 📦
