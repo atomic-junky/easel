@@ -64,6 +64,12 @@ jobs:
           mkdir ./build/installer
           mv ./installer/${EXPORT_NAME}_${TAG}_setup.exe ./build
 
+      - name: Upload Artifact for publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: ./build/*
+
       # - name: Upload Release Asset 🚀
       #   uses: svenstaro/upload-release-action@v2
       #   with:
