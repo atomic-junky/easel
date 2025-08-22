@@ -70,7 +70,7 @@ jobs:
           name: windows_build
           path: |
             ./build/
-            !*.zip
+            !./build/*.zip
 
       # - name: Upload Release Asset 🚀
       #   uses: svenstaro/upload-release-action@v2

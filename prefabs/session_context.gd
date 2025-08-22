@@ -7,7 +7,6 @@ enum Type {
 	CUSTOM
 }
 
-
 var session_type: Type = Type.STANDARD
 var number_of_images: int = -1
 var time_per_image: int = 60 # in seconds
@@ -57,5 +56,16 @@ func get_packs() -> Array[PackContext]:
 
 func get_image_duration(idx: int) -> int:
 	if session_type == Type.CLASS:
-		return class_data[idx]
+		return _get_all_poses()[idx]["duration"]
 	return time_per_image
+
+
+func _get_all_poses() -> Array:
+	var poses: Array = []
+	for pose: Dictionary in class_data:
+		for _i in pose.get("amount", 1):
+			poses.append({
+				"type": pose.get("type"),
+				"duration": pose.get("duration")
+			})
+	return poses

@@ -33,6 +33,7 @@ func load_args(args: SessionContext) -> void:
 		await ready
 	
 	start_session(args)
+	get_window().unresizable = false
 
 
 func setup() -> void:

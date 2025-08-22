@@ -10577,12 +10577,6 @@ first_label = "Standard"
 second_label = "Class Mode"
 third_label = "Relaxed"
 fourth_label = "Custom"
-fifth_label = ""
-fifth_value = 5
-fifth_enabled = false
-sixth_label = ""
-sixth_value = 6
-sixth_enabled = false
 
 [node name="Panel" type="PanelContainer" parent="SafeMarginContainer/VBox/VBox"]
 layout_mode = 2
@@ -10611,12 +10605,6 @@ third_label = "50"
 third_value = 50
 fourth_label = "all"
 fourth_value = -1
-fifth_label = ""
-fifth_value = 5
-fifth_enabled = false
-sixth_label = ""
-sixth_value = 6
-sixth_enabled = false
 
 [node name="TPISwitcher" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" instance=ExtResource("3_fkryp")]
 layout_mode = 2
@@ -10632,12 +10620,6 @@ third_label = "5min"
 third_value = 300
 fourth_label = "15min"
 fourth_value = 900
-fifth_label = ""
-fifth_value = 5
-fifth_enabled = false
-sixth_label = ""
-sixth_value = 6
-sixth_enabled = false
 
 [node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" instance=ExtResource("6_qkn2v")]
 layout_mode = 2
@@ -10663,9 +10645,6 @@ fourth_value = 120
 fifth_label = "3h"
 fifth_value = 180
 fifth_enabled = true
-sixth_label = "6h"
-sixth_value = 360
-sixth_enabled = false
 
 [node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Class" instance=ExtResource("6_qkn2v")]
 layout_mode = 2

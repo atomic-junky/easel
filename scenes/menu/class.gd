@@ -21,7 +21,6 @@ func apply_context(context: SessionContext):
 	context.number_of_images = number_of_images
 	context.shuffle = shuffle
 	context.reverse = reverse
-	context.session_type = SessionContext.Type.STANDARD
 
 
 func is_valid() -> bool:

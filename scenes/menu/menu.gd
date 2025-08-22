@@ -34,6 +34,7 @@ func _ready() -> void:
 	_on_session_type_switcher_value_changed(1)
 	_update()
 	visibility_changed.connect(_update)
+	get_window().unresizable = true
 
 
 func _on_session_type_switcher_value_changed(value: int) -> void:
@@ -92,6 +93,7 @@ func _update_labels() -> void:
 	info_text += " in %s packs" if more_than_one_pack else " in %s packs"
 	
 	info_label.text = info_text % [image_count, pack_count]
+
 
 func _add_packs(packs: Array[PackContext]) -> void:
 	for new_pack: PackContext in packs:
