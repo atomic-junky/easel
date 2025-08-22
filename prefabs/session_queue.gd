@@ -6,21 +6,28 @@ signal cache_loaded
 
 const URL_REGEX: String = '^(ftp|http|https)://[^ "]+$'
 const PRELOAD_RANGE := 10
-const MAX_CACHE_MEMORY_MB: int = 256 # Mo
+const UNLOAD_RANGE := 20
 
 var _queue: Array = []
 var _queue_idx: int = 0
 var _cache: Dictionary = {} # { idx: { "texture": Texture2D, "size": int } }
-var _cache_memory: int = 0 # octets
 
 var _url_regex: RegEx = RegEx.new()
 var _thread: Thread
 var _loading: bool = false
 var _load_queue: Array = []
+var _thread_loop: bool = true
 
 
 func _init() -> void:
 	_url_regex.compile(URL_REGEX)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE:
+		if _thread != null and _thread.is_alive():
+			_thread_loop = false
+			await _thread.wait_to_finish()
 
 
 func load_queue(queue: Array) -> void:
@@ -81,17 +88,15 @@ func _enqueue_load(idx: int, callback: Callable) -> void:
 
 
 func _background_loader() -> void:
-	while true:
-		# Construire la liste des indices à charger
+	while _thread_loop:
 		for offset in range(-PRELOAD_RANGE, PRELOAD_RANGE + 1):
 			var idx = _queue_idx + offset
-			if idx >= 0 and idx < _queue.size():
-				if not _cache.has(idx) and not _is_in_load_queue(idx):
-					# Vérifie qu'on a (ou aura) la place dans le cache
-					if _would_fit_in_cache(idx):
-						_load_queue.append({"index": idx})
+			if not (idx >= 0 and idx < _queue.size()):
+				continue
+			if not _cache.has(idx) and not _is_in_load_queue(idx):
+				_load_queue.append({"index": idx})
 
-		# Rien à charger → on attend un peu
+		_clean_cache()
 		if _load_queue.is_empty():
 			await get_tree().create_timer(0.2).timeout
 			continue
@@ -100,7 +105,7 @@ func _background_loader() -> void:
 		var idx: int = queue_obj["index"]
 		var callback: Callable = queue_obj.get("callback", func(_x): return)
 		var path: String = _queue[idx]
-
+		
 		_cache[idx] = { "status": "loading", "path": path }
 
 		var texture: Texture2D = await _load_image(path)
@@ -108,12 +113,11 @@ func _background_loader() -> void:
 			var size_bytes = _estimate_texture_size(texture)
 			_cache[idx] = {
 				"status": "success",
+				"index": idx,
 				"texture": texture,
 				"path": path,
 				"size": size_bytes
 			}
-			_cache_memory += size_bytes
-			_clean_cache()
 		else:
 			_cache[idx] = { "status": "fail", "path": path }
 
@@ -140,13 +144,6 @@ func _is_in_load_queue(idx: int) -> bool:
 	return false
 
 
-func _would_fit_in_cache(idx: int) -> bool:
-	# Estimer la taille avant chargement
-	var fake_size = 512 * 512 * 4 # estimation par défaut si on ne sait pas
-	# Ici tu pourrais faire un quick metadata check si tu veux
-	return (_cache_memory + fake_size) <= (MAX_CACHE_MEMORY_MB * 1024 * 1024)
-
-
 func _estimate_texture_size(tex: Texture2D) -> int:
 	if tex == null:
 		return 0
@@ -158,21 +155,18 @@ func _get_cache_count() -> int:
 	var count: int = 0
 	for idx in _cache.keys():
 		var el: Dictionary = _cache[idx]
-		if el and el["status"] == "succcess":
+		if el and el["status"] == "success":
 			count += 1
 	return count
 
 
 func _clean_cache() -> void:
-	while _cache_memory > MAX_CACHE_MEMORY_MB * 1024 * 1024:
-		var farthest_idx = -1
-		var farthest_dist = -1
-		for key in _cache.keys():
-			var dist = abs(key - _queue_idx)
-			if dist > farthest_dist:
-				farthest_dist = dist
-				farthest_idx = key
-
-		if farthest_idx != -1:
-			_cache_memory -= _cache[farthest_idx].get("size", 0)
-			_cache.erase(farthest_idx)
+	var unload_range: Array = range(_queue_idx - UNLOAD_RANGE, _queue_idx + UNLOAD_RANGE + 1)
+	for idx: int in _cache.keys():
+		if not idx in unload_range:
+			_cache.erase(idx)
+	
+	for el: Dictionary in _load_queue:
+		var idx: int = el.get("index")
+		if not idx in unload_range:
+			_load_queue.erase(idx)

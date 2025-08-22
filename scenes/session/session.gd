@@ -162,7 +162,8 @@ func _on_image_loaded(data: Dictionary) -> void:
 		"loading":
 			spiner_container.show()
 		"success":
-			texture_container.texture = data.get("texture")
+			if data.get("index") == queue._queue_idx:
+				texture_container.texture = data.get("texture")
 		_:
 			printerr("Unknown status %s" % data.get("status"))
 

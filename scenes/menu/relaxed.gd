@@ -11,7 +11,7 @@ func apply_context(context: SessionContext) -> void:
 	context.time_per_image = -1
 	context.shuffle = shuffle
 	context.reverse = reverse
-	context.session_type = SessionContext.Type.STANDARD
+	context.session_type = SessionContext.Type.RELAXED
 
 
 func is_valid() -> bool:
