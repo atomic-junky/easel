@@ -14,7 +14,7 @@ func apply_context(context: SessionContext):
 	for pose in class_session:
 		total_duration += pose.get("duration") * pose.get("amount", 1)
 		if pose.get("type") == "poses":
-			number_of_images += pose.get("ammout")
+			number_of_images += pose.get("amount", 1)
 	
 	context.session_type = SessionContext.Type.CLASS
 	context.class_data = class_session

@@ -13,12 +13,6 @@ bg_color = Color(0.141176, 0.141176, 0.141176, 1)
 
 [node name="OptionSwitcher" type="VBoxContainer"]
 script = ExtResource("1_oj872")
-fifth_label = null
-fifth_value = null
-fifth_enabled = null
-sixth_label = null
-sixth_value = null
-sixth_enabled = null
 
 [node name="Label" type="Label" parent="."]
 unique_name_in_owner = true

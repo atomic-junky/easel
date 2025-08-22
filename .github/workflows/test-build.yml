@@ -204,7 +204,7 @@ jobs:
         with:
           name: mac_build
           path: |
-            ./build/*.dmg
+            ./build/mac/*
 
       # - name: Upload Release Asset 🚀
       #   uses: svenstaro/upload-release-action@v2
