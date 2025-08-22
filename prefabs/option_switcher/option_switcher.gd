@@ -25,6 +25,14 @@ signal value_changed(value: int)
 @export_subgroup("Fourth option", "fourth_")
 @export var fourth_label: String = ""
 @export var fourth_value: int = 4
+@export_subgroup("Fifth option", "fifth_")
+@export var fifth_label: String = ""
+@export var fifth_value: int = 5
+@export var fifth_enabled: bool = false
+@export_subgroup("Sixth option", "sixth_")
+@export var sixth_label: String = ""
+@export var sixth_value: int = 6
+@export var sixth_enabled: bool = false
 
 @onready var buttons_container: Control = %ButtonsContainer
 @onready var custom_value_container: Control = %CustomValueContainer
@@ -32,14 +40,17 @@ signal value_changed(value: int)
 @onready var custom_value_container_bg: Control = %CustomValueContainerBG
 @onready var label: Label = %Label
 @onready var custom_button: Button = %CustomButton
-@onready var _buttons: Array = [%FirstButton, %SecondButton, %ThirdButton, %FourthButton]
+@onready var _buttons: Array = [%FirstButton, %SecondButton, %ThirdButton, %FourthButton, %FifthButton, %SixthButton]
 
 var _button_labels: Array :
 	get():
-		return [first_label, second_label, third_label, fourth_label]
+		return [first_label, second_label, third_label, fourth_label, fifth_label, sixth_label]
 var _button_values: Array :
 	get():
-		return [first_value, second_value, third_value, fourth_value]
+		return [first_value, second_value, third_value, fourth_value, fifth_value, sixth_value]
+var _buttons_enabled: Array :
+	get():
+		return [true, true, true, true, fifth_enabled, sixth_enabled]
 var _last_toggled_button: Button
 
 var value: int : get = _get_value
@@ -51,6 +62,7 @@ func _ready() -> void:
 	custom_value.get_line_edit().text_changed.connect(_on_custom_value_value_changed)
 	custom_value.get_line_edit().theme_type_variation = "LineEditSwitcher"
 	_update()
+	value_changed.emit(value)
 
 
 func _update() -> void:
@@ -64,8 +76,10 @@ func _update() -> void:
 	for idx: int in _buttons.size():
 		var button: Button = _buttons[idx]
 		var label: String = _button_labels[idx]
+		var enabled: bool = _buttons_enabled[idx]
 
 		button.text = label
+		button.visible = enabled
 		button.pressed.connect(_update_buttons.bind(button))
 	
 	custom_button.pressed.connect(_update_buttons.bind(custom_button))

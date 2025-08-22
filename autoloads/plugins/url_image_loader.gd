@@ -5,8 +5,11 @@ func get_image(url: String) -> ImageTexture:
 	var im: Image = Image.new()
 	for _i in range(4): # retry 4 times if it fail
 		var http_request: AwaitableHTTPRequest = AwaitableHTTPRequest.new()
-		add_child(http_request)
 		
+		call_deferred("add_child", http_request)
+		if not http_request.is_node_ready():
+			await http_request.ready
+			
 		var response: HTTPResult = await http_request.async_request(url)
 		http_request.queue_free()
 		

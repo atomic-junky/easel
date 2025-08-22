@@ -9,10 +9,11 @@ const SUPPORTED_EXTENSIONS := ["png", "jpeg", "jpg", "tiff"]
 
 @onready var info_label: Label = %InfoLabel
 @onready var standard: Control = %Standard
+@onready var class_room: Control = %Class
 @onready var comming_soon: Control = %CommingSoon
 @onready var relaxed: Control = %Relaxed
 @onready var session_type_switcher: OptionSwitcher = %SessionTypeSwitcher
-@onready var _session_panel: Array = [standard, comming_soon, relaxed, comming_soon]
+@onready var _session_panel: Array = [standard, class_room, relaxed, comming_soon]
 @onready var done_button: Button = %DoneButton
 
 @onready var pack_selector: Control = %PackSelectorContainer
@@ -36,6 +37,9 @@ func _ready() -> void:
 
 
 func _on_session_type_switcher_value_changed(value: int) -> void:
+	if not is_node_ready():
+		return
+	
 	for panel in _session_panel:
 		panel.hide()
 	
@@ -171,4 +175,5 @@ func _on_pack_done_button_pressed() -> void:
 
 
 func _on_done_button_pressed() -> void:
+	get_session_panel().apply_context(_context)
 	done.emit(_context)

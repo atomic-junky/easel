@@ -15,6 +15,7 @@ signal done(session_context: SessionContext)
 @onready var navigation_container := %NavigationContainer
 @onready var file_location_button := %FileLocationButton
 @onready var texture_container := %TextureContainer
+@onready var spiner_container := %SpinerContainer
 
 var _context: SessionContext
 var queue: SessionQueue
@@ -31,7 +32,7 @@ func load_args(args: SessionContext) -> void:
 	if not is_node_ready():
 		await ready
 	
-	await start_session(args)
+	start_session(args)
 
 
 func setup() -> void:
@@ -40,6 +41,7 @@ func setup() -> void:
 	set_process_input(false)
 	
 	queue = SessionQueue.new()
+	add_child(queue)
 	_context = null
 
 
@@ -51,15 +53,13 @@ func start_session(context: SessionContext) -> void:
 		navigation_container.hide()
 		file_location_button.hide()
 	
-	if context.time_per_image <= 0:
+	if context.session_type == SessionContext.Type.RELAXED:
 		no_timer = true
 		pause_button.hide()
-	else:
-		timer.wait_time = context.time_per_image
 	
 	_context = context
 	var _queue: Array = context.get_images_path()
-	await queue.load_queue(_queue)
+	queue.load_queue(_queue)
 	mouse_move_timer.start()
 	
 	set_process(true)
@@ -67,11 +67,7 @@ func start_session(context: SessionContext) -> void:
 	current_image()
 
 
-
 func _process(_delta: float) -> void:
-	if not queue.is_cache_loaded():
-		return
-	
 	var time_left: int = ceil(timer.time_left)
 	var minutes: int = floor(time_left/60)
 	var seconds: int = time_left-(minutes*60)
@@ -124,7 +120,7 @@ func _input(event: InputEvent) -> void:
 
 
 func current_image() -> void:
-	change_image(queue.current())
+	change_image(queue.current)
 	_update()
 
 
@@ -133,7 +129,7 @@ func next_image() -> void:
 		print("Reach the end")
 		return
 	
-	change_image(queue.next())
+	change_image(queue.next)
 	_update()
 
 
@@ -142,19 +138,30 @@ func previous_image() -> void:
 		print("At the start")
 		return
 	
-	change_image(queue.previous())
+	change_image(queue.previous)
 	_update()
 
 
-func change_image(data: Dictionary) -> void:
-	%SpinerContainer.hide()
+func change_image(image_callable: Callable) -> void:
+	texture_container.texture = null
+	spiner_container.show()
+	var data: Dictionary = image_callable.call(_image_loaded_callback)
+	_on_image_loaded(data)
+
+
+func _image_loaded_callback(data: Dictionary) -> void:
+	_on_image_loaded.call_deferred(data)
+
+
+func _on_image_loaded(data: Dictionary) -> void:
+	spiner_container.hide()
 	match data.get("status"):
 		"fail":
 			printerr(data.get("message"))
 		"loading":
-			%SpinerContainer.show()
+			spiner_container.show()
 		"success":
-			%TextureContainer.texture = data.get("texture")
+			texture_container.texture = data.get("texture")
 		_:
 			printerr("Unknown status %s" % data.get("status"))
 
@@ -164,6 +171,7 @@ func _update() -> void:
 	file_location_button.text = file_name
 	
 	if not no_timer:
+		timer.wait_time = _context.get_image_duration(queue._queue_idx)
 		timer.start()
 	
 	var canvas_idx: String = _get_canvas_index(queue._queue_idx)
@@ -245,7 +253,7 @@ func _on_rotate_left_button_pressed() -> void:
 	var im: Image = get_current_image()
 	if im:
 		im.rotate_90(COUNTERCLOCKWISE)
-		queue.current()["texture"] = ImageTexture.create_from_image(im)
+		queue._cache[queue._queue_idx]["texture"] = ImageTexture.create_from_image(im)
 	current_image()
 
 
@@ -253,7 +261,7 @@ func _on_rotate_right_button_pressed() -> void:
 	var im: Image = get_current_image()
 	if im:
 		im.rotate_90(CLOCKWISE)
-		queue.current()["texture"] = ImageTexture.create_from_image(im)
+		queue._cache[queue._queue_idx]["texture"] = ImageTexture.create_from_image(im)
 	current_image()
 
 

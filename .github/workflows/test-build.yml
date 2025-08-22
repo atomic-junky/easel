@@ -105,32 +105,24 @@ jobs:
       - name: Linux Build 🔧
         run: |
           godot --headless -v --export-release "Linux 64-bit" ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
-          godot --headless -v --export-release "Linux 32-bit" ./build/${EXPORT_NAME}-Linux-32bit/${EXPORT_NAME}.x86_32
           godot --headless -v --export-release "Linux arm64" ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
-          godot --headless -v --export-release "Linux arm32" ./build/${EXPORT_NAME}-Linux-arm32/${EXPORT_NAME}.arm32
 
       - name: Give execute permission ☑️
         run: |
           chmod +x ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
-          chmod +x ./build/${EXPORT_NAME}-Linux-32bit/${EXPORT_NAME}.x86_32
           chmod +x ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
-          chmod +x ./build/${EXPORT_NAME}-Linux-arm32/${EXPORT_NAME}.arm32
 
       - name: Copy gesture_companion_data folder 📁
         run: |
           rm ./gesture_companion_data/.gdignore
           cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-64bit
-          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-32bit
           cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-arm64
-          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-arm32
 
       - name: Create tar.gz archive 🗜️
         run: |
           cd build
           tar zcvf ${EXPORT_NAME}-Linux-64bit.tar.gz ${EXPORT_NAME}-Linux-64bit
-          tar zcvf ${EXPORT_NAME}-Linux-32bit.tar.gz ${EXPORT_NAME}-Linux-32bit
           tar zcvf ${EXPORT_NAME}-Linux-arm64.tar.gz ${EXPORT_NAME}-Linux-arm64
-          tar zcvf ${EXPORT_NAME}-Linux-arm32.tar.gz ${EXPORT_NAME}-Linux-arm32
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4

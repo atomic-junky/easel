@@ -13,6 +13,12 @@ bg_color = Color(0.141176, 0.141176, 0.141176, 1)
 
 [node name="OptionSwitcher" type="VBoxContainer"]
 script = ExtResource("1_oj872")
+fifth_label = null
+fifth_value = null
+fifth_enabled = null
+sixth_label = null
+sixth_value = null
+sixth_enabled = null
 
 [node name="Label" type="Label" parent="."]
 unique_name_in_owner = true
@@ -67,6 +73,24 @@ theme_type_variation = &"ButtonSwitcher"
 toggle_mode = true
 text = "4"
 
+[node name="FifthButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonSwitcher"
+toggle_mode = true
+text = "4"
+
+[node name="SixthButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonSwitcher"
+toggle_mode = true
+text = "4"
+
 [node name="CustomValueContainerBG" type="Panel" parent="HBoxContainer/PanelContainer"]
 unique_name_in_owner = true
 visible = false
@@ -83,6 +107,7 @@ theme_override_constants/separation = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+value = 1.0
 allow_greater = true
 alignment = 1
 

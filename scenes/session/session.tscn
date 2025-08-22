@@ -72,7 +72,7 @@ bg_color = Color(0.113725, 0.113725, 0.113725, 1)
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 
-[node name="SessionView" type="Control" node_paths=PackedStringArray("invisible_element")]
+[node name="Session" type="Control" node_paths=PackedStringArray("invisible_element")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
