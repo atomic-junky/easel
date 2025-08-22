@@ -64,12 +64,12 @@ jobs:
           mkdir ./build/installer
           mv ./installer/${EXPORT_NAME}_${TAG}_setup.exe ./build
 
-      - name: Upload Artifact for publish
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows_build
           path: |
-            ./build/*
+            ./build/
             !*.zip
 
       # - name: Upload Release Asset 🚀
@@ -80,3 +80,144 @@ jobs:
       #     tag: ${{env.TAG}}
       #     overwrite: true
       #     file_glob: true
+
+
+  export-linux:
+    name: Linux Export 🐧
+    runs-on: ubuntu-latest
+    container:
+      image: docker://barichello/godot-ci:4.4.1
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v5
+        with:
+          submodules: true
+
+      - name: Setup 💻
+        run: |
+          mkdir -v -p build/${EXPORT_NAME}-Linux-64bit build/${EXPORT_NAME}-Linux-32bit build/${EXPORT_NAME}-Linux-arm64 build/${EXPORT_NAME}-Linux-arm32 ~/.local/share/godot/export_templates
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+
+      - name: Import resources once 📦
+        continue-on-error: true
+        run: godot --headless -v --import
+
+      - name: Linux Build 🔧
+        run: |
+          godot --headless -v --export-release "Linux 64-bit" ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
+          godot --headless -v --export-release "Linux 32-bit" ./build/${EXPORT_NAME}-Linux-32bit/${EXPORT_NAME}.x86_32
+          godot --headless -v --export-release "Linux arm64" ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
+          godot --headless -v --export-release "Linux arm32" ./build/${EXPORT_NAME}-Linux-arm32/${EXPORT_NAME}.arm32
+
+      - name: Give execute permission ☑️
+        run: |
+          chmod +x ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
+          chmod +x ./build/${EXPORT_NAME}-Linux-32bit/${EXPORT_NAME}.x86_32
+          chmod +x ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
+          chmod +x ./build/${EXPORT_NAME}-Linux-arm32/${EXPORT_NAME}.arm32
+
+      - name: Copy gesture_companion_data folder 📁
+        run: |
+          rm ./gesture_companion_data/.gdignore
+          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-64bit
+          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-32bit
+          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-arm64
+          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-arm32
+
+      - name: Create tar.gz archive 🗜️
+        run: |
+          cd build
+          tar zcvf ${EXPORT_NAME}-Linux-64bit.tar.gz ${EXPORT_NAME}-Linux-64bit
+          tar zcvf ${EXPORT_NAME}-Linux-32bit.tar.gz ${EXPORT_NAME}-Linux-32bit
+          tar zcvf ${EXPORT_NAME}-Linux-arm64.tar.gz ${EXPORT_NAME}-Linux-arm64
+          tar zcvf ${EXPORT_NAME}-Linux-arm32.tar.gz ${EXPORT_NAME}-Linux-arm32
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux_build
+          path: |
+            ./build/*.tar.gz
+
+      # - name: Upload Release Asset 🚀
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ./build/${{env.EXPORT_NAME}}-Linux-*.tar.gz
+      #     tag: ${{env.TAG}}
+      #     overwrite: true
+      #     file_glob: true
+
+  export-mac:
+    name: Mac Export 🍎
+    runs-on: macos-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v5
+        with:
+          submodules: true
+
+      - name: Setup environment 🔧
+        run: |
+          export GODOT_VERSION=${GODOT_VERSION}
+          export EXPORT_NAME=${EXPORT_NAME}
+
+      - name: Download and extract export templates 💾
+        run: |
+          mkdir -v -p "/Users/runner/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable"
+          wget https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          unzip -a Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          mv ./templates/* "/Users/runner/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable"
+
+      - name: Download Godot headless binary 🤖
+        run: |
+          wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_macos.universal.zip
+          unzip -a Godot_v${GODOT_VERSION}-stable_macos.universal.zip
+
+      - name: Setup 💻
+        run: mkdir -v -p ./build/mac
+
+      - name: Import resources once 📦
+        continue-on-error: true
+        run: ./Godot.app/Contents/MacOS/Godot --headless -v --import
+
+      - name: Mac Build 🔧
+        run: |
+          chown runner ./Godot.app/Contents/MacOS/Godot
+          chmod +x ./Godot.app/Contents/MacOS/Godot
+          ./Godot.app/Contents/MacOS/Godot --headless -v --export-release "macOS" ./build/mac/${EXPORT_NAME}.zip
+
+      - name: Make application executable 🔧
+        run: |
+          unzip -a ./build/mac/${EXPORT_NAME}.zip -d ./build/mac
+          chmod +x ./build/mac/${EXPORT_NAME}.app/Contents/MacOS/${EXPORT_NAME}
+          rm ./build/mac/${EXPORT_NAME}.zip
+
+      - name: Fix application icon 🖼
+        run: sips -s format icns ./build/mac/${EXPORT_NAME}.app/Contents/Resources/icon.icns --out ./build/mac/${EXPORT_NAME}.app/Contents/Resources/icon.icns
+
+      - name: Copy gesture_companion_data folder 📁
+        run: |
+          cp -R ./gesture_companion_data ./build/mac/${EXPORT_NAME}.app/Contents/Resources
+          rm ./build/mac/${EXPORT_NAME}.app/Contents/Resources/gesture_companion_data/.gdignore
+
+      - name: Ad-hoc signing ✍️
+        run: codesign -s - --force --deep ./build/mac/${EXPORT_NAME}.app
+
+      - name: Create DMG archive 🔧
+        run: hdiutil create -srcfolder ./build/mac -fs HFS+ -volname ${EXPORT_NAME} ./build/mac/${EXPORT_NAME}-Mac.dmg
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac_build
+          path: |
+            ./build/*.dmg
+
+      # - name: Upload Release Asset 🚀
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ./build/mac/${{env.EXPORT_NAME}}-Mac.dmg
+      #     tag: ${{env.TAG}}
+      #     overwrite: true
