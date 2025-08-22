@@ -25,12 +25,12 @@
 
 ; Default installation folder
 
-  InstallDir "$APPDATA\${COMPANYNAME}\${APPNAME}"
+  InstallDir "$APPDATA\${APPNAME}"
 
 
 ; Get installation folder from registry if available
 
-  InstallDirRegKey HKCU "Software\${COMPANYNAME}\${APPNAME}" "InstallDir"
+  InstallDirRegKey HKCU "Software\${APPNAME}" "InstallDir"
 
 
 ; Request application privileges for Vista and later
@@ -48,18 +48,20 @@
   !define MUI_HEADERIMAGE_RIGHT
   !define MUI_HEADERIMAGE_BITMAP "assets\header.bmp"
   !define MUI_HEADERIMAGE_UNBITMAP "assets\header.bmp"
+  !define MUI_HEADERIMAGE_BITMAP_NOSTRETCH
+  !define MUI_HEADERIMAGE_UNBITMAP_NOSTRETCH
   !define MUI_ABORTWARNING
   !define MUI_COMPONENTSPAGE_SMALLDESC
   !define MUI_FINISHPAGE_NOAUTOCLOSE
   !define MUI_UNFINISHPAGE_NOAUTOCLOSE
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\gesture-companion.exe"
+  !define MUI_FINISHPAGE_RUN "$INSTDIR\${APPNAME}.exe"
 
 ; Language selection settings
 
   !define MUI_LANGDLL_ALLLANGUAGES
   ## Remember the installer language
   !define MUI_LANGDLL_REGISTRY_ROOT HKCU
-  !define MUI_LANGDLL_REGISTRY_KEY "Software\${COMPANYNAME}\${APPNAME}"
+  !define MUI_LANGDLL_REGISTRY_KEY "Software\${APPNAME}"
   !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
 
@@ -157,13 +159,13 @@
   SectionEnd
 
 
-  Section /o "$(SecStartmenu)" SecStartmenu ; Create Start Menu shortcuts
+  Section "$(SecStartmenu)" SecStartmenu ; Create Start Menu shortcuts
 
     ; Create folder in Start Menu\Programs and create shortcuts for app and uninstaller
-    CreateDirectory "$SMPROGRAMS\${COMPANYNAME}"
+    ; CreateDirectory "$SMPROGRAMS\${COMPANYNAME}"
 
-    CreateShortCut "$SMPROGRAMS\${COMPANYNAME}\${APPNAME} ${APPVERSION}.lnk" "$INSTDIR\GestureCompanion.exe"
-    CreateShortCut "$SMPROGRAMS\${COMPANYNAME}\Uninstall.lnk" "$INSTDIR\uninstall.exe"
+    CreateShortCut "$SMPROGRAMS\${APPNAME} ${APPVERSION}.lnk" "$INSTDIR\GestureCompanion.exe"
+    CreateShortCut "$SMPROGRAMS\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 
   SectionEnd
 
@@ -207,7 +209,7 @@
     RMDir /r "${COMPANYNAME}"
 
     ; If empty, delete the application's registry key
-    DeleteRegKey /ifempty HKCU "Software\${COMPANYNAME}\${APPNAME}"
+    DeleteRegKey /ifempty HKCU "Software\${APPNAME}"
 
     ; Delete the Add/Remove Programs entry
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
