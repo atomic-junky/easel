@@ -29,8 +29,18 @@ func get_images_path() -> Array:
 		return all_paths
 
 	var result: Array = []
-	for i in number_of_images:
-		result.append(all_paths.pop_front())
+	for idx in number_of_images:
+		var pose_type: String = get_pose_type(idx)
+		var pose_duration: int = get_pose_duration(idx)
+		var pose_data: Dictionary = {
+			"type": pose_type,
+			"duration": pose_duration
+		}
+		
+		if pose_type == "pose":
+			pose_data["path"] = all_paths.pop_front()
+			
+		result.append(pose_data)
 	return result
 
 
@@ -54,8 +64,14 @@ func get_packs() -> Array[PackContext]:
 	return packs.filter(func(p: PackContext): return p.enabled)
 
 
-func get_image_duration(idx: int) -> int:
-	if session_type == Type.CLASS:
+func get_pose_type(idx: int) -> String:
+	if session_type in [Type.CLASS, Type.CUSTOM]:
+		return _get_all_poses()[idx]["type"]
+	return "pose"
+
+
+func get_pose_duration(idx: int) -> int:
+	if session_type in [Type.CLASS, Type.CUSTOM]:
 		return _get_all_poses()[idx]["duration"]
 	return time_per_image
 

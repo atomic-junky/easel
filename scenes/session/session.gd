@@ -27,6 +27,7 @@ var _swipe_start := Vector2.ZERO
 var _swipe_min_distance := 50
 
 var is_drawing: bool = false
+var is_pause: bool = false
 var no_timer: bool = false
 
 
@@ -155,7 +156,12 @@ func _image_loaded_callback(data: Dictionary) -> void:
 func _on_image_loaded(data: Dictionary) -> void:
 	spiner.hide()
 	message_label.hide()
+	is_pause = false
 	match data.get("status"):
+		"break":
+			message_label.show()
+			message_label.text = "Break"
+			is_pause = true
 		"fail":
 			message_label.text = data.get("message")
 			message_label.show()
@@ -174,8 +180,8 @@ func _update() -> void:
 	var file_name: String = queue.get_current_location().get_file()
 	file_location_button.text = file_name
 	
-	if not no_timer and not texture_container.texture == null:
-		timer.wait_time = _context.get_image_duration(queue._queue_idx)
+	if not no_timer and (not texture_container.texture == null or is_pause):
+		timer.wait_time = _context.get_pose_duration(queue._queue_idx)
 		timer.paused = false
 		timer.start()
 	elif texture_container.texture == null:

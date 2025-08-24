@@ -65,10 +65,16 @@ func size() -> int: return _queue.size()
 
 
 func get_current_location() -> String:
-	return _queue[_queue_idx]
+	return _queue[_queue_idx].get("path", "") if _queue.has(_queue_idx) else ""
 
 
 func get_from_cache(idx: int, callback: Callable) -> Dictionary:
+	if _queue[idx].get("type") == "break":
+		return {
+			"status": "break",
+			"duration": _queue[idx].get("duration")
+		}
+	
 	if _cache.has(idx):
 		return _cache[idx]
 
@@ -91,7 +97,7 @@ func _background_loader() -> void:
 	while _thread_loop:
 		for offset in range(-PRELOAD_RANGE, PRELOAD_RANGE + 1):
 			var idx = _queue_idx + offset
-			if not (idx >= 0 and idx < _queue.size()):
+			if not (idx >= 0 and idx < _queue.size()) or _queue[idx].get("type") != "pose":
 				continue
 			if not _cache.has(idx) and not _is_in_load_queue(idx):
 				_load_queue.append({"index": idx})
@@ -104,7 +110,7 @@ func _background_loader() -> void:
 		var queue_obj: Dictionary = _load_queue.pop_front()
 		var idx: int = queue_obj["index"]
 		var callback: Callable = queue_obj.get("callback", func(_x): return)
-		var path: String = _queue[idx]
+		var path: String = _queue[idx].get("path")
 		
 		_cache[idx] = { "status": "loading", "path": path }
 
