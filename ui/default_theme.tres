@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=55 format=3 uid="uid://c4tjtr1l5tu78"]
+[gd_resource type="Theme" load_steps=56 format=3 uid="uid://c4tjtr1l5tu78"]
 
 [ext_resource type="Texture2D" uid="uid://dh3ciw6v7ml7y" path="res://assets/icons/grabber.svg" id="1_0ie0l"]
 [ext_resource type="FontFile" uid="uid://dci5hf6p3f7m" path="res://assets/fonts/InterDisplay-Black.ttf" id="1_5r0yv"]
@@ -169,6 +169,17 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oq6wx"]
+content_margin_left = 15.0
+content_margin_top = 7.0
+content_margin_right = 15.0
+content_margin_bottom = 7.0
+bg_color = Color(0.192157, 0.192157, 0.192157, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_womgl"]
 content_margin_left = 15.0
 content_margin_top = 7.0
@@ -331,6 +342,7 @@ LabelSecondary/colors/font_color = Color(1, 1, 1, 1)
 LabelSecondary/fonts/font = ExtResource("2_5r0yv")
 LineEdit/colors/caret_color = Color(1, 1, 1, 1)
 LineEdit/constants/caret_width = 1
+LineEdit/styles/focus = SubResource("StyleBoxFlat_oq6wx")
 LineEdit/styles/normal = SubResource("StyleBoxFlat_womgl")
 LineEditSwitcher/base_type = &"LineEdit"
 LineEditSwitcher/styles/normal = SubResource("StyleBoxFlat_kn7di")

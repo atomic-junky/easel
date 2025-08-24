@@ -22,11 +22,10 @@ func get_image(url: String) -> ImageTexture:
 				im.load_png_from_buffer(response.bytes)
 			"jpg", "jpeg":
 				im.load_jpg_from_buffer(response.bytes)
-			"ktx":
-				im.load_ktx_from_buffer(response.bytes)
 			"bmp":
 				im.load_bmp_from_buffer(response.bytes)
 			_:
 				printerr("Unsupported image extension \"%s\"." % im_extension)
-		break
-	return ImageTexture.create_from_image(im)
+				return null
+		return ImageTexture.create_from_image(im)
+	return null

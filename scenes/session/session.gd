@@ -15,7 +15,10 @@ signal done(session_context: SessionContext)
 @onready var navigation_container := %NavigationContainer
 @onready var file_location_button := %FileLocationButton
 @onready var texture_container := %TextureContainer
-@onready var spiner_container := %SpinerContainer
+@onready var spiner := %Spiner
+@onready var message_label := %MessageLabel
+@onready var count_label := %CountLabel
+@onready var paint_button := %PaintButton
 
 var _context: SessionContext
 var queue: SessionQueue
@@ -33,7 +36,6 @@ func load_args(args: SessionContext) -> void:
 		await ready
 	
 	start_session(args)
-	get_window().unresizable = false
 
 
 func setup() -> void:
@@ -122,7 +124,6 @@ func _input(event: InputEvent) -> void:
 
 func current_image() -> void:
 	change_image(queue.current)
-	_update()
 
 
 func next_image() -> void:
@@ -131,21 +132,18 @@ func next_image() -> void:
 		return
 	
 	change_image(queue.next)
-	_update()
 
 
 func previous_image() -> void:
 	if not queue.has_previous():
-		print("At the start")
 		return
 	
 	change_image(queue.previous)
-	_update()
 
 
 func change_image(image_callable: Callable) -> void:
 	texture_container.texture = null
-	spiner_container.show()
+	spiner.show()
 	var data: Dictionary = image_callable.call(_image_loaded_callback)
 	_on_image_loaded(data)
 
@@ -155,32 +153,40 @@ func _image_loaded_callback(data: Dictionary) -> void:
 
 
 func _on_image_loaded(data: Dictionary) -> void:
-	spiner_container.hide()
+	spiner.hide()
+	message_label.hide()
 	match data.get("status"):
 		"fail":
+			message_label.text = data.get("message")
+			message_label.show()
 			printerr(data.get("message"))
 		"loading":
-			spiner_container.show()
+			spiner.show()
 		"success":
 			if data.get("index") == queue._queue_idx:
 				texture_container.texture = data.get("texture")
 		_:
 			printerr("Unknown status %s" % data.get("status"))
+	_update()
 
 
 func _update() -> void:
 	var file_name: String = queue.get_current_location().get_file()
 	file_location_button.text = file_name
 	
-	if not no_timer:
+	if not no_timer and not texture_container.texture == null:
 		timer.wait_time = _context.get_image_duration(queue._queue_idx)
+		timer.paused = false
 		timer.start()
+	elif texture_container.texture == null:
+		timer.start()
+		timer.paused = true
 	
 	var canvas_idx: String = _get_canvas_index(queue._queue_idx)
 	paint_canvas.create_canvas(canvas_idx)
 	paint_canvas.switch_canvas(canvas_idx)
 	
-	%CountLabel.text = "%s/%s" % [queue._queue_idx+1, queue.size()]
+	count_label.text = "%s/%s" % [queue._queue_idx+1, queue.size()]
 
 
 func _on_timer_timeout() -> void:
@@ -213,8 +219,8 @@ func _on_mouse_movetimer_timeout() -> void:
 
 func _on_grid_button_pressed() -> void:
 	%GridContainer.visible = %GridButton.button_pressed
-	
-	
+
+
 func _get_swipe_direction(delta: Vector2) -> String:
 	if abs(delta.x) > abs(delta.y):
 		return "right" if delta.x > 0 else "left"

@@ -10,7 +10,7 @@ const UNLOAD_RANGE := 20
 
 var _queue: Array = []
 var _queue_idx: int = 0
-var _cache: Dictionary = {} # { idx: { "texture": Texture2D, "size": int } }
+var _cache: Dictionary = {} # { <idx>: { "texture": <Texture2D>, "size": <int> } }
 
 var _url_regex: RegEx = RegEx.new()
 var _thread: Thread
@@ -110,16 +110,18 @@ func _background_loader() -> void:
 
 		var texture: Texture2D = await _load_image(path)
 		if texture:
-			var size_bytes = _estimate_texture_size(texture)
 			_cache[idx] = {
 				"status": "success",
 				"index": idx,
 				"texture": texture,
-				"path": path,
-				"size": size_bytes
+				"path": path
 			}
 		else:
-			_cache[idx] = { "status": "fail", "path": path }
+			_cache[idx] = { 
+				"status": "fail", 
+				"path": path, 
+				"message": "The image cannot be loaded."
+			}
 
 		call_deferred("emit_signal", "image_loaded", idx)
 		callback.call(_cache[idx])
@@ -129,7 +131,7 @@ func _load_image(path: String) -> Texture2D:
 	var is_url: bool = _url_regex.search(path) != null
 	if is_url:
 		return await UrlImageLoader.get_image(path)
-
+	
 	for _i in range(4):
 		var im: Image = Image.load_from_file(path)
 		if im and not im.is_empty():
@@ -142,13 +144,6 @@ func _is_in_load_queue(idx: int) -> bool:
 		if typeof(q) == TYPE_DICTIONARY and q.get("index", -1) == idx:
 			return true
 	return false
-
-
-func _estimate_texture_size(tex: Texture2D) -> int:
-	if tex == null:
-		return 0
-	var size = tex.get_width() * tex.get_height() * 4 # RGBA8 → 4 bytes par pixel
-	return size
 
 
 func _get_cache_count() -> int:

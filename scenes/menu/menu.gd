@@ -34,7 +34,6 @@ func _ready() -> void:
 	_on_session_type_switcher_value_changed(1)
 	_update()
 	visibility_changed.connect(_update)
-	get_window().unresizable = true
 
 
 func _on_session_type_switcher_value_changed(value: int) -> void:

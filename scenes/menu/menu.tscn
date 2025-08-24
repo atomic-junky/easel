@@ -10533,15 +10533,17 @@ horizontal_alignment = 1
 
 [node name="Label" type="Label" parent="SafeMarginContainer/VBox/Label"]
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.732
-anchor_top = 0.897
-anchor_right = 0.732
-anchor_bottom = 0.897
-offset_left = 0.0319519
-offset_top = -17.009
-offset_right = 40.032
-offset_bottom = -0.00900269
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 109.0
+offset_top = 22.5
+offset_right = 148.0
+offset_bottom = 39.5
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_colors/font_color = Color(0.109804, 0.109804, 0.109804, 1)
 theme_override_fonts/font = ExtResource("3_kaijy")
 theme_override_font_sizes/font_size = 12

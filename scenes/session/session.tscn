@@ -94,6 +94,29 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.498039, 0.498039, 0.498039, 1)
 
+[node name="SpinerContainer" type="CenterContainer" parent="CanvasLayer2"]
+offset_right = 1152.0
+offset_bottom = 648.0
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer2/SpinerContainer"]
+layout_mode = 2
+
+[node name="Spiner" parent="CanvasLayer2/SpinerContainer/VBox" instance=ExtResource("2_5d8hc")]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="MessageLabel" type="Label" parent="CanvasLayer2/SpinerContainer/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "Break"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="SafeMarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -108,15 +131,6 @@ metadata/_custom_type_script = "uid://b08vxne14bjfa"
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_0dsos")
-
-[node name="SpinerContainer" type="CenterContainer" parent="SafeMarginContainer/PanelContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-mouse_filter = 2
-
-[node name="Spiner" parent="SafeMarginContainer/PanelContainer/SpinerContainer" instance=ExtResource("2_5d8hc")]
-layout_mode = 2
-mouse_filter = 2
 
 [node name="TextureContainer" type="TextureRect" parent="SafeMarginContainer/PanelContainer"]
 unique_name_in_owner = true
