@@ -2,8 +2,6 @@ class_name Menu extends Control
 
 signal done(context: SessionContext)
 
-const SUPPORTED_EXTENSIONS := ["png", "jpeg", "jpg", "tiff"]
-
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
 

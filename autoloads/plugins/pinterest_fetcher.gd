@@ -5,7 +5,7 @@ var _progress_callback: Callable
 
 # Constants for better maintainability
 const MAX_REQUESTS = 64
-const PAGE_SIZE = 25
+const PAGE_SIZE = 50
 const DEFAULT_DOMAIN = "pinterest.com"
 const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0"
 
@@ -309,7 +309,11 @@ func _parse_api_response(result: HTTPResult) -> Dictionary:
 	}
 
 func _extract_image_url(pin: Dictionary) -> String:
-	return pin.get("images", {}).get("orig", {}).get("url", "")
+	var url: String = pin.get("images", {}).get("orig", {}).get("url", "")
+	var extension: String = url.get_extension()
+	if not extension in Constants.SUPPORTED_EXTENSIONS:
+		return ""
+	return url
 
 func fetch(url: String, include_sections: bool, progress_callback: Callable = _empty_progress_callback) -> Array:
 	_progress_callback = progress_callback
