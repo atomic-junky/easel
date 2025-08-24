@@ -24,6 +24,7 @@ const SUPPORTED_EXTENSIONS := ["png", "jpeg", "jpg", "tiff"]
 @onready var url_input_container: Control = %UrlInputContainer
 @onready var url_input: LineEdit = %UrlInput
 @onready var url_input_spiner_container: Control = %UrlInputSpinerContainer
+@onready var pinterest_section_chech_box: CheckBox = %PinterestSectionCheckBox
 
 @onready var pack_object: PackedScene = preload("res://prefabs/pack/pack.tscn")
 
@@ -151,19 +152,22 @@ func _on_clear_button_pressed() -> void:
 func _on_url_done_button_pressed() -> void:
 	url_input_container.hide()
 	url_input_spiner_container.show()
+	pinterest_section_chech_box.disabled = true
 	
-	var board: Dictionary = await PinterestFetcher.fetch(url_input.text, _on_url_fetcher_progress_callback)
+	var results: Array = await PinterestFetcher.fetch(url_input.text, pinterest_section_chech_box.button_pressed ,_on_url_fetcher_progress_callback)
 	
 	url_input_spiner_container.hide()
 	url_input_container.show()
 	dimer.hide()
 	url_container.hide()
+	pinterest_section_chech_box.disabled = false
 	
-	if board.is_empty() or board.get("status") != "success":
-		printerr(board.get("data", "Fetching failure (no data)"))
-		return
+	for pack in results:
+		if pack.is_empty() or pack.get("status") != "success":
+			printerr(pack.get("data", "Fetching failure (no data)"))
+			return
 	
-	_context.packs.append(PackContext.create_from_urls(board.get("data", {})))
+		_context.packs.append(PackContext.create_from_urls(pack.get("data", {})))
 	_update()
 
 

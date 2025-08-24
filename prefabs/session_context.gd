@@ -25,8 +25,11 @@ func get_images_path() -> Array:
 	elif reverse:
 		all_paths.reverse()
 		
-	if image_count <= number_of_images or number_of_images < 0:
-		return all_paths
+	if number_of_images < 0:
+		number_of_images = image_count
+	
+	if number_of_images > image_count:
+		number_of_images = image_count
 
 	var result: Array = []
 	for idx in number_of_images:

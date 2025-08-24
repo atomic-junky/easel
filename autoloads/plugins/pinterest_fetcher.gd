@@ -7,10 +7,9 @@ func _ready():
 	add_child(http_request)
 
 
-func get_board_options(url: String, board_id: String, bookmarks: Array) -> Dictionary:
+func get_board_options(url: String, res_id: String, bookmarks: Array, type: String = "board") -> Dictionary:
 	var options = {
-		"board_id": board_id,
-		"board_url": url,
+		"%s_id" % type: res_id,
 		"currentFilter": -1,
 		"field_set_key": "react_grid_pin",
 		"filter_section_pins": true,
@@ -19,34 +18,13 @@ func get_board_options(url: String, board_id: String, bookmarks: Array) -> Dicti
 		"page_size": 25,
 		"redux_normalize_feed": true,
 	}
-	if bookmarks.size() > 0:
-		options["bookmarks"] = bookmarks
-	return options
-
-func get_user_options(username: String, bookmarks: Array) -> Dictionary:
-	var options = {
-		"privacy_filter": "all",
-		"sort": "last_pinned_to",
-		"field_set_key": "profile_grid_item",
-		"filter_stories": false,
-		"username": username,
-		"page_size": 25,
-		"group_by": "mix_public_private",
-		"include_archived": false,
-		"redux_normalize_feed": true,
-		"filter_all_pins": true,
-	}
-	if bookmarks.size() > 0:
-		options["bookmarks"] = bookmarks
+	if type == "board": options["type_url"] = url
+	if bookmarks.size() > 0: options["bookmarks"] = bookmarks
 	return options
 
 
-func get_board_params(url: String, board_id: String, bookmarks: Array = []) -> Array:
-	return build_params(get_board_options(url, board_id, bookmarks), url)
-
-
-func get_user_params(username: String, bookmarks: Array = []) -> Array:
-	return build_params(get_user_options(username, bookmarks), username)
+func get_board_params(url: String, board_id: String, type: String, bookmarks: Array = []) -> Array:
+	return build_params(get_board_options(url, board_id, bookmarks, type), url)
 
 
 func build_params(options: Dictionary, url: String) -> Array:
@@ -62,14 +40,14 @@ func build_params(options: Dictionary, url: String) -> Array:
 	return params
 
 
-func get_header(url: String) -> PackedStringArray:
+func get_header(url: String, url_handler: String) -> PackedStringArray:
 	if url.count("/") <= 2:
 		return [
 			"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0",
 			"Accept: application/json, text/javascript, */*, q=0.01",
 			"X-Requested-With: XMLHttpRequest",
 			"X-Pinterest-Source-Url: %s" % url,
-			"X-Pinterest-PWS-Handler: www/[username].js"
+			"X-Pinterest-PWS-Handler: %s" % url_handler
 		] as PackedStringArray
 	
 	return [
@@ -77,49 +55,8 @@ func get_header(url: String) -> PackedStringArray:
 		"Accept: application/json, text/javascript, */*, q=0.01",
 		"X-Requested-With: XMLHttpRequest",
 		"X-Pinterest-Source-Url: %s" % url,
-		"X-Pinterest-PWS-Handler: www/[username]/[slug].js"
+		"X-Pinterest-PWS-Handler: %s" % url_handler
 	] as PackedStringArray
-
-
-func get_user_info(board_url) -> Dictionary:
-	var username: String = ""
-	var domain: String = ""
-	var boards: Array[Dictionary] = []
-	var bookmarks: Array = []
-	
-	for i in range(64):
-		if bookmarks.find("-end-") != -1:
-			break
-
-		var params_array: Array = get_user_params(username, bookmarks)
-		var url: String = "https://%s/resource/BoardsResource/get/?%s" % [domain, _query_string(params_array)]
-		var result: HTTPResult = await http_request.async_request(url, get_header(username), HTTPClient.METHOD_GET)
-		var response: String = result.body_as_string()
-		if not result.success():
-			printerr(response)
-			return _build_result("fail", response)
-
-		var json: JSON = JSON.new()
-		var err: Error = json.parse(response)
-		if err != OK:
-			printerr(response)
-			return _build_result("fail", response)
-		
-		var raw_data: Variant = JSON.parse_string(response)
-		if raw_data is not Dictionary:
-			printerr("Invalid response type")
-			return _build_result("fail", "Invalid response type")
-
-		var resource: Dictionary = raw_data.get("resource_response", {})
-		
-		var data: Array = resource.get("data", [])
-		var options: Dictionary = raw_data.get("resource", {}).get("options", {})
-		bookmarks = options.get("bookmarks", [])
-
-		for board in data:
-			print(board)
-	
-	return {"username": username, "boards": boards}
 
 
 func get_board_info(board_url: String) -> Dictionary:
@@ -133,8 +70,8 @@ func get_board_info(board_url: String) -> Dictionary:
 	
 	var result: HTTPResult = await http_request.async_request(board_url)
 	var body = result.body_as_string()
-	var page_file: FileAccess = FileAccess.open("C:\\Users\\holyt\\Desktop\\log\\page.html", FileAccess.WRITE)
-	page_file.store_string(body)
+	#var page_file: FileAccess = FileAccess.open("C:\\Users\\holyt\\Desktop\\log\\page.html", FileAccess.WRITE)
+	#page_file.store_string(body)
 	var regex = RegEx.new()
 	regex.compile("(?is)<script\\b[^>]*>([\\s\\S]*?)<\\/script>")
 	var scripts = regex.search_all(body)
@@ -152,6 +89,7 @@ func get_board_info(board_url: String) -> Dictionary:
 		
 		if data.has("initialReduxState"):
 			_debug_initialReduxState_found = true
+			# print(data)
 			var resources: Dictionary = data["initialReduxState"].get("resources", {})
 			if not resources.has("BoardResource"):
 				continue
@@ -167,17 +105,63 @@ func get_board_info(board_url: String) -> Dictionary:
 				_debug_resources = resources
 	
 	if board_id.is_empty():
-		print("DEBUG board id not found")
+		print("board id not found")
 		if _debug_initialReduxState_found:
-			print("DEBUG initialReduxState found")
-			print("DEBUG resources:")
+			print("initialReduxState found")
+			print("Resources:")
 			print(_debug_resources)
 		else:
-			print("DEBUG initialReduxState not found")
-			print("DEBUG page body:")
+			print("initialReduxState not found")
+			print("Page body:")
 			print(body)
 	
-	return {"board_id": board_id, "board_name": board_name, "url": url, "domain": domain}
+	return { "board_id": board_id, "board_name": board_name, "url": url, "domain": domain }
+
+
+func fetch_board_sections(url: String, board_id: String, board_name: String, domain: String) -> Array:
+	var section_ids: Array = []
+	
+	var bookmarks: Array = []
+	_progress_callback.call("Searching for board sections...")
+	for i in range(64):
+		if bookmarks.find("-end-") != -1:
+			break
+
+		var params_array: Array = get_board_params(url, board_id, "board", bookmarks)
+		var final_url: String = "https://%s/resource/BoardSectionsResource/get/?%s" % [domain, _query_string(params_array)]
+		var result: HTTPResult = await http_request.async_request(final_url, get_header(url, "www/[username]/[slug].js"), HTTPClient.METHOD_GET)
+		var response: String = result.body_as_string()
+		if not result.success():
+			printerr(response)
+			return section_ids
+
+		var json: JSON = JSON.new()
+		var err: Error = json.parse(response)
+		if err != OK:
+			printerr(response)
+			return section_ids
+		
+		var raw_data: Variant = JSON.parse_string(response)
+		if raw_data is not Dictionary:
+			printerr("Invalid response type")
+			return section_ids
+
+		var resource: Dictionary = raw_data.get("resource_response", {})
+		
+		var data: Array = resource.get("data", [])
+		var options: Dictionary = raw_data.get("resource", {}).get("options", {})
+		bookmarks = options.get("bookmarks", [])
+
+		for section in data:
+			if section.has("id") and section.has("slug"):
+				section_ids.append({
+					"id": section.get("id"),
+					"slug": section.get("slug"),
+					"title": section.get("title", "Empty section title")
+				})
+			_progress_callback.call("Collecting board sections (%s found)..." % [section_ids.size()])
+	
+	return section_ids
 
 
 func fetch_redirect_url(url: String) -> String:
@@ -204,50 +188,101 @@ func fetch_redirect_url(url: String) -> String:
 	return redirect_url
 
 
-func fetch_board(board_url: String):
+func fetch_board(board_url: String, include_sections: bool) -> Array:
 	_progress_callback.call("Searching...")
 	var infos: Dictionary = await get_board_info(board_url)
 	var url: String = infos.get("url", "")
 	var board_id: String = infos.get("board_id", "")
 	var board_name: String = infos.get("board_name", "")
 	var domain: String = infos.get("domain", "pinterest.com")
-	var bookmarks: Array = []
-	var image_urls: Array = []
+	var results: Array = []
 	
 	if board_id.is_empty():
 		_progress_callback.call("Board not found...")
 		printerr("Empty board_id!")
-		return _build_result("fail", "Can't find board_id")
+		return [_build_result("fail", "Can't find board_id")]
 	if url.is_empty():
 		_progress_callback.call("Board not found...")
 		printerr("Empty url!")
-		return _build_result("fail", "Can't find username")
+		return [_build_result("fail", "Can't find username")]
 	
+	results.append(await collect_pins(url, board_id, board_name, domain, "board"))
+	if include_sections:
+		var sections: Array = await fetch_board_sections(url, board_id, board_name, domain)
+		for section: Dictionary in sections:
+			var section_url: String = url + section.get("slug") + "/"
+			results.append(await collect_pins(section_url, section.get("id"), section.get("title"), domain, "section"))
+	return results
+
+
+func fetch_section(board_url: String, section_slug: String) -> Array:
+	_progress_callback.call("Searching...")
+	var infos: Dictionary = await get_board_info(board_url)
+	var url: String = infos.get("url", "")
+	var board_id: String = infos.get("board_id", "")
+	var board_name: String = infos.get("board_name", "")
+	var domain: String = infos.get("domain", "pinterest.com")
+	var results: Array = []
+	
+	if board_id.is_empty():
+		_progress_callback.call("Board not found...")
+		printerr("Empty board_id!")
+		return [_build_result("fail", "Can't find board_id")]
+	if url.is_empty():
+		_progress_callback.call("Board not found...")
+		printerr("Empty url!")
+		return [_build_result("fail", "Can't find username")]
+	
+	var sections: Array = await fetch_board_sections(url, board_id, board_name, domain)
+	for section: Dictionary in sections:
+		if section.get("slug") != section_slug:
+			continue
+		var section_url: String = url + section.get("slug") + "/"
+		results.append(await collect_pins(section_url, section.get("id"), section.get("title"), domain, "section"))
+	return results
+
+func collect_pins(url: String, board_id: String, board_name: String, domain: String, resource_type: String = "board") -> Dictionary:
+	var resource_request: String = "BoardFeedResource"
+	var url_handler: String = "www/[username]/[slug].js"
+	if resource_type == "section":
+		resource_request = "BoardSectionPinsResource"
+		url_handler = "www/[username]/[slug]/[section_slug].js"
+	
+	var bookmarks: Array = []
+	var image_urls: Array = []
 	_progress_callback.call("Collecting pins...")
 	for i in range(64):
 		if bookmarks.find("-end-") != -1:
 			break
 
-		var params_array: Array = get_board_params(url, board_id, bookmarks)
-		var final_url: String = "https://%s/resource/BoardFeedResource/get/?%s" % [domain, _query_string(params_array)]
-		var result: HTTPResult = await http_request.async_request(final_url, get_header(url), HTTPClient.METHOD_GET)
+		var params_array: Array = get_board_params(url, board_id, resource_type, bookmarks)
+		var final_url: String = "https://%s/resource/%s/get/?%s" % [domain, resource_request, _query_string(params_array)]
+		var result: HTTPResult = await http_request.async_request(final_url, get_header(url, url_handler), HTTPClient.METHOD_GET)
 		var response: String = result.body_as_string()
 		if not result.success():
 			printerr(response)
-			return _build_result("fail", response)
+			break
 
 		var json: JSON = JSON.new()
 		var err: Error = json.parse(response)
 		if err != OK:
 			printerr(response)
-			return _build_result("fail", response)
+			break
 		
 		var raw_data: Variant = JSON.parse_string(response)
 		if raw_data is not Dictionary:
 			printerr("Invalid response type")
-			return _build_result("fail", "Invalid response type")
+			break
 
 		var resource: Dictionary = raw_data.get("resource_response", {})
+		
+		if resource.get("data", []) is String:
+			printerr(resource.get("data"))
+			break
+			
+		if resource.has("error"):
+			printerr(resource.get("error"))
+			break
 		
 		var data: Array = resource.get("data", [])
 		var options: Dictionary = raw_data.get("resource", {}).get("options", {})
@@ -258,21 +293,39 @@ func fetch_board(board_url: String):
 				var url_image = image.get("images", {}).get("orig", {}).get("url", "")
 				if url_image != "":
 					image_urls.append(url_image)
-		_progress_callback.call("Collecting pins (%s found)..." % [image_urls.size()])
+			_progress_callback.call("Collecting pins (%s found)..." % [image_urls.size()])
 	
 	return _build_result("success", {"urls": image_urls, "board_name": board_name})
 
 
-func fetch(url: String, progress_callback: Callable = _empty_progress_callback) -> Dictionary:
+func fetch(url: String, include_sections: bool, progress_callback: Callable = _empty_progress_callback) -> Array:
 	_progress_callback = progress_callback
 	
 	if url.is_empty() or url.get_slice_count("/") <= 0:
-		return {}
+		return []
 	
 	if url.contains("pin.it"):
 		url = await fetch_redirect_url(url)
 	
-	var result: Dictionary = await fetch_board(url)
+	var result: Array = []
+	
+	var base_url: String = url
+	base_url = base_url.trim_prefix("https://www.")
+	base_url = base_url.trim_prefix("https://")
+	base_url = base_url.trim_prefix("www.")
+	base_url = base_url.trim_suffix("/")
+	var splitted_url: Array = base_url.split("/")
+	
+	print(splitted_url)
+	
+	if splitted_url.size() <= 2:
+		return []
+	if splitted_url.size() == 4:
+		var section_slug: String = splitted_url[3]
+		var board_url: String = url.trim_suffix(section_slug + "/")
+		result = await fetch_section(board_url, section_slug)
+	else:
+		result = await fetch_board(url, include_sections)
 	
 	http_request.cancel_request()
 	return result

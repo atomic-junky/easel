@@ -10686,7 +10686,6 @@ text = "Let's draw!"
 
 [node name="PackSelectorContainer" type="Control" parent="."]
 unique_name_in_owner = true
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -10823,6 +10822,7 @@ text = "Done"
 
 [node name="Dimer" parent="PackSelectorContainer" instance=ExtResource("10_h8ew4")]
 unique_name_in_owner = true
+visible = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -10832,7 +10832,6 @@ grow_vertical = 2
 
 [node name="UrlContainer" type="MarginContainer" parent="PackSelectorContainer"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -10880,6 +10879,11 @@ alignment = 1
 [node name="Spiner" parent="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer/UrlInputSpinerContainer" instance=ExtResource("11_4rn7p")]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
+
+[node name="PinterestSectionCheckBox" type="CheckBox" parent="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Include board sections"
 
 [node name="FolderDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
