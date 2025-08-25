@@ -1,4 +1,4 @@
-[gd_scene load_steps=1532 format=3 uid="uid://c324hect6sylf"]
+[gd_scene load_steps=1533 format=3 uid="uid://c324hect6sylf"]
 
 [ext_resource type="Script" uid="uid://b805udtrxhmnd" path="res://scenes/menu/menu.gd" id="1_0rb32"]
 [ext_resource type="Script" uid="uid://b08vxne14bjfa" path="res://prefabs/responsive_margin_container.gd" id="1_nvwcl"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://d1pq0dja3bw03" path="res://prefabs/pack/pack.tscn" id="9_bk4j0"]
 [ext_resource type="Texture2D" uid="uid://7iashyxj0ocr" path="res://assets/icons/clear.svg" id="9_h8ew4"]
 [ext_resource type="PackedScene" uid="uid://chvpqk2heieyt" path="res://prefabs/dimer.tscn" id="10_h8ew4"]
+[ext_resource type="Texture2D" uid="uid://c26y8tjfxft4g" path="res://assets/icons/settings.svg" id="10_rcuxh"]
 [ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="11_4rn7p"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nvwcl"]
@@ -10514,7 +10515,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 40
 theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 script = ExtResource("1_nvwcl")
 metadata/_custom_type_script = "uid://b08vxne14bjfa"
@@ -10529,7 +10532,7 @@ theme_override_constants/separation = 20
 [node name="Label" type="Label" parent="SafeMarginContainer/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 38
-text = "Gesture App"
+text = "GestureApp"
 horizontal_alignment = 1
 
 [node name="VersionLabel" type="Label" parent="SafeMarginContainer/VBox/Label"]
@@ -10678,6 +10681,18 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Let's draw!"
+
+[node name="HBox" type="HBoxContainer" parent="SafeMarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+alignment = 2
+
+[node name="Button" type="Button" parent="SafeMarginContainer/HBox"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+icon = ExtResource("10_rcuxh")
 
 [node name="PackSelectorContainer" type="Control" parent="."]
 unique_name_in_owner = true
