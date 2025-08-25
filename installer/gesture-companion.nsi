@@ -1,11 +1,11 @@
-; Gesture Companion Installer NSIS Script
+; Gesture App Installer NSIS Script
 ; Copyright Xenofon Konitsas (huskee) 2021
 ; Licensed under the MIT License
 
 
 ; Helper variables so that we don't change 20 instances of the version for every update
 
-  !define APPNAME "GestureCompanion"
+  !define APPNAME "GestureApp"
   !define APPVERSION "alpha"
   !define COMPANYNAME "Atomic Junky"
 
@@ -115,8 +115,8 @@
       ${EndIf}
       File "..\assets\graphics\icons\gc.ico"
 
-      SetOutPath "$INSTDIR\gesture_companion_data"
-      File /nonfatal /r "..\build\gesture_companion_data\*"
+      SetOutPath "$INSTDIR\gesture_app_data"
+      File /nonfatal /r "..\build\gesture_app_data\*"
 
     ; Store installation folder in the registry
       WriteRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "InstallDir" $INSTDIR
@@ -130,7 +130,7 @@
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
       "UninstallString" "$INSTDIR\uninstall.exe"
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
-      "DisplayIcon" "$INSTDIR\gesture_companion.exe,0"
+      "DisplayIcon" "$INSTDIR\gesture_app.exe,0"
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
       "InstallLocation" "$INSTDIR"
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
@@ -144,9 +144,9 @@
       WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
       "NoRepair" 1
 
-    ; Associate .pxo files with Gesture Companion
+    ; Associate .pxo files with Gesture App
       WriteRegStr HKCR ".pxo" "" "${APPNAME} project"
-      WriteRegStr HKCR ".pxo" "ContentType" "image/gesture-companion"
+      WriteRegStr HKCR ".pxo" "ContentType" "image/gesture-app"
       WriteRegStr HKCR ".pxo" "PerceivedType" "document"
 
       WriteRegStr HKCR "${APPNAME} project" "" "${APPNAME} project"
@@ -164,7 +164,7 @@
     ; Create folder in Start Menu\Programs and create shortcuts for app and uninstaller
     ; CreateDirectory "$SMPROGRAMS\${COMPANYNAME}"
 
-    CreateShortCut "$SMPROGRAMS\${APPNAME} ${APPVERSION}.lnk" "$INSTDIR\GestureCompanion.exe"
+    CreateShortCut "$SMPROGRAMS\${APPNAME} ${APPVERSION}.lnk" "$INSTDIR\GestureApp.exe"
     CreateShortCut "$SMPROGRAMS\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 
   SectionEnd
@@ -197,7 +197,7 @@
     Delete "$INSTDIR\${APPNAME}.exe"
     Delete "$INSTDIR\${APPNAME}.pck"
     Delete "$INSTDIR\gc.ico"
-    RMDir /r "$INSTDIR\gesture_companion_data"
+    RMDir /r "$INSTDIR\gesture_app_data"
     RMDir "$INSTDIR"
 
     ; Delete shortcuts

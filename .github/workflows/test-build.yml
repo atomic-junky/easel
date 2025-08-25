@@ -7,7 +7,7 @@ on:
 
 env:
   GODOT_VERSION: 4.4.1
-  EXPORT_NAME: GestureCompanion
+  EXPORT_NAME: GestureApp
   TAG: alpha
 
 jobs:
@@ -43,12 +43,12 @@ jobs:
           godot --headless -v --export-release "Windows Desktop 64-bit" ./build/${EXPORT_NAME}-Windows-64bit/${EXPORT_NAME}.exe
           godot --headless -v --export-release "Windows Desktop arm64" ./build/${EXPORT_NAME}-Windows-arm64/${EXPORT_NAME}.exe
 
-      - name: Copy gesture_companion_data folder 📁
+      - name: Copy gesture_app_data folder 📁
         run: |
-          rm ./gesture_companion_data/.gdignore
-          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Windows-64bit
-          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Windows-arm64
-          cp -R ./gesture_companion_data ./build
+          rm ./gesture_app_data/.gdignore
+          cp -R ./gesture_app_data ./build/${EXPORT_NAME}-Windows-64bit
+          cp -R ./gesture_app_data ./build/${EXPORT_NAME}-Windows-arm64
+          cp -R ./gesture_app_data ./build
 
       - name: Zip 🗜️
         working-directory: ./build
@@ -59,8 +59,8 @@ jobs:
       - name: Build installer 🔧
         run: |
           apt-get update && apt-get install -y python3 && apt-get install -y nsis
-          python3 ./installer/utils/po2nsi.py -i ./installer/gesture-companion.nsi -o ./installer/gesture-companion_loc.nsi -p ./installer/po -l "English" -v
-          makensis ./installer/gesture-companion_loc.nsi
+          python3 ./installer/utils/po2nsi.py -i ./installer/gesture-app.nsi -o ./installer/gesture-app_loc.nsi -p ./installer/po -l "English" -v
+          makensis ./installer/gesture-app_loc.nsi
           mkdir ./build/installer
           mv ./installer/${EXPORT_NAME}_${TAG}_setup.exe ./build
 
@@ -112,11 +112,11 @@ jobs:
           chmod +x ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
           chmod +x ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
 
-      - name: Copy gesture_companion_data folder 📁
+      - name: Copy gesture_app_data folder 📁
         run: |
-          rm ./gesture_companion_data/.gdignore
-          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-64bit
-          cp -R ./gesture_companion_data ./build/${EXPORT_NAME}-Linux-arm64
+          rm ./gesture_app_data/.gdignore
+          cp -R ./gesture_app_data ./build/${EXPORT_NAME}-Linux-64bit
+          cp -R ./gesture_app_data ./build/${EXPORT_NAME}-Linux-arm64
 
       - name: Create tar.gz archive 🗜️
         run: |
@@ -188,10 +188,10 @@ jobs:
       - name: Fix application icon 🖼
         run: sips -s format icns ./build/mac/${EXPORT_NAME}.app/Contents/Resources/icon.icns --out ./build/mac/${EXPORT_NAME}.app/Contents/Resources/icon.icns
 
-      - name: Copy gesture_companion_data folder 📁
+      - name: Copy gesture_app_data folder 📁
         run: |
-          cp -R ./gesture_companion_data ./build/mac/${EXPORT_NAME}.app/Contents/Resources
-          rm ./build/mac/${EXPORT_NAME}.app/Contents/Resources/gesture_companion_data/.gdignore
+          cp -R ./gesture_app_data ./build/mac/${EXPORT_NAME}.app/Contents/Resources
+          rm ./build/mac/${EXPORT_NAME}.app/Contents/Resources/gesture_app_data/.gdignore
 
       - name: Ad-hoc signing ✍️
         run: codesign -s - --force --deep ./build/mac/${EXPORT_NAME}.app

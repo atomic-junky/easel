@@ -1,2 +1,2 @@
-# gesture-companion
+# gesture-app
 

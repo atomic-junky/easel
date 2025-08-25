@@ -10514,21 +10514,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_bottom = 40
 script = ExtResource("1_nvwcl")
 metadata/_custom_type_script = "uid://b08vxne14bjfa"
 
 [node name="VBox" type="VBoxContainer" parent="SafeMarginContainer"]
+custom_minimum_size = Vector2(474, 0)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 40
+size_flags_vertical = 3
+theme_override_constants/separation = 20
 
 [node name="Label" type="Label" parent="SafeMarginContainer/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 38
-text = "Gesture
-Companion"
+text = "Gesture App"
 horizontal_alignment = 1
 
 [node name="VersionLabel" type="Label" parent="SafeMarginContainer/VBox/Label"]
@@ -10538,10 +10539,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 109.0
-offset_top = 22.5
-offset_right = 148.0
-offset_bottom = 39.5
+offset_left = 121.0
+offset_top = -3.5
+offset_right = 160.0
+offset_bottom = 13.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.109804, 0.109804, 0.109804, 1)
@@ -10551,27 +10552,21 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_y4i35")
 text = "alpha"
 
 [node name="VBox" type="VBoxContainer" parent="SafeMarginContainer/VBox"]
-custom_minimum_size = Vector2(474, 0)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 20
-
-[node name="VBox" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox"]
 layout_mode = 2
 
-[node name="SelectPackButton" type="Button" parent="SafeMarginContainer/VBox/VBox/VBox"]
+[node name="SelectPackButton" type="Button" parent="SafeMarginContainer/VBox/VBox"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Select packs"
 
-[node name="InfoLabel" type="Label" parent="SafeMarginContainer/VBox/VBox/VBox"]
+[node name="InfoLabel" type="Label" parent="SafeMarginContainer/VBox/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 theme_type_variation = &"LabelSecondary"
 text = "No pack selected"
 
-[node name="SessionTypeSwitcher" parent="SafeMarginContainer/VBox/VBox" instance=ExtResource("3_fkryp")]
+[node name="SessionTypeSwitcher" parent="SafeMarginContainer/VBox" instance=ExtResource("3_fkryp")]
 unique_name_in_owner = true
 layout_mode = 2
 title = "Session Type"
@@ -10580,22 +10575,22 @@ second_label = "Class Mode"
 third_label = "Relaxed"
 fourth_label = "Custom"
 
-[node name="Panel" type="PanelContainer" parent="SafeMarginContainer/VBox/VBox"]
+[node name="Panel" type="PanelContainer" parent="SafeMarginContainer/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_0m5w4")
 
-[node name="VBox" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel"]
+[node name="VBox" type="VBoxContainer" parent="SafeMarginContainer/VBox/Panel"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="Standard" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox"]
+[node name="Standard" type="VBoxContainer" parent="SafeMarginContainer/VBox/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 15
 script = ExtResource("5_i1lnr")
 
-[node name="NOISwitcher" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" instance=ExtResource("3_fkryp")]
+[node name="NOISwitcher" parent="SafeMarginContainer/VBox/Panel/VBox/Standard" instance=ExtResource("3_fkryp")]
 layout_mode = 2
 use_custom_button = true
 title = "Numbers of Images"
@@ -10608,7 +10603,7 @@ third_value = 50
 fourth_label = "all"
 fourth_value = -1
 
-[node name="TPISwitcher" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" instance=ExtResource("3_fkryp")]
+[node name="TPISwitcher" parent="SafeMarginContainer/VBox/Panel/VBox/Standard" instance=ExtResource("3_fkryp")]
 layout_mode = 2
 use_custom_button = true
 title = "Time per Images"
@@ -10623,17 +10618,17 @@ third_value = 300
 fourth_label = "15min"
 fourth_value = 900
 
-[node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" instance=ExtResource("6_qkn2v")]
+[node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/Panel/VBox/Standard" instance=ExtResource("6_qkn2v")]
 layout_mode = 2
 
-[node name="Class" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox"]
+[node name="Class" type="VBoxContainer" parent="SafeMarginContainer/VBox/Panel/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 15
 script = ExtResource("7_y4i35")
 
-[node name="ClassDurationSwitcher" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Class" instance=ExtResource("3_fkryp")]
+[node name="ClassDurationSwitcher" parent="SafeMarginContainer/VBox/Panel/VBox/Class" instance=ExtResource("3_fkryp")]
 layout_mode = 2
 title = "Class duration"
 first_label = "30min"
@@ -10648,37 +10643,37 @@ fifth_label = "3h"
 fifth_value = 180
 fifth_enabled = true
 
-[node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Class" instance=ExtResource("6_qkn2v")]
+[node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/Panel/VBox/Class" instance=ExtResource("6_qkn2v")]
 layout_mode = 2
 
-[node name="CommingSoon" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox"]
+[node name="CommingSoon" type="VBoxContainer" parent="SafeMarginContainer/VBox/Panel/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 15
 script = ExtResource("6_bk4j0")
 
-[node name="Label" type="Label" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/CommingSoon"]
+[node name="Label" type="Label" parent="SafeMarginContainer/VBox/Panel/VBox/CommingSoon"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 14
 text = "This session type is comming soon."
 
-[node name="Relaxed" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox"]
+[node name="Relaxed" type="VBoxContainer" parent="SafeMarginContainer/VBox/Panel/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 script = ExtResource("7_5n576")
 
-[node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/Relaxed" instance=ExtResource("6_qkn2v")]
+[node name="ImageOrderContainer" parent="SafeMarginContainer/VBox/Panel/VBox/Relaxed" instance=ExtResource("6_qkn2v")]
 layout_mode = 2
 
-[node name="DoneButtonContiainer" type="VBoxContainer" parent="SafeMarginContainer/VBox/VBox/Panel/VBox"]
+[node name="DoneButtonContiainer" type="VBoxContainer" parent="SafeMarginContainer/VBox/Panel/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 alignment = 2
 
-[node name="DoneButton" type="Button" parent="SafeMarginContainer/VBox/VBox/Panel/VBox/DoneButtonContiainer"]
+[node name="DoneButton" type="Button" parent="SafeMarginContainer/VBox/Panel/VBox/DoneButtonContiainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -10909,15 +10904,15 @@ access = 2
 filters = PackedStringArray("*.png,*.jpg,*.jpeg, *.tiff")
 use_native_dialog = true
 
-[connection signal="pressed" from="SafeMarginContainer/VBox/VBox/VBox/SelectPackButton" to="." method="_on_select_pack_button_pressed"]
-[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/SessionTypeSwitcher" to="." method="_on_session_type_switcher_value_changed"]
-[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard/NOISwitcher" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" method="_on_noi_switcher_value_changed"]
-[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard/TPISwitcher" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" method="_on_tpi_switcher_value_changed"]
-[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard/ImageOrderContainer" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Standard" method="_on_image_order_value_changed"]
-[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Class/ClassDurationSwitcher" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Class" method="_on_class_duration_switcher_value_changed"]
-[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Class/ImageOrderContainer" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Class" method="_on_image_order_container_value_changed"]
-[connection signal="value_changed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/Relaxed/ImageOrderContainer" to="SafeMarginContainer/VBox/VBox/Panel/VBox/Relaxed" method="_on_image_order_value_changed"]
-[connection signal="pressed" from="SafeMarginContainer/VBox/VBox/Panel/VBox/DoneButtonContiainer/DoneButton" to="." method="_on_done_button_pressed"]
+[connection signal="pressed" from="SafeMarginContainer/VBox/VBox/SelectPackButton" to="." method="_on_select_pack_button_pressed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/SessionTypeSwitcher" to="." method="_on_session_type_switcher_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/Panel/VBox/Standard/NOISwitcher" to="SafeMarginContainer/VBox/Panel/VBox/Standard" method="_on_noi_switcher_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/Panel/VBox/Standard/TPISwitcher" to="SafeMarginContainer/VBox/Panel/VBox/Standard" method="_on_tpi_switcher_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/Panel/VBox/Standard/ImageOrderContainer" to="SafeMarginContainer/VBox/Panel/VBox/Standard" method="_on_image_order_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/Panel/VBox/Class/ClassDurationSwitcher" to="SafeMarginContainer/VBox/Panel/VBox/Class" method="_on_class_duration_switcher_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/Panel/VBox/Class/ImageOrderContainer" to="SafeMarginContainer/VBox/Panel/VBox/Class" method="_on_image_order_container_value_changed"]
+[connection signal="value_changed" from="SafeMarginContainer/VBox/Panel/VBox/Relaxed/ImageOrderContainer" to="SafeMarginContainer/VBox/Panel/VBox/Relaxed" method="_on_image_order_value_changed"]
+[connection signal="pressed" from="SafeMarginContainer/VBox/Panel/VBox/DoneButtonContiainer/DoneButton" to="." method="_on_done_button_pressed"]
 [connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer/FolderButton" to="." method="_on_folder_button_pressed"]
 [connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer/ImagesButton" to="." method="_on_images_button_pressed"]
 [connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer/PinterestButton" to="." method="_on_pinterest_button_pressed"]
