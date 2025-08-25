@@ -87,7 +87,10 @@ func _update() -> void:
 	custom_value.suffix = custom_suffix
 	label.text = title
 	
-	_update_button_size.call_deferred()
+	for button: Button in _buttons:
+		button.custom_minimum_size.x = 0.0
+	
+	# _update_button_size.call_deferred()
 
 
 func _get_value() -> int:

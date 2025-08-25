@@ -10,9 +10,9 @@
 [ext_resource type="FontFile" uid="uid://cus4jsf1mbr0y" path="res://assets/fonts/InterDisplay-Medium.ttf" id="8_h40d0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xsrfh"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.192, 0.192, 0.192, 0.3)
 corner_radius_top_left = 5
@@ -23,9 +23,9 @@ corner_radius_bottom_left = 5
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y5boi"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_njd2n"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 corner_radius_top_left = 5
@@ -34,9 +34,9 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0rb32"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 corner_radius_top_left = 5
@@ -45,9 +45,9 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_scqqr"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.639216, 0.564706, 0.964706, 1)
 corner_radius_top_left = 5
@@ -126,23 +126,23 @@ corner_radius_bottom_left = 25
 corner_detail = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k2l3o"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h40d0"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tk1f8"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.639216, 0.564706, 0.964706, 1)
 
@@ -170,9 +170,9 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oq6wx"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 corner_radius_top_left = 5
@@ -181,9 +181,9 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_womgl"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 corner_radius_top_left = 5
@@ -192,9 +192,9 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kn7di"]
-content_margin_left = 15.0
+content_margin_left = 10.0
 content_margin_top = 7.0
-content_margin_right = 15.0
+content_margin_right = 10.0
 content_margin_bottom = 7.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 

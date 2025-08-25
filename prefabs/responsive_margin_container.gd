@@ -12,6 +12,16 @@ func _ready() -> void:
 	viewport.size_changed.connect(_set_safe_area_margins)
 	_set_safe_area_margins()
 
+
+func set_margin_all(margin: int) -> void:
+	var _default_top: int = margin
+	var _default_left: int = margin
+	var _default_bottom: int = margin
+	var _default_right: int = margin
+	
+	_set_safe_area_margins()
+
+
 func _set_safe_area_margins() -> void:
 	if not (OS.has_feature("ios") or OS.has_feature("android")):
 		return
@@ -24,10 +34,10 @@ func _set_safe_area_margins() -> void:
 	var aspect_y = size.y / screen_size.y
 
 	# Convert the safe-area rect to logical pixel margins
-	var margin_left = rect.position.x * aspect_x
-	var margin_top = rect.position.y * aspect_y
-	var margin_right = (screen_size.x - (rect.position.x + rect.size.x)) * aspect_x
-	var margin_bottom = (screen_size.y - (rect.position.y + rect.size.y)) * aspect_y
+	var margin_left = max(rect.position.x * aspect_x, _default_left)
+	var margin_top = max(rect.position.y * aspect_y, _default_top)
+	var margin_right = max((screen_size.x - (rect.position.x + rect.size.x)) * aspect_x, _default_right)
+	var margin_bottom = max((screen_size.y - (rect.position.y + rect.size.y)) * aspect_y, _default_bottom)
 
 	add_theme_constant_override("margin_left", margin_left)
 	add_theme_constant_override("margin_top", margin_top)

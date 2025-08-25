@@ -1,8 +1,8 @@
-class_name ImageOrder extends HBoxContainer
+class_name ImageOrder extends Control
 
 signal value_changed
 
-@onready var _order_container: HBoxContainer = %OrderContainer
+@onready var _order_container: Control = %OrderContainer
 
 var shuffle: bool = false
 var reverse: bool = false

@@ -5,6 +5,8 @@ signal done(context: SessionContext)
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
 
+@onready var main_vbox: VBoxContainer = %MainVBox
+@onready var main_safe_margin: SafeMarginContainer = %MainSafeMargin
 @onready var info_label: Label = %InfoLabel
 @onready var standard: Control = %Standard
 @onready var class_room: Control = %Class
@@ -33,6 +35,7 @@ func _ready() -> void:
 	_on_session_type_switcher_value_changed(1)
 	_update()
 	visibility_changed.connect(_update)
+	_on_resized()
 
 
 func _on_session_type_switcher_value_changed(value: int) -> void:
@@ -180,3 +183,17 @@ func _on_pack_done_button_pressed() -> void:
 func _on_done_button_pressed() -> void:
 	get_session_panel().apply_context(_context)
 	done.emit(_context)
+
+
+func _on_resized() -> void:
+	if not is_node_ready():
+		return
+	
+	if size.x <= 490 + 80:
+		main_vbox.custom_minimum_size.x = 0.0
+		main_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		#main_safe_margin.set_margin_all(20)
+		return
+	main_vbox.custom_minimum_size.x = 474.0
+	main_vbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	#main_safe_margin.set_margin_all(40)

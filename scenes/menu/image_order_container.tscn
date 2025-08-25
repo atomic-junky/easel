@@ -3,8 +3,13 @@
 [ext_resource type="PackedScene" uid="uid://cje6cnv0sdjgd" path="res://prefabs/check_button/check_button.tscn" id="1_hktry"]
 [ext_resource type="Script" uid="uid://cackjr814hdkj" path="res://scenes/menu/image_order_container.gd" id="1_u00mr"]
 
-[node name="ImageOrderContainer" type="HBoxContainer"]
-theme_override_constants/separation = 15
+[node name="ImageOrderContainer" type="HFlowContainer"]
+anchors_preset = -1
+anchor_right = 0.332
+anchor_bottom = 0.039
+offset_right = -0.46402
+offset_bottom = -0.272001
+size_flags_horizontal = 3
 script = ExtResource("1_u00mr")
 
 [node name="ShuffleContainer" type="HBoxContainer" parent="."]
@@ -35,6 +40,3 @@ text = "Reverse"
 
 [node name="OrderButton" parent="OrderContainer" instance=ExtResource("1_hktry")]
 layout_mode = 2
-
-[connection signal="toggled" from="ShuffleContainer/ShuffleButton" to="." method="_on_shuffle_button_toggled"]
-[connection signal="toggled" from="OrderContainer/OrderButton" to="." method="_on_order_button_toggled"]
