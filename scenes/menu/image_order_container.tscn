@@ -40,3 +40,6 @@ text = "Reverse"
 
 [node name="OrderButton" parent="OrderContainer" instance=ExtResource("1_hktry")]
 layout_mode = 2
+
+[connection signal="toggled" from="ShuffleContainer/ShuffleButton" to="." method="_on_shuffle_button_toggled"]
+[connection signal="toggled" from="OrderContainer/OrderButton" to="." method="_on_order_button_toggled"]

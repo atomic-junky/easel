@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://p1jvnk0k5u2f" path="res://prefabs/option_switcher/option_switcher.gd" id="1_oj872"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i1lnr"]
+bg_color = Color(0.141176, 0.141176, 0.141176, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -36,6 +37,7 @@ theme_override_constants/h_separation = 2
 theme_override_constants/v_separation = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 2
@@ -58,6 +60,7 @@ toggle_mode = true
 text = "2"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 2
@@ -109,8 +112,8 @@ layout_mode = 2
 theme_override_constants/separation = 2
 
 [node name="MinusButton" type="Button" parent="HBoxContainer/PanelContainer/CustomValueContainer"]
-custom_minimum_size = Vector2(81.05, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 theme_type_variation = &"ButtonSwitcher"
 text = "-"
 
@@ -123,9 +126,7 @@ allow_greater = true
 alignment = 1
 
 [node name="AddButton" type="Button" parent="HBoxContainer/PanelContainer/CustomValueContainer"]
-custom_minimum_size = Vector2(81.8, 0)
 layout_mode = 2
-size_flags_horizontal = 4
 theme_type_variation = &"ButtonSwitcher"
 text = "+"
 

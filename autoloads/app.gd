@@ -48,12 +48,14 @@ func _get_auto_display_scale() -> float:
 			if DisplayServer.get_screen_count() == 1:
 				return main_window_scale
 			return DisplayServer.screen_get_max_scale()
-	if os_name in ["macOS", "Android"]:
+	if os_name in ["iOS", "Android"]:
 		var phone_factor: float = screen_size.y / screen_size.x
 		var is_portrait: bool = screen_size.x < screen_size.y
 		if is_portrait: phone_factor = 2.0
 			
 		return DisplayServer.screen_get_scale() * phone_factor
+	if os_name in ["macOS"]:
+		return DisplayServer.screen_get_scale()
 	if screen_size == Vector2i():
 		return 1.0  # Invalid screen size
 	var smallest_dimension: int = min(screen_size.x, screen_size.y)

@@ -17,9 +17,11 @@ signal done(context: SessionContext)
 @onready var done_button: Button = %DoneButton
 
 @onready var pack_selector: Control = %PackSelectorContainer
+@onready var pack_selector_panel: PanelContainer = %PackSelectorPanel
 @onready var pack_container: Control = %PackContainer
 @onready var dimer: ColorRect = %Dimer
 @onready var url_container: Control = %UrlContainer
+@onready var url_vbox: VBoxContainer = %UrlVBox
 @onready var url_label: Label = %UrlLabel
 @onready var url_input_container: Control = %UrlInputContainer
 @onready var url_input: LineEdit = %UrlInput
@@ -32,6 +34,9 @@ var _context: SessionContext
 
 
 func _ready() -> void:
+	if OS.get_name() in ["Android", "iOS"]:
+		DisplayServer.screen_set_orientation(DisplayServer.SCREEN_PORTRAIT)
+	
 	_on_session_type_switcher_value_changed(1)
 	_update()
 	visibility_changed.connect(_update)
@@ -137,6 +142,10 @@ func _on_library_button_pressed() -> void:
 	pass # Replace with function body.
 
 
+func _on_history_button_pressed() -> void:
+	pass # Replace with function body.
+
+
 func _on_folder_dialog_dir_selected(dir: String) -> void:
 	_add_packs(PackContext.create_from_path(dir))
 
@@ -192,8 +201,14 @@ func _on_resized() -> void:
 	if size.x <= 490 + 80:
 		main_vbox.custom_minimum_size.x = 0.0
 		main_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		#main_safe_margin.set_margin_all(20)
+		pack_selector_panel.custom_minimum_size.x = 0.0
+		pack_selector_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		url_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		url_vbox.custom_minimum_size.x = 0.0
 		return
 	main_vbox.custom_minimum_size.x = 474.0
 	main_vbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	#main_safe_margin.set_margin_all(40)
+	pack_selector_panel.custom_minimum_size.x = 650.0
+	pack_selector_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	url_container.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	url_vbox.custom_minimum_size.x = 400.0

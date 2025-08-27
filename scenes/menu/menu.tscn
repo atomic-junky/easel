@@ -1,4 +1,4 @@
-[gd_scene load_steps=1533 format=3 uid="uid://c324hect6sylf"]
+[gd_scene load_steps=1534 format=3 uid="uid://c324hect6sylf"]
 
 [ext_resource type="Script" uid="uid://b805udtrxhmnd" path="res://scenes/menu/menu.gd" id="1_0rb32"]
 [ext_resource type="Script" uid="uid://b08vxne14bjfa" path="res://prefabs/responsive_margin_container.gd" id="1_nvwcl"]
@@ -29,11 +29,18 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="GDScript" id="GDScript_rcuxh"]
+script/source = "extends Label
+
+func _ready() -> void:
+	text = \"v\" + ProjectSettings.get_setting(\"application/config/version\")
+"
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0m5w4"]
-content_margin_left = 10.0
-content_margin_top = 10.0
-content_margin_right = 10.0
-content_margin_bottom = 10.0
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
 bg_color = Color(0.141176, 0.141176, 0.141176, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
@@ -10539,22 +10546,21 @@ horizontal_alignment = 1
 
 [node name="VersionLabel" type="Label" parent="MainSafeMargin/MainVBox/Label"]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.5
+anchor_top = 0.628
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 121.0
-offset_top = -3.5
-offset_right = 160.0
-offset_bottom = 13.5
-grow_horizontal = 2
+anchor_bottom = 0.628
+offset_left = 116.0
+offset_top = -8.516
+offset_right = 127.0
+offset_bottom = 8.484
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.109804, 0.109804, 0.109804, 1)
 theme_override_fonts/font = ExtResource("3_kaijy")
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_y4i35")
-text = "alpha"
+script = SubResource("GDScript_rcuxh")
 
 [node name="VBox" type="VBoxContainer" parent="MainSafeMargin/MainVBox"]
 layout_mode = 2
@@ -10722,113 +10728,108 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_bottom = 20
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
 script = ExtResource("1_nvwcl")
 metadata/_custom_type_script = "uid://b08vxne14bjfa"
 
-[node name="Panel" type="PanelContainer" parent="PackSelectorContainer/SafeMarginContainer"]
+[node name="PackSelectorPanel" type="PanelContainer" parent="PackSelectorContainer/SafeMarginContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(650, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_0m5w4")
 
-[node name="VBox" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel"]
+[node name="VBox" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel"]
 layout_mode = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 10
 alignment = 1
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 15
-
-[node name="VBox2" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2"]
+[node name="VBox2" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox"]
 custom_minimum_size = Vector2(125, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2"]
-layout_mode = 2
-
-[node name="Label2" type="Label" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/HBoxContainer"]
+[node name="Label2" type="Label" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 14
 text = "Sources"
 
-[node name="ClearButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/HBoxContainer"]
-visible = false
-layout_mode = 2
-icon = ExtResource("9_h8ew4")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2"]
+[node name="HFlowContainer" type="HFlowContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="FolderButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer"]
+[node name="FolderButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Folder"
 
-[node name="ImagesButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer"]
+[node name="ImagesButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Images"
 
-[node name="PinterestButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer"]
+[node name="PinterestButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Pinterest"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer"]
+[node name="LibraryButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
 layout_mode = 2
-size_flags_vertical = 3
-alignment = 2
-
-[node name="LibraryButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer/VBoxContainer"]
-layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 8
 disabled = true
 text = "Library"
 
-[node name="VSeparator" type="VSeparator" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2"]
+[node name="HistoryButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+disabled = true
+text = "History"
 
-[node name="VBox" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2"]
+[node name="VBox" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox"]
+custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox/HBoxContainer"]
+[node name="Label2" type="Label" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 14
 text = "Packs"
 
-[node name="ClearButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox/HBoxContainer"]
+[node name="ClearButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/HBoxContainer"]
 layout_mode = 2
 icon = ExtResource("9_h8ew4")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PackContainer" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox/ScrollContainer"]
+[node name="PackContainer" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Pack" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox/ScrollContainer/PackContainer" instance=ExtResource("9_bk4j0")]
+[node name="Pack" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/ScrollContainer/PackContainer" instance=ExtResource("9_bk4j0")]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox"]
 layout_mode = 2
 alignment = 1
 
-[node name="PackDoneButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer"]
+[node name="PackDoneButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Done"
@@ -10846,54 +10847,64 @@ grow_vertical = 2
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -230.0
+offset_top = -74.0
+offset_right = 230.0
+offset_bottom = 74.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 script = ExtResource("1_nvwcl")
 metadata/_custom_type_script = "uid://b08vxne14bjfa"
 
 [node name="PanelContainer" type="PanelContainer" parent="PackSelectorContainer/UrlContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_0m5w4")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PackSelectorContainer/UrlContainer/PanelContainer"]
+[node name="UrlVBox" type="VBoxContainer" parent="PackSelectorContainer/UrlContainer/PanelContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 
-[node name="UrlLabel" type="Label" parent="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer"]
+[node name="UrlLabel" type="Label" parent="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Enter url"
 
-[node name="UrlInputContainer" type="HBoxContainer" parent="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer"]
+[node name="UrlInputContainer" type="HBoxContainer" parent="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="UrlInput" type="LineEdit" parent="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer/UrlInputContainer"]
+[node name="UrlInput" type="LineEdit" parent="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox/UrlInputContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Url"
 
-[node name="UrlDoneButton" type="Button" parent="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer/UrlInputContainer"]
+[node name="UrlDoneButton" type="Button" parent="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox/UrlInputContainer"]
 layout_mode = 2
 text = "Done"
 
-[node name="UrlInputSpinerContainer" type="HBoxContainer" parent="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer"]
+[node name="UrlInputSpinerContainer" type="HBoxContainer" parent="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 alignment = 1
 
-[node name="Spiner" parent="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer/UrlInputSpinerContainer" instance=ExtResource("11_4rn7p")]
+[node name="Spiner" parent="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox/UrlInputSpinerContainer" instance=ExtResource("11_4rn7p")]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 
-[node name="PinterestSectionCheckBox" type="CheckBox" parent="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer"]
+[node name="PinterestSectionCheckBox" type="CheckBox" parent="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Include board sections"
@@ -10931,12 +10942,13 @@ use_native_dialog = true
 [connection signal="value_changed" from="MainSafeMargin/MainVBox/Panel/VBox/Class/ImageOrderContainer" to="MainSafeMargin/MainVBox/Panel/VBox/Class" method="_on_image_order_container_value_changed"]
 [connection signal="value_changed" from="MainSafeMargin/MainVBox/Panel/VBox/Relaxed/ImageOrderContainer" to="MainSafeMargin/MainVBox/Panel/VBox/Relaxed" method="_on_image_order_value_changed"]
 [connection signal="pressed" from="MainSafeMargin/MainVBox/Panel/VBox/DoneButtonContiainer/DoneButton" to="." method="_on_done_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer/FolderButton" to="." method="_on_folder_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer/ImagesButton" to="." method="_on_images_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer/PinterestButton" to="." method="_on_pinterest_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox2/VBoxContainer/VBoxContainer/LibraryButton" to="." method="_on_library_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer2/VBox/HBoxContainer/ClearButton" to="." method="_on_clear_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/Panel/VBox/HBoxContainer/PackDoneButton" to="." method="_on_pack_done_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/UrlContainer/PanelContainer/VBoxContainer/UrlInputContainer/UrlDoneButton" to="." method="_on_url_done_button_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/FolderButton" to="." method="_on_folder_button_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/ImagesButton" to="." method="_on_images_button_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/PinterestButton" to="." method="_on_pinterest_button_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/LibraryButton" to="." method="_on_library_button_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/HistoryButton" to="." method="_on_history_button_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/HBoxContainer/ClearButton" to="." method="_on_clear_button_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/HBoxContainer/PackDoneButton" to="." method="_on_pack_done_button_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox/UrlInputContainer/UrlDoneButton" to="." method="_on_url_done_button_pressed"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
 [connection signal="files_selected" from="ImageDialog" to="." method="_on_image_dialog_files_selected"]

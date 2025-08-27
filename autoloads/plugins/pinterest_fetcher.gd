@@ -163,7 +163,7 @@ func fetch_redirect_url(url: String) -> String:
 	var response: HTTPResult = await http_request.async_request(url)
 	var page_content: String = response.body_as_string()
 	
-	if not page_content.contains("https://api.pinterest.com/url_shortener"):
+	if not page_content.contains("api.pinterest.com/url_shortener"):
 		return url
 	
 	var href_regex = RegEx.new()
@@ -324,6 +324,7 @@ func fetch(url: String, include_sections: bool, progress_callback: Callable = _e
 	# Handle short URLs
 	if url.contains("pin.it"):
 		url = await fetch_redirect_url(url)
+		print(url)
 	
 	var parsed_url = _parse_pinterest_url(url)
 	if parsed_url.is_empty():

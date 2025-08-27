@@ -31,6 +31,11 @@ var is_pause: bool = false
 var no_timer: bool = false
 
 
+func _ready() -> void:
+	if OS.get_name() in ["Android", "iOS"]:
+		DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR)
+
+
 func load_args(args: SessionContext) -> void:
 	setup()
 	if not is_node_ready():
