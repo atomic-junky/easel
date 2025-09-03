@@ -24,8 +24,10 @@ const RESOURCE_CONFIGS = {
 	}
 }
 
+
 func _ready():
 	add_child(http_request)
+
 
 func get_board_options(url: String, res_id: String, bookmarks: Array, resource_type: ResourceType) -> Dictionary:
 	var type_key = "board" if resource_type == ResourceType.BOARD else "section"
@@ -47,6 +49,7 @@ func get_board_options(url: String, res_id: String, bookmarks: Array, resource_t
 		
 	return options
 
+
 func build_request_params(url: String, board_id: String, resource_type: ResourceType, bookmarks: Array = []) -> Array:
 	var options = get_board_options(url, board_id, bookmarks, resource_type)
 	var data = JSON.stringify({
@@ -60,6 +63,7 @@ func build_request_params(url: String, board_id: String, resource_type: Resource
 		{"_": str(int(Time.get_unix_time_from_system() * 1000))}
 	]
 
+
 func get_request_headers(url: String, url_handler: String) -> PackedStringArray:
 	return [
 		"User-Agent: %s" % USER_AGENT,
@@ -68,6 +72,7 @@ func get_request_headers(url: String, url_handler: String) -> PackedStringArray:
 		"X-Pinterest-Source-Url: %s" % url,
 		"X-Pinterest-PWS-Handler: %s" % url_handler
 	] as PackedStringArray
+
 
 func get_board_info(board_url: String) -> Dictionary:
 	var result: HTTPResult = await http_request.async_request(board_url)
@@ -78,6 +83,7 @@ func get_board_info(board_url: String) -> Dictionary:
 		_log_debug_info(body, board_data)
 	
 	return board_data
+
 
 func _extract_board_data_from_html(body: String) -> Dictionary:
 	var regex = RegEx.new()
@@ -90,6 +96,7 @@ func _extract_board_data_from_html(body: String) -> Dictionary:
 			return board_data
 	
 	return {}
+
 
 func _parse_script_for_board_data(content: String) -> Dictionary:
 	var json = JSON.new()
@@ -114,6 +121,7 @@ func _parse_script_for_board_data(content: String) -> Dictionary:
 		"domain": board_res.get("seo_canonical_domain", DEFAULT_DOMAIN)
 	}
 
+
 func _log_debug_info(body: String, board_data: Dictionary):
 	print("Board ID not found")
 	if board_data.has("initialReduxState"):
@@ -121,6 +129,7 @@ func _log_debug_info(body: String, board_data: Dictionary):
 	else:
 		print("initialReduxState not found")
 		print("Page body preview: ", body.substr(0, 500))
+
 
 func fetch_board_sections(url: String, board_id: String, domain: String) -> Array:
 	var section_ids: Array = []
@@ -151,6 +160,7 @@ func fetch_board_sections(url: String, board_id: String, domain: String) -> Arra
 	
 	return section_ids
 
+
 func _make_sections_request(url: String, board_id: String, domain: String, bookmarks: Array) -> Dictionary:
 	var params_array = build_request_params(url, board_id, ResourceType.BOARD, bookmarks)
 	var final_url = "https://%s/resource/BoardSectionsResource/get/?%s" % [domain, _build_query_string(params_array)]
@@ -158,6 +168,7 @@ func _make_sections_request(url: String, board_id: String, domain: String, bookm
 	
 	var result: HTTPResult = await http_request.async_request(final_url, headers, HTTPClient.METHOD_GET)
 	return _parse_api_response(result)
+
 
 func fetch_redirect_url(url: String) -> String:
 	var response: HTTPResult = await http_request.async_request(url)
@@ -184,9 +195,11 @@ func fetch_redirect_url(url: String) -> String:
 	
 	return redirect_url
 
+
 func _extract_href(content: String, regex: RegEx) -> String:
 	var match = regex.search(content)
 	return match.get_string(1) if match else ""
+
 
 func fetch_board(board_url: String, include_sections: bool) -> Array:
 	_progress_callback.call("Searching...")
@@ -213,6 +226,7 @@ func fetch_board(board_url: String, include_sections: bool) -> Array:
 	
 	return results
 
+
 func fetch_section(board_url: String, section_slug: String) -> Array:
 	_progress_callback.call("Searching...")
 	var board_info = await get_board_info(board_url)
@@ -229,6 +243,7 @@ func fetch_section(board_url: String, section_slug: String) -> Array:
 	
 	return [_build_result("fail", "Section not found")]
 
+
 func _validate_board_info(board_info: Dictionary) -> bool:
 	if board_info.get("board_id", "").is_empty():
 		_progress_callback.call("Board not found...")
@@ -240,10 +255,11 @@ func _validate_board_info(board_info: Dictionary) -> bool:
 		return false
 	return true
 
+
 func collect_pins(url: String, board_id: String, board_name: String, domain: String, resource_type: ResourceType) -> Dictionary:
-	var config = RESOURCE_CONFIGS[resource_type]
+	var config: Dictionary = RESOURCE_CONFIGS[resource_type]
 	var bookmarks: Array = []
-	var image_urls: Array = []
+	var images: Array = []
 	
 	_progress_callback.call("Collecting pins...")
 	
@@ -251,21 +267,22 @@ func collect_pins(url: String, board_id: String, board_name: String, domain: Str
 		if bookmarks.find("-end-") != -1:
 			break
 
-		var response_data = await _make_pins_request(url, board_id, domain, resource_type, bookmarks)
+		var response_data: Dictionary = await _make_pins_request(url, board_id, domain, resource_type, bookmarks)
 		if response_data.is_empty():
 			break
 			
-		var pins = response_data.get("data", [])
+		var pins: Array = response_data.get("data", [])
 		bookmarks = response_data.get("bookmarks", [])
 
 		for pin in pins:
-			var image_url = _extract_image_url(pin)
-			if not image_url.is_empty():
-				image_urls.append(image_url)
+			var pin_result: Dictionary = _extract_pins(pin)
+			if not pin_result.is_empty():
+				images.append(pin_result)
 				
-		_progress_callback.call("Collecting pins (%s found)..." % [image_urls.size()])
+		_progress_callback.call("Collecting pins (%s found)..." % [images.size()])
 	
-	return _build_result("success", {"urls": image_urls, "board_name": board_name})
+	return _build_result("success", {"images": images, "board_name": board_name})
+
 
 func _make_pins_request(url: String, board_id: String, domain: String, resource_type: ResourceType, bookmarks: Array) -> Dictionary:
 	var config = RESOURCE_CONFIGS[resource_type]
@@ -275,6 +292,7 @@ func _make_pins_request(url: String, board_id: String, domain: String, resource_
 	
 	var result: HTTPResult = await http_request.async_request(final_url, headers, HTTPClient.METHOD_GET)
 	return _parse_api_response(result)
+
 
 func _parse_api_response(result: HTTPResult) -> Dictionary:
 	if not result.success():
@@ -308,12 +326,18 @@ func _parse_api_response(result: HTTPResult) -> Dictionary:
 		"bookmarks": options.get("bookmarks", [])
 	}
 
-func _extract_image_url(pin: Dictionary) -> String:
+
+func _extract_pins(pin: Dictionary) -> Dictionary:
 	var url: String = pin.get("images", {}).get("orig", {}).get("url", "")
+	var pname = pin.get("seo_alt_text", "No name")
 	var extension: String = url.get_extension()
 	if not extension in Constants.SUPPORTED_EXTENSIONS:
-		return ""
-	return url
+		return {}
+	return {
+		"path": url,
+		"name": pname
+	}
+
 
 func fetch(url: String, include_sections: bool, progress_callback: Callable = _empty_progress_callback) -> Array:
 	_progress_callback = progress_callback
@@ -324,7 +348,6 @@ func fetch(url: String, include_sections: bool, progress_callback: Callable = _e
 	# Handle short URLs
 	if url.contains("pin.it"):
 		url = await fetch_redirect_url(url)
-		print(url)
 	
 	var parsed_url = _parse_pinterest_url(url)
 	if parsed_url.is_empty():
@@ -335,6 +358,7 @@ func fetch(url: String, include_sections: bool, progress_callback: Callable = _e
 		return await fetch_section(parsed_url["board_url"], parsed_url["section_slug"])
 	else:
 		return await fetch_board(url, include_sections)
+
 
 func _parse_pinterest_url(url: String) -> Dictionary:
 	var base_url = url.trim_prefix("https://www.").trim_prefix("https://").trim_prefix("www.").trim_suffix("/")
@@ -349,6 +373,7 @@ func _parse_pinterest_url(url: String) -> Dictionary:
 		}
 	else:
 		return {"board_url": url}
+
 
 func _build_query_string(params: Array) -> String:
 	var query_parts: Array = []
@@ -369,8 +394,10 @@ func _build_query_string(params: Array) -> String:
 	
 	return "&".join(query_parts)
 
+
 func _empty_progress_callback(_message: String) -> void:
 	return
+
 
 func _build_result(status: String, data: Variant) -> Dictionary:
 	return {"status": status, "data": data}

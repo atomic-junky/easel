@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://bfd5fhqweur3r" path="res://scenes/session/session.gd" id="1_qm4ye"]
 [ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="2_5d8hc"]
 [ext_resource type="Shader" uid="uid://08xit4vciyir" path="res://shaders/grid.gdshader" id="2_r1u5e"]
-[ext_resource type="Texture2D" uid="uid://dbeuaxl54l35o" path="res://assets/icons/play.svg" id="3_x4b3v"]
 [ext_resource type="Script" uid="uid://b08vxne14bjfa" path="res://prefabs/responsive_margin_container.gd" id="4_0dsos"]
 [ext_resource type="Shader" uid="uid://c4ax77h6bdpy2" path="res://shaders/greyscale.gdshader" id="4_7mwt7"]
 [ext_resource type="Texture2D" uid="uid://byatp0dfiw56i" path="res://assets/icons/arrow_previous.svg" id="4_8efxp"]
@@ -17,6 +16,7 @@
 [ext_resource type="Script" uid="uid://djmfis3yxwyao" path="res://prefabs/drawing/canvas/paint_canvas.gd" id="11_qm4ye"]
 [ext_resource type="Script" uid="uid://dobtye2vh0nao" path="res://scenes/session/drawing_tool_bar.gd" id="12_d6r8s"]
 [ext_resource type="PackedScene" uid="uid://dwennv2xbanag" path="res://prefabs/drawing/tool_bar/brush_size_slider/brush_size_slider.tscn" id="13_d6r8s"]
+[ext_resource type="PackedScene" uid="uid://cith8i4qkfgiq" path="res://prefabs/pause_button/pause_button.tscn" id="14_7mwt7"]
 [ext_resource type="Shader" uid="uid://d066f3yvy06y6" path="res://shaders/blur.gdshader" id="14_n84ho"]
 [ext_resource type="Texture2D" uid="uid://bbj3352wn216h" path="res://assets/icons/undo.svg" id="14_qvbex"]
 [ext_resource type="Texture2D" uid="uid://dses3wc1o1ssn" path="res://assets/icons/redo.svg" id="15_vboup"]
@@ -80,7 +80,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_qm4ye")
-invisible_element = [NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/RotateLeftButton"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer/FileLocationButton"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/CountLabel"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/ExitButton")]
+invisible_element = [NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/RotateLeftButton"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/FileLocationButton"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/CountLabel"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/ExitButton")]
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="."]
 layer = -1
@@ -220,21 +220,19 @@ unique_name_in_owner = true
 layout_mode = 2
 icon = ExtResource("4_r1u5e")
 
+[node name="FileLocationButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+text = "loading..."
+alignment = 0
+
 [node name="HBox" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
 layout_mode = 2
 size_flags_vertical = 8
 mouse_filter = 2
 alignment = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-mouse_filter = 2
-
-[node name="FileLocationButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-alignment = 0
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox"]
 layout_mode = 2
@@ -265,15 +263,9 @@ layout_mode = 2
 toggle_mode = true
 icon = ExtResource("7_mvl4h")
 
-[node name="PauseButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox"]
+[node name="PauseButton" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox" instance=ExtResource("14_7mwt7")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
-theme_override_constants/icon_max_width = 18
-toggle_mode = true
-text = "19:58"
-icon = ExtResource("3_x4b3v")
-alignment = 2
 
 [node name="ExitButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
 layout_mode = 2
@@ -399,7 +391,7 @@ one_shot = true
 
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer/VBoxContainer/ButtonPrevious" to="." method="_on_button_previous_pressed"]
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer2/VBoxContainer/ButtonNext" to="." method="_on_button_next_pressed"]
-[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer/FileLocationButton" to="." method="_on_file_location_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/FileLocationButton" to="." method="_on_file_location_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/RotateLeftButton" to="." method="_on_rotate_left_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/RotateRightButton" to="." method="_on_rotate_right_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/GreyscaleButton" to="." method="_on_greyscale_button_toggled"]

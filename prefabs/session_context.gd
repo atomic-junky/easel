@@ -17,13 +17,13 @@ var packs: Array[PackContext] = []
 
 
 func get_images_path() -> Array:
-	var all_paths: Array = get_images_path_raw()
-	var image_count = all_paths.size()
+	var all_images: Array = get_images_path_raw()
+	var image_count = all_images.size()
 	
 	if shuffle:
-		all_paths.shuffle()
+		all_images.shuffle()
 	elif reverse:
-		all_paths.reverse()
+		all_images.reverse()
 		
 	if number_of_images < 0:
 		number_of_images = image_count
@@ -41,16 +41,17 @@ func get_images_path() -> Array:
 		}
 		
 		if pose_type == "pose":
-			pose_data["path"] = all_paths.pop_front()
+			pose_data["path"] = all_images.pop_front()["path"]
+			pose_data["name"] = all_images.pop_front()["name"]
 			
 		result.append(pose_data)
 	return result
 
 
 func get_images_path_raw() -> Array:
-	var all_paths: Array[String] = []
+	var all_paths: Array = []
 	for pack: PackContext in get_packs():
-		all_paths.append_array(pack.image_paths)
+		all_paths.append_array(pack.images)
 	
 	return all_paths
 

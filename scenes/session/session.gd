@@ -77,10 +77,7 @@ func start_session(context: SessionContext) -> void:
 
 
 func _process(_delta: float) -> void:
-	var time_left: int = ceil(timer.time_left)
-	var minutes: int = floor(time_left/60)
-	var seconds: int = time_left-(minutes*60)
-	pause_button.text = "%s:%02d" % [minutes, seconds]
+	pause_button.set_time(timer.time_left, timer.wait_time)
 	
 	%ButtonPrevious.disabled = not queue.has_previous()
 	%ButtonNext.disabled = not queue.has_next()
@@ -182,7 +179,15 @@ func _on_image_loaded(data: Dictionary) -> void:
 
 
 func _update() -> void:
-	var file_name: String = queue.get_current_location().get_file()
+	var file_name: String = queue.get_current_filename()
+	if file_name.length() > 48:
+		file_name = file_name.left(45)
+		file_name += "..."
+	elif file_name.length() <= 0:
+		file_name = queue.get_current_location()
+		if file_name.length() > 48:
+			file_name = file_name.right(45)
+			file_name = "..." + file_name
 	file_location_button.text = file_name
 	
 	if not no_timer and (not texture_container.texture == null or is_pause):
@@ -244,6 +249,8 @@ func _on_paint_button_toggled(toggled_on: bool) -> void:
 	paint_canvas.can_draw = toggled_on
 	paint_toolbar.visible = toggled_on
 	navigation_container.visible = !toggled_on
+	count_label.visible = !toggled_on
+	file_location_button.visible = !toggled_on
 	if OS.get_name() in ["Android", "iOS"]:
 		navigation_container.hide()
 	if visible:

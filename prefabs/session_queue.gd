@@ -65,7 +65,11 @@ func size() -> int: return _queue.size()
 
 
 func get_current_location() -> String:
-	return _queue[_queue_idx].get("path", "") if _queue.has(_queue_idx) else ""
+	return _queue[_queue_idx].get("path", "") if _queue.size() >= _queue_idx else ""
+
+
+func get_current_filename() -> String:
+	return _queue[_queue_idx].get("name", "Unknown") if _queue.size() >= _queue_idx else "Unknown"
 
 
 func get_from_cache(idx: int, callback: Callable) -> Dictionary:

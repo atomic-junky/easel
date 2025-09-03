@@ -10691,6 +10691,7 @@ size_flags_horizontal = 4
 text = "Let's draw!"
 
 [node name="HBox" type="HBoxContainer" parent="MainSafeMargin"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
