@@ -52,6 +52,7 @@ func _get_auto_display_scale() -> float:
 		var phone_factor: float = screen_size.y / screen_size.x
 		var is_portrait: bool = screen_size.x < screen_size.y
 		if is_portrait: phone_factor = 2.0
+		phone_factor *= 0.9
 			
 		return DisplayServer.screen_get_scale() * phone_factor
 	if os_name in ["macOS"]:

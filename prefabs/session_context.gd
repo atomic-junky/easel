@@ -41,8 +41,9 @@ func get_images_path() -> Array:
 		}
 		
 		if pose_type == "pose":
-			pose_data["path"] = all_images.pop_front()["path"]
-			pose_data["name"] = all_images.pop_front()["name"]
+			var next_image: Dictionary = all_images.pop_front()
+			pose_data["path"] = next_image["path"]
+			pose_data["name"] = next_image["name"]
 			
 		result.append(pose_data)
 	return result
