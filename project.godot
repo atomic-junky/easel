@@ -13,7 +13,7 @@ config_version=5
 config/name="GestureApp"
 config/version="0.0.2-alpha"
 run/main_scene="res://scenes/app/app.tscn"
-config/features=PackedStringArray("4.4")
+config/features=PackedStringArray("4.5")
 boot_splash/fullsize=false
 boot_splash/use_filter=false
 boot_splash/image="uid://b4pu8yxomwywq"
@@ -41,10 +41,10 @@ enabled=PackedStringArray("res://addons/awaitable_http_request/plugin.cfg")
 
 [gui]
 
-theme/custom="uid://c4tjtr1l5tu78"
-theme/custom_font="uid://cus4jsf1mbr0y"
 theme/default_font_hinting=2
 theme/default_font_multichannel_signed_distance_field=true
+theme/custom="uid://c4tjtr1l5tu78"
+theme/custom_font="uid://cus4jsf1mbr0y"
 
 [importer_defaults]
 
