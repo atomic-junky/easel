@@ -9,6 +9,7 @@ var reverse: bool = false
 
 
 func apply_context(context: SessionContext):
+	@warning_ignore("unused_variable")
 	var total_duration: int = 0
 	var number_of_images: int = 0
 	for pose in class_session:

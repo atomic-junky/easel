@@ -1,19 +1,19 @@
 [gd_resource type="Theme" load_steps=56 format=3 uid="uid://c4tjtr1l5tu78"]
 
 [ext_resource type="Texture2D" uid="uid://dh3ciw6v7ml7y" path="res://assets/icons/grabber.svg" id="1_0ie0l"]
-[ext_resource type="FontFile" uid="uid://dci5hf6p3f7m" path="res://assets/fonts/InterDisplay-Black.ttf" id="1_5r0yv"]
+[ext_resource type="FontFile" uid="uid://dci5hf6p3f7m" path="res://assets/fonts/InterDisplay/InterDisplay-Black.ttf" id="1_5r0yv"]
 [ext_resource type="Texture2D" uid="uid://c4mmkg31k836p" path="res://assets/icons/check.svg" id="1_k2l3o"]
-[ext_resource type="FontFile" uid="uid://c0u2wo1eodxax" path="res://assets/fonts/InterDisplay-SemiBold.ttf" id="2_5r0yv"]
+[ext_resource type="FontFile" uid="uid://c0u2wo1eodxax" path="res://assets/fonts/InterDisplay/InterDisplay-SemiBold.ttf" id="2_5r0yv"]
 [ext_resource type="Texture2D" uid="uid://crgae5fm0hbut" path="res://assets/icons/check_disabled.svg" id="2_h40d0"]
 [ext_resource type="Texture2D" uid="uid://bm7l1m02wm851" path="res://assets/icons/uncheck.svg" id="3_almxo"]
 [ext_resource type="Texture2D" uid="uid://6qvblf41anya" path="res://assets/icons/uncheck_disabled.svg" id="4_tk1f8"]
-[ext_resource type="FontFile" uid="uid://cus4jsf1mbr0y" path="res://assets/fonts/InterDisplay-Medium.ttf" id="8_h40d0"]
+[ext_resource type="FontFile" uid="uid://cus4jsf1mbr0y" path="res://assets/fonts/InterDisplay/InterDisplay-Medium.ttf" id="8_h40d0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xsrfh"]
 content_margin_left = 10.0
-content_margin_top = 7.0
+content_margin_top = 4.0
 content_margin_right = 10.0
-content_margin_bottom = 7.0
+content_margin_bottom = 4.0
 bg_color = Color(0.192, 0.192, 0.192, 0.3)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
@@ -24,9 +24,9 @@ corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_njd2n"]
 content_margin_left = 10.0
-content_margin_top = 7.0
+content_margin_top = 4.0
 content_margin_right = 10.0
-content_margin_bottom = 7.0
+content_margin_bottom = 4.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
@@ -35,9 +35,9 @@ corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0rb32"]
 content_margin_left = 10.0
-content_margin_top = 7.0
+content_margin_top = 4.0
 content_margin_right = 10.0
-content_margin_bottom = 7.0
+content_margin_bottom = 4.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
@@ -46,9 +46,9 @@ corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_scqqr"]
 content_margin_left = 10.0
-content_margin_top = 7.0
+content_margin_top = 4.0
 content_margin_right = 10.0
-content_margin_bottom = 7.0
+content_margin_bottom = 4.0
 bg_color = Color(0.639216, 0.564706, 0.964706, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
@@ -126,24 +126,24 @@ corner_radius_bottom_left = 25
 corner_detail = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k2l3o"]
-content_margin_left = 10.0
-content_margin_top = 7.0
-content_margin_right = 10.0
-content_margin_bottom = 7.0
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h40d0"]
-content_margin_left = 10.0
-content_margin_top = 7.0
-content_margin_right = 10.0
-content_margin_bottom = 7.0
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
 bg_color = Color(0.192157, 0.192157, 0.192157, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tk1f8"]
-content_margin_left = 10.0
-content_margin_top = 7.0
-content_margin_right = 10.0
-content_margin_bottom = 7.0
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
 bg_color = Color(0.639216, 0.564706, 0.964706, 1)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_oq6wx"]
@@ -288,7 +288,7 @@ Button/colors/icon_pressed_color = Color(0.141176, 0.141176, 0.141176, 1)
 Button/constants/align_to_largest_stylebox = 1
 Button/constants/h_separation = 10
 Button/constants/icon_max_width = 18
-Button/font_sizes/font_size = 19
+Button/font_sizes/font_size = 16
 Button/fonts/font = null
 Button/styles/disabled = SubResource("StyleBoxFlat_xsrfh")
 Button/styles/focus = SubResource("StyleBoxEmpty_y5boi")

@@ -14,7 +14,7 @@ bg_color = Color(0.141176, 0.141176, 0.141176, 1)
 
 [node name="OptionSwitcher" type="VBoxContainer"]
 offset_right = 175.0
-offset_bottom = 64.0
+offset_bottom = 100.0
 script = ExtResource("1_oj872")
 
 [node name="Label" type="Label" parent="."]

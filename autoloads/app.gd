@@ -29,6 +29,10 @@ func _update_window(update_size: bool = false) -> void:
 
 func _load_preferences() -> void:
 	var err := preferences.load(Constants.PREFERENCES_PATH)
+	if err == ERR_FILE_NOT_FOUND:
+		preferences.save(Constants.PREFERENCES_PATH)
+		return
+	
 	if err != OK:
 		push_warning("Failed to load preferences from %s" % Constants.PREFERENCES_PATH)
 
@@ -49,7 +53,7 @@ func _get_auto_display_scale() -> float:
 				return main_window_scale
 			return DisplayServer.screen_get_max_scale()
 	if os_name in ["iOS", "Android"]:
-		var phone_factor: float = screen_size.y / screen_size.x
+		var phone_factor: float = float(screen_size.y) / screen_size.x
 		var is_portrait: bool = screen_size.x < screen_size.y
 		if is_portrait: phone_factor = 2.0
 		phone_factor *= 0.9

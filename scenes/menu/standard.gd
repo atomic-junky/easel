@@ -8,7 +8,7 @@ var shuffle: bool = false
 var reverse: bool = false
 
 
-func apply_context(context: SessionContext):
+func apply_context(context: SessionContext) -> void:
 	context.number_of_images = number_of_images
 	context.time_per_image = time_per_images
 	context.shuffle = shuffle

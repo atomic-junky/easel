@@ -257,7 +257,6 @@ func _validate_board_info(board_info: Dictionary) -> bool:
 
 
 func collect_pins(url: String, board_id: String, board_name: String, domain: String, resource_type: ResourceType) -> Dictionary:
-	var config: Dictionary = RESOURCE_CONFIGS[resource_type]
 	var bookmarks: Array = []
 	var images: Array = []
 	

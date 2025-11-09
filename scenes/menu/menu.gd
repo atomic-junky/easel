@@ -10,10 +10,10 @@ signal done(context: SessionContext)
 @onready var info_label: Label = %InfoLabel
 @onready var standard: Control = %Standard
 @onready var class_room: Control = %Class
-@onready var comming_soon: Control = %CommingSoon
+@onready var custom: Control = %Custom
 @onready var relaxed: Control = %Relaxed
 @onready var session_type_switcher: OptionSwitcher = %SessionTypeSwitcher
-@onready var _session_panel: Array = [standard, class_room, relaxed, comming_soon]
+@onready var _session_panel: Array = [standard, class_room, relaxed, custom]
 @onready var done_button: Button = %DoneButton
 
 @onready var pack_selector: Control = %PackSelectorContainer
@@ -36,11 +36,18 @@ var _context: SessionContext
 func _ready() -> void:
 	if OS.get_name() in ["Android", "iOS"]:
 		DisplayServer.screen_set_orientation(DisplayServer.SCREEN_PORTRAIT)
+		main_vbox.add_theme_constant_override("separation",
+			60
+		)
 	
 	_on_session_type_switcher_value_changed(1)
 	_update()
 	visibility_changed.connect(_update)
 	_on_resized()
+
+
+func load_args(args: SessionContext) -> void:
+	_context = args
 
 
 func _on_session_type_switcher_value_changed(value: int) -> void:
@@ -115,7 +122,7 @@ func _on_pack_delete_request(pack: PackContext) -> void:
 	_update()
 
 
-func _on_pack_toggled(pack: PackContext) -> void:
+func _on_pack_toggled(_pack: PackContext) -> void:
 	_update_labels()
 
 

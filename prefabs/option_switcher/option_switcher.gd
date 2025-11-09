@@ -75,10 +75,10 @@ func _update() -> void:
 	
 	for idx: int in _buttons.size():
 		var button: Button = _buttons[idx]
-		var label: String = _button_labels[idx]
+		var button_label: String = _button_labels[idx]
 		var enabled: bool = _buttons_enabled[idx]
 
-		button.text = label
+		button.text = button_label
 		button.visible = enabled
 		button.pressed.connect(_update_buttons.bind(button))
 	
@@ -89,13 +89,11 @@ func _update() -> void:
 	
 	for button: Button in _buttons:
 		button.custom_minimum_size.x = 0.0
-	
-	# _update_button_size.call_deferred()
 
 
 func _get_value() -> int:
 	if custom_button.button_pressed:
-		return custom_value.value
+		return roundi(custom_value.value)
 	
 	for idx: int in _buttons.size():
 		var button: Button = _buttons[idx]

@@ -44,6 +44,10 @@ func load_args(args: SessionContext) -> void:
 	start_session(args)
 
 
+func get_args() -> SessionContext:
+	return _context
+
+
 func setup() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	set_process(false)

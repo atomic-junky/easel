@@ -14,10 +14,10 @@ func _ready() -> void:
 
 
 func set_margin_all(margin: int) -> void:
-	var _default_top: int = margin
-	var _default_left: int = margin
-	var _default_bottom: int = margin
-	var _default_right: int = margin
+	_default_top = margin
+	_default_left = margin
+	_default_bottom = margin
+	_default_right = margin
 	
 	_set_safe_area_margins()
 
@@ -32,6 +32,12 @@ func _set_safe_area_margins() -> void:
 	# Calculate how many "logical pixels" correspond to a single physical pixel
 	var aspect_x = size.x / screen_size.x
 	var aspect_y = size.y / screen_size.y
+	
+	if OS.get_name() in ["Android", "iOS"]:
+		_default_left /= 2
+		_default_top /= 2
+		_default_right /= 2
+		_default_bottom /= 2
 
 	# Convert the safe-area rect to logical pixel margins
 	var margin_left = max(rect.position.x * aspect_x, _default_left)

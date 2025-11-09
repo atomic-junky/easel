@@ -12,26 +12,26 @@ var image_count: int :
 		return images.size()
 
 
-static func create_from_path(path: String) -> Array[PackContext]:
+static func create_from_path(pack_path: String) -> Array[PackContext]:
 	var pack := PackContext.new()
-	var dir_name: String = path.replace("\\", "/").split("/")[-1]
+	var dir_name: String = pack_path.replace("\\", "/").split("/")[-1]
 	
-	pack.path = path
+	pack.path = pack_path
 	pack.enabled = true
 	pack.source = Constants.Source.FOLDER
 	pack.pack_name = dir_name
-	pack.images = PackContext._recursive_load_dir(path)
+	pack.images = PackContext._recursive_load_dir(pack_path)
 	return [pack]
 
 
 static func create_from_paths(paths: Array) -> Array[PackContext]:
 	var pack := PackContext.new()
 	
-	for path: String in paths:
-		if path.get_extension() not in SUPPORTED_EXTENSIONS:
-			paths.erase(path)
+	for pack_path: String in paths:
+		if pack_path.get_extension() not in SUPPORTED_EXTENSIONS:
+			paths.erase(pack_path)
 			continue
-		pack.images.append({ "path": path, "name": path.get_file() })
+		pack.images.append({ "path": pack_path, "name": pack_path.get_file() })
 	
 	pack.path = paths[0]
 	pack.enabled = true
@@ -41,13 +41,13 @@ static func create_from_paths(paths: Array) -> Array[PackContext]:
 
 
 static func create_from_urls(data: Dictionary) -> PackContext:
-	var images: Array = data.get("images", [])
+	var pack_images: Array = data.get("images", [])
 	var board_name: String = data.get("board_name", "Unknown")
 	
 	var pack: PackContext = PackContext.new()
 	pack.source = Constants.Source.PINTEREST
 	pack.pack_name = board_name
-	pack.images = images
+	pack.images = pack_images
 	return pack
 
 
