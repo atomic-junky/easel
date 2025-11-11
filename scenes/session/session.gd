@@ -153,6 +153,9 @@ func change_image(image_callable: Callable) -> void:
 	spiner.show()
 	var data: Dictionary = image_callable.call(_image_loaded_callback)
 	_on_image_loaded(data)
+	# If image is already cached and loaded, display it immediately
+	if data.get("status") == "success" and data.has("texture"):
+		texture_container.texture = data.get("texture")
 
 
 func _image_loaded_callback(data: Dictionary) -> void:
@@ -175,8 +178,14 @@ func _on_image_loaded(data: Dictionary) -> void:
 		"loading":
 			spiner.show()
 		"success":
+			# Show texture if it's for the current image
 			if data.get("index") == queue._queue_idx:
 				texture_container.texture = data.get("texture")
+			# If no texture is showing and we have one cached for current index, show it
+			elif texture_container.texture == null:
+				var cached = queue._cache.get(queue._queue_idx, {})
+				if cached.get("status") == "success" and cached.has("texture"):
+					texture_container.texture = cached.get("texture")
 		_:
 			printerr("Unknown status %s" % data.get("status"))
 	_update()
