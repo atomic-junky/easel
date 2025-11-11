@@ -1,95 +1,54 @@
 extends SessionType
 
-@onready var image_order_container: ImageOrder = $ImageOrderContainer
+var _class_session: Array = []
 
-var class_session: Array = []
-var shuffle: bool = false
-var reverse: bool = false
+func setup() -> void:
+	ClassSessionTemplateRegistry.initialize()
+	var durations := ClassSessionTemplateRegistry.get_available_durations()
+	define_field(
+		"duration", "switcher", durations[0] if durations.size() > 0 else 30, durations,
+		"Session duration", " min"
+	)
+	define_field(
+		"image_order", "image_order", null, [], "", "", {
+			"shuffle_property": "shuffle",
+			"reverse_property": "reverse"
+		}
+	)
+	# After fields are built, select initial template and hookup change listener
+	fields_built.connect(_on_fields_built)
 
+func _on_fields_built() -> void:
+	# Set initial template based on default duration
+	var values := collect_field_values()
+	if values.has("duration"):
+		_apply_template_for_duration(int(values["duration"]))
+	# Connect to duration field changes
+	for field in get_field_nodes():
+		if field is SessionFieldSwitcher and field.field_name == "duration":
+			field.value_changed.connect(func(new_value: Dictionary, _old_value: Dictionary):
+				if new_value.has("duration"):
+					_apply_template_for_duration(int(new_value["duration"]))
+			)
+			break
 
+func _apply_template_for_duration(duration: int) -> void:
+	var template := ClassSessionTemplateRegistry.get_template(duration)
+	if template:
+		_class_session = template.session_sequence.duplicate(true)
 
-func apply_context(context: SessionContext):
-	@warning_ignore("unused_variable")
-	var total_duration: int = 0
+func apply_context(context: SessionContext) -> void:
 	var number_of_images: int = 0
-	for pose in class_session:
-		total_duration += pose.get("duration") * pose.get("amount", 1)
+	for pose in _class_session:
 		number_of_images += pose.get("amount", 1)
-	
 	context.session_type = SessionContext.Type.CLASS
-	context.class_data = class_session
+	context.class_data = _class_session
 	context.number_of_images = number_of_images
-	context.shuffle = shuffle
-	context.reverse = reverse
-
+	# Apply image_order toggles generically
+	apply_fields_to_context(context)
 
 func is_valid() -> bool:
-	return !class_session.is_empty()
+	return not _class_session.is_empty()
 
-
-func _on_class_duration_switcher_value_changed(value: int) -> void:
-	var session: Array = []
-	
-	match value:
-		30:
-			session = [
-				{"type": "pose", "duration": 30, "amount": 10}, # 5min
-				{"type": "pose", "duration": 60, "amount": 5}, # 10min (5min)
-				{"type": "pose", "duration": 5*60, "amount": 2}, # 20min (10min)
-				{"type": "pose", "duration": 10*60, "amount": 1}, # 30min (10min)
-			]
-		60:
-			session = [
-				{"type": "pose", "duration": 30, "amount": 10}, # 5min
-				{"type": "pose", "duration": 60, "amount": 5}, # 10min (5min)
-				{"type": "pose", "duration": 5*60, "amount": 2}, # 20min (10min)
-				{"type": "pose", "duration": 10*60, "amount": 1}, # 30min (10min)
-				{"type": "break", "duration": 5*60}, # 35min (5min)
-				{"type": "pose", "duration": 25*60, "amount": 1}, # 60min (25min)
-			]
-		90:
-			session = [
-				{"type": "pose", "duration": 30, "amount": 10}, # 5min
-				{"type": "pose", "duration": 60, "amount": 5}, # 10min (5min)
-				{"type": "pose", "duration": 5*60, "amount": 3}, # 25min (15min)
-				{"type": "break", "duration": 5*60}, # 40min (5min)
-				{"type": "pose", "duration": 10*60, "amount": 2}, # 60min (20min)
-				{"type": "pose", "duration": 30*60, "amount": 1}, # 90min (30min)
-			]
-		120:
-			session = [
-				{"type": "pose", "duration": 60, "amount": 5}, # 5min
-				{"type": "pose", "duration": 5*60, "amount": 3}, # 20min (15min)
-				{"type": "break", "duration": 5*60}, # 25min (5min)
-				{"type": "pose", "duration": 10*60, "amount": 2}, # 45min (20min)
-				{"type": "pose", "duration": 20*60, "amount": 1}, # 65min  (20min)
-				{"type": "break", "duration": 5*60}, # 70min (5min)
-				{"type": "pose", "duration": 50*60, "amount": 1}, # 120min (50min)
-			]
-		180:
-			session = [
-				{"type": "pose", "duration": 60, "amount": 5}, # 5min
-				{"type": "pose", "duration": 5*60, "amount": 3}, # 20min (15min)
-				{"type": "pose", "duration": 10*60, "amount": 2}, # 40min (20min)
-				{"type": "break", "duration": 5*60}, # 45min (5min)
-				{"type": "pose", "duration": 20*60, "amount": 2}, # 85min  (40min)
-				{"type": "break", "duration": 5*60}, # 90min (5min)
-				{"type": "pose", "duration": 30*60, "amount": 1}, # 120min (30min)
-				{"type": "pose", "duration": 60*60, "amount": 1}, # 180min (60min)
-			]
-	
-	assert(!session.is_empty(), "Invalid session time %s" % value)
-	
-	var total_duration: int = 0
-	for pose in session:
-		total_duration += pose.get("duration") * pose.get("amount", 1)
-	
-	if total_duration != total_duration:
-		push_error("Session duration do not correspond to button value. (%s and %s)" % [total_duration, value])
-	
-	class_session = session
-
-
-func _on_image_order_container_value_changed() -> void:
-	shuffle = image_order_container.shuffle
-	reverse = image_order_container.reverse
+func get_context_type() -> SessionContext.Type:
+	return SessionContext.Type.CLASS

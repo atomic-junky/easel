@@ -2,20 +2,23 @@ class_name Menu extends Control
 
 signal done(context: SessionContext)
 
+const PACK_OBJECT: PackedScene = preload("res://prefabs/pack/pack.tscn")
+
+var _context: SessionContext
+var _active_session_panel_index: int = 0
+var _dynamic_state: Dictionary = {}
+
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
-
 @onready var main_vbox: VBoxContainer = %MainVBox
 @onready var main_safe_margin: SafeMarginContainer = %MainSafeMargin
 @onready var info_label: Label = %InfoLabel
-@onready var standard: Control = %Standard
-@onready var class_room: Control = %Class
-@onready var custom: Control = %Custom
-@onready var relaxed: Control = %Relaxed
 @onready var session_type_switcher: OptionSwitcher = %SessionTypeSwitcher
-@onready var _session_panel: Array = [standard, class_room, relaxed, custom]
 @onready var done_button: Button = %DoneButton
-
+@onready var standard: SessionType = %Standard
+@onready var class_room: SessionType = %Class
+@onready var custom: SessionType = %Custom
+@onready var relaxed: SessionType = %Relaxed
 @onready var pack_selector: Control = %PackSelectorContainer
 @onready var pack_selector_panel: PanelContainer = %PackSelectorPanel
 @onready var pack_container: Control = %PackContainer
@@ -27,10 +30,9 @@ signal done(context: SessionContext)
 @onready var url_input: LineEdit = %UrlInput
 @onready var url_input_spiner_container: Control = %UrlInputSpinerContainer
 @onready var pinterest_section_chech_box: CheckBox = %PinterestSectionCheckBox
+@onready var _dynamic_container: Control = %Standard
 
-@onready var pack_object: PackedScene = preload("res://prefabs/pack/pack.tscn")
-
-var _context: SessionContext
+## end variables
 
 
 func _ready() -> void:
@@ -40,8 +42,8 @@ func _ready() -> void:
 			60
 		)
 	
-	_on_session_type_switcher_value_changed(1)
 	_update()
+	_on_session_type_switcher_value_changed(1)
 	visibility_changed.connect(_update)
 	_on_resized()
 
@@ -54,10 +56,25 @@ func _on_session_type_switcher_value_changed(value: int) -> void:
 	if not is_node_ready():
 		return
 	
-	for panel in _session_panel:
-		panel.hide()
+	# Deactivate old panel
+	#var old_panel := get_session_panel()
+	#if old_panel and old_panel.has_method("on_deactivated"):
+		#old_panel.on_deactivated()
+
+	# Hide all and show selected
+	standard.hide()
+	class_room.hide()
+	custom.hide()
+	relaxed.hide()
+
+	_active_session_panel_index = value - 1
+	var new_panel := get_session_panel()
+	if new_panel:
+		new_panel.show()
+		new_panel.bind_context(_context)
+		if new_panel.has_method("on_activated"):
+			new_panel.on_activated()
 	
-	_session_panel[value-1].show()
 	_update()
 
 
@@ -66,7 +83,17 @@ func _on_select_pack_button_pressed() -> void:
 
 
 func get_session_panel() -> SessionType:
-	return _session_panel[session_type_switcher.value-1]
+	match _active_session_panel_index:
+		0:
+			return standard
+		1:
+			return class_room
+		2:
+			return relaxed
+		3:
+			return custom
+		_:
+			return standard
 
 
 func _update() -> void:
@@ -77,15 +104,19 @@ func _update() -> void:
 		pack.queue_free()
 	
 	for pack: PackContext in _context.packs:
-		var new_pack: Pack = pack_object.instantiate()
+		var new_pack: Pack = PACK_OBJECT.instantiate()
 		pack_container.add_child(new_pack)
 		new_pack._from_context(pack)
 		new_pack.delete_request.connect(_on_pack_delete_request.bind(pack))
 		new_pack.toggled.connect(_on_pack_toggled.bind(pack))
 	
-	get_session_panel().apply_context(_context)
-	
-	done_button.disabled = not get_session_panel().is_valid()
+	var panel := get_session_panel()
+	if panel and panel.has_method("apply_context"):
+		panel.apply_context(_context)
+	var valid := false
+	if panel and panel.has_method("is_valid"):
+		valid = panel.is_valid()
+	done_button.disabled = not valid
 	if _context.get_image_count() <= 0:
 		done_button.disabled = true
 	
@@ -171,7 +202,12 @@ func _on_url_done_button_pressed() -> void:
 	url_input_spiner_container.show()
 	pinterest_section_chech_box.disabled = true
 	
-	var results: Array = await PinterestFetcher.fetch(url_input.text, pinterest_section_chech_box.button_pressed ,_on_url_fetcher_progress_callback)
+	var use_sections := pinterest_section_chech_box.button_pressed
+	var results: Array = await PinterestFetcher.fetch(
+		url_input.text,
+		use_sections,
+		_on_url_fetcher_progress_callback
+	)
 	
 	url_input_spiner_container.hide()
 	url_input_container.show()
@@ -197,7 +233,7 @@ func _on_pack_done_button_pressed() -> void:
 
 
 func _on_done_button_pressed() -> void:
-	get_session_panel().apply_context(_context)
+	get_session_panel().update_context(_context)
 	done.emit(_context)
 
 

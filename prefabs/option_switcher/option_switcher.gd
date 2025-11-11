@@ -3,6 +3,19 @@ class_name OptionSwitcher extends VBoxContainer
 
 signal value_changed(value: int)
 
+## If true, uses data-driven options array.
+## If false, falls back to legacy hardcoded properties.
+@export var use_dynamic_options: bool = false :
+	set(value):
+		use_dynamic_options = value
+		_update()
+
+## Array of OptionData for data-driven configuration (only used when use_dynamic_options = true)
+@export var options: Array[OptionData] = [] :
+	set(value):
+		options = value
+		_update()
+
 @export var use_custom_button: bool = false :
 	set(value):
 		use_custom_button = value
@@ -13,6 +26,8 @@ signal value_changed(value: int)
 		_update()
 @export var custom_suffix: String = ""
 @export var custom_step: int = 1
+
+## Legacy hardcoded option properties (deprecated).
 @export_subgroup("First option", "first_")
 @export var first_label: String = ""
 @export var first_value: int = 1
@@ -40,19 +55,37 @@ signal value_changed(value: int)
 @onready var custom_value_container_bg: Control = %CustomValueContainerBG
 @onready var label: Label = %Label
 @onready var custom_button: Button = %CustomButton
-@onready var _buttons: Array = [%FirstButton, %SecondButton, %ThirdButton, %FourthButton, %FifthButton, %SixthButton]
+@onready var _buttons: Array = [
+	%FirstButton, %SecondButton, %ThirdButton,
+	%FourthButton, %FifthButton, %SixthButton
+]
 
+## Computed labels for logical buttons
 var _button_labels: Array :
 	get():
+		if use_dynamic_options and not options.is_empty():
+			return options.map(func(opt: OptionData): return opt.label)
 		return [first_label, second_label, third_label, fourth_label, fifth_label, sixth_label]
+
+## Computed values for logical buttons
 var _button_values: Array :
 	get():
+		if use_dynamic_options and not options.is_empty():
+			return options.map(func(opt: OptionData): return opt.value)
 		return [first_value, second_value, third_value, fourth_value, fifth_value, sixth_value]
+
+## Enabled flags for logical buttons
 var _buttons_enabled: Array :
 	get():
+		if use_dynamic_options and not options.is_empty():
+			var enabled_array: Array = options.map(func(opt: OptionData): return opt.enabled)
+			# Pad with false if we have fewer than 6 options
+			while enabled_array.size() < 6:
+				enabled_array.append(false)
+			return enabled_array
 		return [true, true, true, true, fifth_enabled, sixth_enabled]
-var _last_toggled_button: Button
 
+var _last_toggled_button: Button
 var value: int : get = _get_value
 
 
@@ -61,8 +94,10 @@ func _ready() -> void:
 	custom_value.value = _get_value()
 	custom_value.get_line_edit().text_changed.connect(_on_custom_value_value_changed)
 	custom_value.get_line_edit().theme_type_variation = "LineEditSwitcher"
+	custom_button.pressed.connect(_update_buttons.bind(custom_button))
 	_update()
 	value_changed.emit(value)
+
 
 
 func _update() -> void:
@@ -72,17 +107,30 @@ func _update() -> void:
 	
 	if not is_node_ready():
 		return
-	
-	for idx: int in _buttons.size():
-		var button: Button = _buttons[idx]
-		var button_label: String = _button_labels[idx]
-		var enabled: bool = _buttons_enabled[idx]
+
+	# Determine how many logical options we have (dynamic or legacy set)
+	var logical_count: int = _button_labels.size()
+	var enabled_count: int = _buttons_enabled.size()
+
+	# Safety: Cap iteration to number of physical buttons
+	var physical_count: int = _buttons.size()
+	var loop_count: int = min(logical_count, physical_count)
+
+	for i in loop_count:
+		var button: Button = _buttons[i]
+		var button_label: String = _button_labels[i] if i < logical_count else ""
+		var enabled: bool = _buttons_enabled[i] if i < enabled_count else false
 
 		button.text = button_label
-		button.visible = enabled
-		button.pressed.connect(_update_buttons.bind(button))
+		button.visible = enabled and button_label != ""
+		if not button.pressed.is_connected(_update_buttons):
+			button.pressed.connect(_update_buttons.bind(button))
+
+	# Hide any extra physical buttons if we have fewer logical options
+	for j in range(loop_count, physical_count):
+		var extra_button: Button = _buttons[j]
+		extra_button.visible = false
 	
-	custom_button.pressed.connect(_update_buttons.bind(custom_button))
 	custom_button.visible = use_custom_button
 	custom_value.suffix = custom_suffix
 	label.text = title
@@ -94,11 +142,15 @@ func _update() -> void:
 func _get_value() -> int:
 	if custom_button.button_pressed:
 		return roundi(custom_value.value)
-	
-	for idx: int in _buttons.size():
-		var button: Button = _buttons[idx]
+
+	var logical_count: int = _button_values.size()
+	var physical_count: int = _buttons.size()
+	var loop_count: int = min(logical_count, physical_count)
+
+	for i in loop_count:
+		var button: Button = _buttons[i]
 		if button.button_pressed:
-			return _button_values[idx]
+			return _button_values[i]
 	
 	return -1
 
@@ -117,7 +169,10 @@ func _update_editor() -> void:
 
 
 func _update_buttons(toggled_button: Button) -> void:
+	# Only process visible logical buttons
 	for button: Button in _buttons:
+		if not button.visible:
+			continue
 		button.button_pressed = button == toggled_button
 		if button == toggled_button:
 			_last_toggled_button = button
@@ -144,3 +199,23 @@ func _on_minus_button_pressed() -> void:
 
 func _on_custom_value_value_changed(_value: float) -> void:
 	value_changed.emit(value)
+
+
+## Programmatically set options (useful for runtime configuration)
+func set_options_array(new_options: Array[OptionData]) -> void:
+	use_dynamic_options = true
+	options = new_options
+	if is_node_ready():
+		_update()
+
+
+## Helper to create options from simple arrays
+func set_options_from_arrays(labels: Array, values: Array, enabled: Array = []) -> void:
+	var new_options: Array[OptionData] = []
+	for i in labels.size():
+		var opt := OptionData.new()
+		opt.label = labels[i]
+		opt.value = values[i] if i < values.size() else i + 1
+		opt.enabled = enabled[i] if i < enabled.size() else true
+		new_options.append(opt)
+	set_options_array(new_options)

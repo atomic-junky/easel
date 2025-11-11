@@ -6,7 +6,7 @@ class_name PauseButton extends Button
 
 func set_time(new_time: float, max_time: float) -> void:
 	var time_left: int = round(new_time)
-	var minutes: int = floor(time_left/60)
+	var minutes: int = floor(time_left/60.0)
 	var seconds: int = time_left-(minutes*60)
 	text = "%s:%02d" % [minutes, seconds]
 	
