@@ -65,12 +65,9 @@ func _create_integer_field(field: FormFieldConfig) -> Control:
 		var options: Array = field.properties.get("options", [])
 		if not options.is_empty():
 			switcher.set_options_array(options)
-	else:
-		# Create range-based options if needed
-		var min_val: int = field.properties.get("min", 0)
-		var max_val: int = field.properties.get("max", 100)
-		var step: int = field.properties.get("step", 1)
-		# This would need more implementation for range-based switchers
+		else:
+			# Range-based switchers would need implementation
+			push_warning("Range-based switcher options not yet implemented")
 	
 	return switcher
 

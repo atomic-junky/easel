@@ -4,7 +4,7 @@ var _custom_sequence: Array[Dictionary] = []
 
 func setup() -> void:
 	# Default sequence with one pose
-	var default_sequence: Array[Dictionary] = [
+	_custom_sequence = [
 		{"type": "pose", "duration": 60, "amount": 1}
 	]
 	
@@ -18,34 +18,24 @@ func setup() -> void:
 			"reverse_property": "reverse"
 		}
 	)
-	
-	# Set initial sequence
-	_custom_sequence = default_sequence.duplicate(true)
+
+func _update_sequence_from_values() -> void:
+	"""Extract sequence from field values"""
+	var values := collect_field_values()
+	if values.has("class_data"):
+		var data = values["class_data"]
+		if typeof(data) == TYPE_ARRAY:
+			_custom_sequence.clear()
+			for item in data:
+				if typeof(item) == TYPE_DICTIONARY:
+					_custom_sequence.append(item.duplicate(true))
 
 func load_from_context(context: SessionContext) -> void:
 	super.load_from_context(context)
-	# After loading fields, get the sequence
-	var values := collect_field_values()
-	if values.has("class_data"):
-		var data = values["class_data"]
-		if typeof(data) == TYPE_ARRAY:
-			_custom_sequence.clear()
-			for item in data:
-				if typeof(item) == TYPE_DICTIONARY:
-					_custom_sequence.append(item.duplicate(true))
+	_update_sequence_from_values()
 
 func save_to_context(context: SessionContext) -> void:
-	# Get current sequence before saving
-	var values := collect_field_values()
-	if values.has("class_data"):
-		var data = values["class_data"]
-		if typeof(data) == TYPE_ARRAY:
-			_custom_sequence.clear()
-			for item in data:
-				if typeof(item) == TYPE_DICTIONARY:
-					_custom_sequence.append(item.duplicate(true))
-	
-	# Apply all fields generically
+	_update_sequence_from_values()
 	apply_fields_to_context(context)
 	
 	# Set custom-specific data

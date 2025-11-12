@@ -13,7 +13,6 @@ var _field_bucket: Dictionary = {
 
 var _field_container: VBoxContainer = null
 var _field_datas: Dictionary = {}
-var _fields: Array = []
 var _fields_ready: bool = false
 
 ## API: Call in _ready or setup to declare a field
@@ -25,10 +24,16 @@ func define_field(
 	suffix: String = "",
 	extra: Dictionary = {}
 ) -> void:
+	# Infer default value from options for switcher fields
+	var default_val = null
+	if field_type == "switcher" and options.size() > 0:
+		default_val = options[0]
+	
 	var fdata = {
 		"name": fname,
 		"type": field_type,
 		"options": options,
+		"default": default_val,
 		"title": title,
 		"suffix": suffix,
 		"extra": extra
@@ -66,15 +71,9 @@ func _build_field(fdata: Dictionary) -> void:
 		node = Label.new()
 		node.text = "Missing field type: " + fdata.get("type")
 	else:
-		var field: SessionField = script.new(fdata)
-		_fields.append(field)
-		node = field
+		node = script.new(fdata)
 	if node:
 		_field_container.add_child(node)
-
-
-func update_context(_context: SessionContext) -> void:
-	push_error("update_context is deprecated. Use save_to_context instead.")
 
 ## Load UI from context values
 func load_from_context(context: SessionContext) -> void:
@@ -107,18 +106,6 @@ func apply_context(context: SessionContext) -> void:
 	context.session_type = get_context_type()
 	# Use the generic helper to apply all fields
 	apply_fields_to_context(context)
-
-
-func have_property(object: Object, property_name: String) -> bool:
-	for property: Dictionary in object.get_property_list():
-		if property.get("name") == property_name:
-			return true
-	return false
-
-
-func bind_context(_context: SessionContext) -> void:
-	push_error("bind_context is deprecated. Use load_from_context instead.")
-
 
 func get_field_nodes() -> Array[SessionField]:
 	var arr: Array[SessionField] = []

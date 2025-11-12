@@ -15,7 +15,6 @@ var _suppress_switcher_signal: bool = false
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
 @onready var main_vbox: VBoxContainer = %MainVBox
-@onready var main_safe_margin: SafeMarginContainer = %MainSafeMargin
 @onready var info_label: Label = %InfoLabel
 @onready var session_type_switcher: OptionSwitcher = %SessionTypeSwitcher
 @onready var done_button: Button = %DoneButton
@@ -352,9 +351,6 @@ func _on_done_button_pressed() -> void:
 		panel.save_to_context(_context)
 	_context_by_type[_context.session_type] = _context
 	done.emit(_context)
-
-func _on_session_panel_fields_changed(_ctx: SessionContext) -> void:
-	push_error("_on_session_panel_fields_changed is deprecated")
 
 
 ## Map SessionContext.Type to panel index

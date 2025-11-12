@@ -1,9 +1,5 @@
 class_name SessionQueue extends Node
 
-signal _frame(delta: float)
-signal image_loaded(idx: int)
-signal cache_loaded
-
 const URL_REGEX: String = '^(ftp|http|https)://[^ "]+$'
 const PRELOAD_RANGE := 10
 const UNLOAD_RANGE := 20
@@ -14,7 +10,6 @@ var _cache: Dictionary = {} # { <idx>: { "texture": <Texture2D>, "size": <int> }
 
 var _url_regex: RegEx = RegEx.new()
 var _thread: Thread
-var _loading: bool = false
 var _load_queue: Array = []
 var _thread_loop: bool = true
 
@@ -100,11 +95,13 @@ func _enqueue_load(idx: int, callback: Callable) -> void:
 func _background_loader() -> void:
 	while _thread_loop:
 		for offset in range(-PRELOAD_RANGE, PRELOAD_RANGE + 1):
-			var idx = _queue_idx + offset
-			if not (idx >= 0 and idx < _queue.size()) or _queue[idx].get("type") != "pose":
+			var preload_idx = _queue_idx + offset
+			var in_range := preload_idx >= 0 and preload_idx < _queue.size()
+			var is_pose: bool = in_range and _queue[preload_idx].get("type") == "pose"
+			if not is_pose:
 				continue
-			if not _cache.has(idx) and not _is_in_load_queue(idx):
-				_load_queue.append({"index": idx})
+			if not _cache.has(preload_idx) and not _is_in_load_queue(preload_idx):
+				_load_queue.append({"index": preload_idx})
 
 		_clean_cache()
 		if _load_queue.is_empty():
@@ -127,13 +124,12 @@ func _background_loader() -> void:
 				"path": path
 			}
 		else:
-			_cache[idx] = { 
-				"status": "fail", 
-				"path": path, 
+			_cache[idx] = {
+				"status": "fail",
+				"path": path,
 				"message": "The image cannot be loaded."
 			}
 
-		call_deferred("emit_signal", "image_loaded", idx)
 		callback.call(_cache[idx])
 
 
