@@ -18,34 +18,52 @@ var packs: Array[PackContext] = []
 
 func get_images_path() -> Array:
 	var all_images: Array = get_images_path_raw()
-	var image_count = all_images.size()
-	
+	var image_count: int = all_images.size()
+
 	if shuffle:
 		all_images.shuffle()
 	elif reverse:
 		all_images.reverse()
-		
+
+	var result: Array = []
+
+	# For CLASS and CUSTOM sessions, follow the sequence exactly as defined
+	if session_type in [Type.CLASS, Type.CUSTOM]:
+		var seq: Array = _get_all_poses()
+		for idx in seq.size():
+			var item: Dictionary = seq[idx]
+			var pose_type: String = String(item.get("type", "pose"))
+			var pose_duration: int = int(item.get("duration", time_per_image))
+			var pose_data: Dictionary = {
+				"type": pose_type,
+				"duration": pose_duration
+			}
+			if pose_type == "pose":
+				# Guard against empty image pool
+				if all_images.is_empty():
+					break
+				var next_image: Dictionary = all_images.pop_front()
+				pose_data["path"] = next_image.get("path", "")
+				pose_data["name"] = next_image.get("name", "Unknown")
+			result.append(pose_data)
+		return result
+
+	# STANDARD and other types: use number_of_images and time_per_image
 	if number_of_images < 0:
 		number_of_images = image_count
-	
 	if number_of_images > image_count:
 		number_of_images = image_count
 
-	var result: Array = []
-	for idx in number_of_images:
-		var pose_type: String = get_pose_type(idx)
-		var pose_duration: int = get_pose_duration(idx)
-		var pose_data: Dictionary = {
-			"type": pose_type,
-			"duration": pose_duration
-		}
-		
-		if pose_type == "pose":
-			var next_image: Dictionary = all_images.pop_front()
-			pose_data["path"] = next_image["path"]
-			pose_data["name"] = next_image["name"]
-			
-		result.append(pose_data)
+	for _i in number_of_images:
+		if all_images.is_empty():
+			break
+		var next_image: Dictionary = all_images.pop_front()
+		result.append({
+			"type": "pose",
+			"duration": time_per_image,
+			"path": next_image.get("path", ""),
+			"name": next_image.get("name", "Unknown")
+		})
 	return result
 
 

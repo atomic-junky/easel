@@ -8,7 +8,7 @@ var _field_bucket: Dictionary = {
 	"toggle": preload("res://prefabs/fields/field_toggle.gd"),
 	"number": preload("res://prefabs/fields/field_int.gd"),
 	"image_order": preload("res://prefabs/fields/field_image_order.gd"),
-	"custom": PackedScene.new()
+	"custom_sequence": preload("res://prefabs/fields/field_custom_sequence.gd"),
 }
 
 var _binded_context: SessionContext = null
@@ -50,6 +50,7 @@ func _build_fields() -> void:
 		child.queue_free()
 		
 	_field_container = VBoxContainer.new()
+	_field_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_field_container.add_theme_constant_override("separation", 6)
 	add_child(_field_container)
 	

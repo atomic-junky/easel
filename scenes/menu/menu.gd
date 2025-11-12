@@ -87,9 +87,9 @@ func get_session_panel() -> SessionType:
 		0:
 			return standard
 		1:
-			return class_room
-		2:
 			return relaxed
+		2:
+			return class_room
 		3:
 			return custom
 		_:

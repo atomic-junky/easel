@@ -10586,8 +10586,8 @@ unique_name_in_owner = true
 layout_mode = 2
 title = "Session Type"
 first_label = "Standard"
-second_label = "Class Mode"
-third_label = "Relaxed"
+second_label = "Relaxed"
+third_label = "Class Mode"
 fourth_label = "Custom"
 
 [node name="Panel" type="PanelContainer" parent="MainSafeMargin/MainVBox/PropertyContainer"]
@@ -10606,19 +10606,19 @@ layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("5_i1lnr")
 
-[node name="Class" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_vertical = 3
-script = ExtResource("7_y4i35")
-
 [node name="Relaxed" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("7_5n576")
+
+[node name="Class" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("7_y4i35")
 
 [node name="Custom" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox"]
 unique_name_in_owner = true
