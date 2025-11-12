@@ -11,16 +11,15 @@ var _field_bucket: Dictionary = {
 	"custom_sequence": preload("res://prefabs/fields/field_custom_sequence.gd"),
 }
 
-var _binded_context: SessionContext = null
 var _field_container: VBoxContainer = null
 var _field_datas: Dictionary = {}
 var _fields: Array = []
+var _fields_ready: bool = false
 
 ## API: Call in _ready or setup to declare a field
 func define_field(
 	fname: String,
 	field_type: String,
-	default: Variant,
 	options: Array = [],
 	title: String = "",
 	suffix: String = "",
@@ -30,7 +29,6 @@ func define_field(
 		"name": fname,
 		"type": field_type,
 		"options": options,
-		"default": default,
 		"title": title,
 		"suffix": suffix,
 		"extra": extra
@@ -58,6 +56,8 @@ func _build_fields() -> void:
 		var fdata: Dictionary = _field_datas[fname]
 		_build_field(fdata)
 
+	_fields_ready = true
+
 ## Build a single field from definition
 func _build_field(fdata: Dictionary) -> void:
 	var script: GDScript = _field_bucket.get(fdata.get("type"))
@@ -67,31 +67,46 @@ func _build_field(fdata: Dictionary) -> void:
 		node.text = "Missing field type: " + fdata.get("type")
 	else:
 		var field: SessionField = script.new(fdata)
-		field.value_changed.connect(_on_field_value_changed)
 		_fields.append(field)
 		node = field
 	if node:
 		_field_container.add_child(node)
 
 
-func _on_field_value_changed(_new_value: Dictionary, _old_value: Dictionary) -> void:
-	update_context(_binded_context)
+func update_context(_context: SessionContext) -> void:
+	push_error("update_context is deprecated. Use save_to_context instead.")
 
-
-func update_context(context: SessionContext) -> void:
+## Load UI from context values
+func load_from_context(context: SessionContext) -> void:
 	if not context:
-		push_error("SessionContext is null")
 		return
 	
+	# Wait for all fields to be ready before loading context
+	if not _fields_ready:
+		await fields_built
+	
+	# Ensure all field nodes are fully initialized
+	for field: SessionField in get_field_nodes():
+		if not field.is_node_ready():
+			await field.ready
+	
+	for field: SessionField in get_field_nodes():
+		if field.has_method("set_from_context"):
+			field.set_from_context(context)
+
+## Save UI values to context
+func save_to_context(context: SessionContext) -> void:
+	if not context:
+		return
+	apply_context(context)
+
+## Base generic application; subclasses can override for specialized logic
+func apply_context(context: SessionContext) -> void:
+	if not context:
+		return
 	context.session_type = get_context_type()
-	for field: SessionField in _fields:
-		var fvalues: Dictionary = field.get_value_dict()
-		for fname: String in fvalues.keys():
-			var fvalue: Variant = fvalues[fname]
-			if not have_property(context, fname):
-				push_error("SessionContext do not have property %s" % fname)
-				continue
-			context.set(fname, fvalue)
+	# Use the generic helper to apply all fields
+	apply_fields_to_context(context)
 
 
 func have_property(object: Object, property_name: String) -> bool:
@@ -101,8 +116,8 @@ func have_property(object: Object, property_name: String) -> bool:
 	return false
 
 
-func bind_context(context: SessionContext) -> void:
-	_binded_context = context
+func bind_context(_context: SessionContext) -> void:
+	push_error("bind_context is deprecated. Use load_from_context instead.")
 
 
 func get_field_nodes() -> Array[SessionField]:
@@ -145,3 +160,6 @@ func is_valid() -> bool:
 
 @abstract
 func get_context_type() -> SessionContext.Type
+
+@abstract
+func get_mode_name() -> String

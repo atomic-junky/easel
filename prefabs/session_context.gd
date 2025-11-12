@@ -8,11 +8,12 @@ enum Type {
 }
 
 var session_type: Type = Type.STANDARD
-var number_of_images: int = -1
-var time_per_image: int = 60 # in seconds
+var number_of_images: int = -1  # -1 means unset, will use field default
+var time_per_image: int = -1  # -1 means unset, will use field default
+var duration: int = -1  # -1 means unset, will use field default (for CLASS mode)
 var class_data: Array = []
-var shuffle: bool = true
-var reverse: bool = false
+var shuffle: bool = true  # Default value for image ordering
+var reverse: bool = false  # Default value for image ordering
 var packs: Array[PackContext] = []
 
 
@@ -49,12 +50,14 @@ func get_images_path() -> Array:
 		return result
 
 	# STANDARD and other types: use number_of_images and time_per_image
-	if number_of_images < 0:
-		number_of_images = image_count
-	if number_of_images > image_count:
-		number_of_images = image_count
+	# Use a local variable to avoid modifying the context's number_of_images
+	var actual_count: int = number_of_images
+	if actual_count < 0:
+		actual_count = image_count
+	if actual_count > image_count:
+		actual_count = image_count
 
-	for _i in number_of_images:
+	for _i in actual_count:
 		if all_images.is_empty():
 			break
 		var next_image: Dictionary = all_images.pop_front()

@@ -2,8 +2,6 @@
 
 [ext_resource type="Script" uid="uid://2pctq4yw81j8" path="res://prefabs/check_button/check_button.gd" id="1_6x71x"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6x71x"]
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wfcqx"]
 content_margin_left = 4.0
 content_margin_top = 4.0
@@ -14,6 +12,8 @@ corner_radius_top_left = 15
 corner_radius_top_right = 15
 corner_radius_bottom_right = 15
 corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6x71x"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6x71x"]
 bg_color = Color(1, 1, 1, 1)
@@ -159,17 +159,17 @@ _data = {
 [node name="CheckButton" type="Button"]
 self_modulate = Color(0.192157, 0.192157, 0.192157, 1)
 custom_minimum_size = Vector2(70, 25)
-theme_override_styles/focus = SubResource("StyleBoxEmpty_6x71x")
-theme_override_styles/disabled = SubResource("StyleBoxFlat_wfcqx")
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_wfcqx")
-theme_override_styles/hover = SubResource("StyleBoxFlat_wfcqx")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_wfcqx")
 theme_override_styles/normal = SubResource("StyleBoxFlat_wfcqx")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_wfcqx")
+theme_override_styles/hover = SubResource("StyleBoxFlat_wfcqx")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_wfcqx")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_wfcqx")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6x71x")
 toggle_mode = true
 script = ExtResource("1_6x71x")
 
 [node name="Panel" type="Panel" parent="."]
-layout_mode = 2
+layout_mode = 0
 offset_left = 4.0
 offset_top = 4.0
 offset_right = 21.0

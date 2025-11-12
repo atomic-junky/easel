@@ -87,6 +87,7 @@ var _buttons_enabled: Array :
 
 var _last_toggled_button: Button
 var value: int : get = _get_value
+var _programmatic_change: bool = false # Flag to prevent animation during programmatic changes
 
 
 func _ready() -> void:
@@ -168,18 +169,28 @@ func _update_editor() -> void:
 	%Label.text = title
 
 
-func _update_buttons(toggled_button: Button) -> void:
+func _update_buttons(toggled_button: Button, animate: bool = true) -> void:
+	# If called programmatically (not from user click), disable animation
+	var should_animate := animate and not _programmatic_change
+	
 	# Only process visible logical buttons
 	for button: Button in _buttons:
 		if not button.visible:
 			continue
-		button.button_pressed = button == toggled_button
+		var should_be_pressed := button == toggled_button
+		if should_animate:
+			button.button_pressed = should_be_pressed
+		else:
+			button.set_pressed_no_signal(should_be_pressed)
 		if button == toggled_button:
 			_last_toggled_button = button
 	
 	if custom_button == toggled_button:
 		if not custom_button.button_pressed and _last_toggled_button:
-			_last_toggled_button.button_pressed = true
+			if should_animate:
+				_last_toggled_button.button_pressed = true
+			else:
+				_last_toggled_button.set_pressed_no_signal(true)
 	else:
 		custom_value.value = _get_value()
 		
@@ -201,7 +212,7 @@ func _on_custom_value_value_changed(_value: float) -> void:
 	value_changed.emit(value)
 
 
-## Programmatically set options (useful for runtime configuration)
+## Programmatically set options
 func set_options_array(new_options: Array[OptionData]) -> void:
 	use_dynamic_options = true
 	options = new_options

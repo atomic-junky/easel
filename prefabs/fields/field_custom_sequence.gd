@@ -57,7 +57,6 @@ func _on_add_pose() -> void:
 		"amount": 1
 	})
 	_rebuild_list()
-	_field_update.emit()
 
 func _on_add_break() -> void:
 	_sequence.append({
@@ -66,7 +65,6 @@ func _on_add_break() -> void:
 		"amount": 1
 	})
 	_rebuild_list()
-	_field_update.emit()
 
 func _rebuild_list() -> void:
 	# Clear existing items
@@ -109,7 +107,6 @@ func _create_list_item(idx: int) -> Control:
 		amount_spin.custom_minimum_size = Vector2(60, 0)
 		amount_spin.value_changed.connect(func(val: float):
 			_sequence[idx]["amount"] = int(val)
-			_field_update.emit()
 		)
 		hbox.add_child(amount_spin)
 	
@@ -127,7 +124,6 @@ func _create_list_item(idx: int) -> Control:
 	duration_spin.custom_minimum_size = Vector2(60, 0)
 	duration_spin.value_changed.connect(func(val: float):
 		_sequence[idx]["duration"] = int(val)
-		_field_update.emit()
 	)
 	hbox.add_child(duration_spin)
 	
@@ -145,15 +141,24 @@ func _on_delete_item(idx: int) -> void:
 	if idx >= 0 and idx < _sequence.size():
 		_sequence.remove_at(idx)
 		_rebuild_list()
-		_field_update.emit()
 
 func get_value_dict() -> Dictionary:
 	return {field_name: _sequence.duplicate(true)}
 
 func set_from_context(context: Object) -> void:
-	if context and context.has_property(field_name):
+	if context and _has_prop(context, field_name):
 		var val = context.get(field_name)
 		if typeof(val) == TYPE_ARRAY:
-			_sequence = val.duplicate(true)
+			# Ensure proper type conversion for typed array
+			_sequence.clear()
+			for item in val:
+				if typeof(item) == TYPE_DICTIONARY:
+					_sequence.append(item.duplicate(true))
 			if is_node_ready():
 				_rebuild_list()
+
+func _has_prop(object: Object, property_name: String) -> bool:
+	for p in object.get_property_list():
+		if p.get("name") == property_name:
+			return true
+	return false
