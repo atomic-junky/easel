@@ -12,6 +12,7 @@ The GestureApp menu has been enhanced with a step-based tabbed interface to impr
 - `SessionContext` has been renamed to `SessionResource` and is now a proper Godot Resource
 - Sessions can be saved as `.gsession` files and loaded later
 - Session history is automatically tracked (last 10 sessions)
+- **File associations**: `.gsession` files are now associated with GestureApp on Windows, macOS, and Linux
 
 **Usage:**
 ```gdscript
@@ -22,6 +23,11 @@ session.save_to_file("user://my_session.gsession")
 # Load a session
 var loaded := SessionResource.load_from_file("user://my_session.gsession")
 ```
+
+**File Associations:**
+- **Windows**: Installer automatically registers `.gsession` files with GestureApp icon
+- **macOS**: `.gsession` files are associated via UTI declarations in the app bundle
+- **Linux**: See `installer/LINUX_INSTALL.md` for manual setup instructions
 
 ### 2. Tabbed Navigation
 

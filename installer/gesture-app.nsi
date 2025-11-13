@@ -156,6 +156,19 @@
       WriteRegStr HKCR "${APPNAME} project\shell\open\command" "" '$INSTDIR\${APPNAME}.exe "%1"'
       WriteRegStr HKCR "${APPNAME} project\shell\edit" "" "Edit project in ${APPNAME}"
       WriteRegStr HKCR "${APPNAME} project\shell\edit\command" "" '$INSTDIR\${APPNAME}.exe "%1"'
+
+    ; Associate .gsession files with Gesture App
+      WriteRegStr HKCR ".gsession" "" "${APPNAME} session"
+      WriteRegStr HKCR ".gsession" "ContentType" "application/gesture-app-session"
+      WriteRegStr HKCR ".gsession" "PerceivedType" "document"
+
+      WriteRegStr HKCR "${APPNAME} session" "" "${APPNAME} session file"
+      WriteRegStr HKCR "${APPNAME} session\shell" "" "open"
+      WriteRegStr HKCR "${APPNAME} session\DefaultIcon" "" "$INSTDIR\gc.ico"
+
+      WriteRegStr HKCR "${APPNAME} session\shell\open\command" "" '$INSTDIR\${APPNAME}.exe "%1"'
+      WriteRegStr HKCR "${APPNAME} session\shell\edit" "" "Open session in ${APPNAME}"
+      WriteRegStr HKCR "${APPNAME} session\shell\edit\command" "" '$INSTDIR\${APPNAME}.exe "%1"'
   SectionEnd
 
 
@@ -217,6 +230,10 @@
     ; Delete the .pxo file association
     DeleteRegKey HKCR "${APPNAME} project"
     DeleteRegKey HKCR ".pxo"
+
+    ; Delete the .gsession file association
+    DeleteRegKey HKCR "${APPNAME} session"
+    DeleteRegKey HKCR ".gsession"
 
   SectionEnd
 
