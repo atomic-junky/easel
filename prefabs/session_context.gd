@@ -14,7 +14,7 @@ var duration: int = -1  # -1 means unset, will use field default (for CLASS mode
 var class_data: Array = []
 var shuffle: bool = true  # Default value for image ordering
 var reverse: bool = false  # Default value for image ordering
-var packs: Array[PackContext] = []
+var packs: Array[PackResource] = []
 
 
 func get_images_path() -> Array:
@@ -72,7 +72,7 @@ func get_images_path() -> Array:
 
 func get_images_path_raw() -> Array:
 	var all_paths: Array = []
-	for pack: PackContext in get_packs():
+	for pack: PackResource in get_packs():
 		all_paths.append_array(pack.images)
 	
 	return all_paths
@@ -80,14 +80,14 @@ func get_images_path_raw() -> Array:
 
 func get_image_count(only_enabled: bool = true) -> int:
 	var count: int = 0
-	for pack: PackContext in packs:
+	for pack: PackResource in packs:
 		if pack.enabled or not only_enabled:
 			count += pack.image_count
 	return count
 
 
-func get_packs() -> Array[PackContext]:
-	return packs.filter(func(p: PackContext): return p.enabled)
+func get_packs() -> Array[PackResource]:
+	return packs.filter(func(p: PackResource): return p.enabled)
 
 
 func get_pose_type(idx: int) -> String:

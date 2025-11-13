@@ -32,6 +32,9 @@ var _suppress_switcher_signal: bool = false
 @onready var url_input: LineEdit = %UrlInput
 @onready var url_input_spiner_container: Control = %UrlInputSpinerContainer
 @onready var pinterest_section_chech_box: CheckBox = %PinterestSectionCheckBox
+@onready var history_container: Control = %HistoryContainer
+@onready var history_scroll: ScrollContainer = %HistoryScroll
+@onready var history_pack_list: VBoxContainer = %HistoryPackList
 
 ## end variables
 
@@ -46,12 +49,26 @@ func _ready() -> void:
 	_initialize_session_panels()
 	visibility_changed.connect(_update)
 	_on_resized()
+	
+	# Connect dimer click to close overlays
+	dimer.gui_input.connect(_on_dimer_input)
 
 	if _session_panels.is_empty():
 		_update()
 		return
 
 	_set_switcher_index(0)
+
+
+func _on_dimer_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			# Close any open overlay
+			if url_container.visible:
+				dimer.hide()
+				url_container.hide()
+			elif history_container.visible:
+				_on_history_cancel_pressed()
 
 
 func _initialize_session_panels() -> void:
@@ -211,7 +228,7 @@ func _update() -> void:
 		for pack in pack_container.get_children():
 			pack.queue_free()
 
-	for pack: PackContext in _context.packs:
+	for pack: PackResource in _context.packs:
 		var new_pack: Pack = PACK_OBJECT.instantiate()
 		if pack_container:
 			pack_container.add_child(new_pack)
@@ -246,21 +263,25 @@ func _update_labels() -> void:
 	info_label.text = info_text % [image_count, pack_count]
 
 
-func _add_packs(packs: Array[PackContext]) -> void:
-	for new_pack: PackContext in packs:
+func _add_packs(packs: Array[PackResource]) -> void:
+	for new_pack: PackResource in packs:
 		if new_pack.image_count <= 0:
 			packs.erase(new_pack)
 
 	_context.packs.append_array(packs)
+	
+	# Add to history
+	PackHistory.add_packs(packs)
+	
 	_update()
 
 
-func _on_pack_delete_request(pack: PackContext) -> void:
+func _on_pack_delete_request(pack: PackResource) -> void:
 	_context.packs.erase(pack)
 	_update()
 
 
-func _on_pack_toggled(_pack: PackContext) -> void:
+func _on_pack_toggled(_pack: PackResource) -> void:
 	_update_labels()
 
 
@@ -293,15 +314,93 @@ func _on_library_button_pressed() -> void:
 
 
 func _on_history_button_pressed() -> void:
-	pass # Replace with function body.
+	dimer.show()
+	history_container.show()
+	_populate_history_list()
+
+
+func _populate_history_list() -> void:
+	# Clear existing items
+	for child in history_pack_list.get_children():
+		child.queue_free()
+	
+	var history: Array[PackResource] = PackHistory.get_history()
+	
+	if history.is_empty():
+		var empty_label := Label.new()
+		empty_label.text = "No packs in history"
+		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		history_pack_list.add_child(empty_label)
+		return
+	
+	# Create Pack instances for each pack in history
+	for pack in history:
+		var pack_node: Pack = PACK_OBJECT.instantiate()
+		history_pack_list.add_child(pack_node)
+		# Show refresh button, hide delete button in history view
+		pack_node._from_context(pack, false, true)
+		# Connect refresh signal
+		pack_node.refresh_request.connect(_on_refresh_pack_pressed.bind(pack))
+
+
+func _on_refresh_pack_pressed(pack: PackResource) -> void:
+	match pack.source:
+		Constants.Source.FOLDER:
+			if DirAccess.dir_exists_absolute(pack.path):
+				pack.images = PackResource._recursive_load_dir(pack.path)
+				_populate_history_list()
+		Constants.Source.IMAGES:
+			# For image packs, filter out deleted files
+			var valid_images: Array[Dictionary] = []
+			for img in pack.images:
+				if FileAccess.file_exists(img.get("path", "")):
+					valid_images.append(img)
+			pack.images = valid_images
+			_populate_history_list()
+		Constants.Source.PINTEREST:
+			# Pinterest packs can't be refreshed from local files
+			pass
+
+
+func _on_history_add_selected_pressed() -> void:
+	var selected_packs: Array[PackResource] = []
+	
+	for pack_node in history_pack_list.get_children():
+		if pack_node is Pack and pack_node.check_box.button_pressed:
+			var index := pack_node.get_index()
+			var history := PackHistory.get_history()
+			if index < history.size():
+				selected_packs.append(history[index])
+	
+	if not selected_packs.is_empty():
+		_add_packs(selected_packs)
+	
+	_on_history_cancel_pressed()
+
+
+func _on_history_cancel_pressed() -> void:
+	dimer.hide()
+	history_container.hide()
+
+
+func _on_history_select_all_pressed() -> void:
+	for pack_node in history_pack_list.get_children():
+		if pack_node is Pack:
+			pack_node.check_box.button_pressed = true
+
+
+func _on_history_select_none_pressed() -> void:
+	for pack_node in history_pack_list.get_children():
+		if pack_node is Pack:
+			pack_node.check_box.button_pressed = false
 
 
 func _on_folder_dialog_dir_selected(dir: String) -> void:
-	_add_packs(PackContext.create_from_path(dir))
+	_add_packs(PackResource.create_from_path(dir))
 
 
 func _on_image_dialog_files_selected(paths: PackedStringArray) -> void:
-	_add_packs(PackContext.create_from_paths(paths))
+	_add_packs(PackResource.create_from_paths(paths))
 
 
 func _on_clear_button_pressed() -> void:
@@ -331,8 +430,9 @@ func _on_url_done_button_pressed() -> void:
 		if pack.is_empty() or pack.get("status") != "success":
 			printerr(pack.get("data", "Fetching failure (no data)"))
 			return
-
-		_context.packs.append(PackContext.create_from_urls(pack.get("data", {})))
+		
+		var pack_resource: PackResource = PackResource.create_from_urls(pack.get("data", {}))
+		_add_packs([pack_resource])
 	_update()
 
 

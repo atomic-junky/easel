@@ -10737,7 +10737,6 @@ text = "Library"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
-disabled = true
 text = "History"
 
 [node name="VBox" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox"]
@@ -10857,6 +10856,77 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Include board sections"
 
+[node name="HistoryContainer" type="MarginContainer" parent="PackSelectorContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -250.0
+offset_right = 300.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+script = ExtResource("1_nvwcl")
+metadata/_custom_type_script = "uid://b08vxne14bjfa"
+
+[node name="PanelContainer" type="PanelContainer" parent="PackSelectorContainer/HistoryContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_0m5w4")
+
+[node name="VBox" type="VBoxContainer" parent="PackSelectorContainer/HistoryContainer/PanelContainer"]
+custom_minimum_size = Vector2(550, 400)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PackSelectorContainer/HistoryContainer/PanelContainer/VBox"]
+layout_mode = 2
+text = "Select Packs from History"
+horizontal_alignment = 1
+
+[node name="HistoryScroll" type="ScrollContainer" parent="PackSelectorContainer/HistoryContainer/PanelContainer/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HistoryPackList" type="VBoxContainer" parent="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/HistoryScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ButtonRow" type="HBoxContainer" parent="PackSelectorContainer/HistoryContainer/PanelContainer/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="SelectAllButton" type="Button" parent="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ButtonRow"]
+layout_mode = 2
+text = "Select All"
+
+[node name="SelectNoneButton" type="Button" parent="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ButtonRow"]
+layout_mode = 2
+text = "Select None"
+
+[node name="ConfirmRow" type="HBoxContainer" parent="PackSelectorContainer/HistoryContainer/PanelContainer/VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="AddSelectedButton" type="Button" parent="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ConfirmRow"]
+layout_mode = 2
+text = "Add Selected"
+
+[node name="CancelButton" type="Button" parent="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ConfirmRow"]
+layout_mode = 2
+text = "Cancel"
+
 [node name="FolderDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
 auto_translate_mode = 1
@@ -10892,5 +10962,9 @@ use_native_dialog = true
 [connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/HBoxContainer/ClearButton" to="." method="_on_clear_button_pressed"]
 [connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/HBoxContainer/PackDoneButton" to="." method="_on_pack_done_button_pressed"]
 [connection signal="pressed" from="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox/UrlInputContainer/UrlDoneButton" to="." method="_on_url_done_button_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ButtonRow/SelectAllButton" to="." method="_on_history_select_all_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ButtonRow/SelectNoneButton" to="." method="_on_history_select_none_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ConfirmRow/AddSelectedButton" to="." method="_on_history_add_selected_pressed"]
+[connection signal="pressed" from="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ConfirmRow/CancelButton" to="." method="_on_history_cancel_pressed"]
 [connection signal="dir_selected" from="FolderDialog" to="." method="_on_folder_dialog_dir_selected"]
 [connection signal="files_selected" from="ImageDialog" to="." method="_on_image_dialog_files_selected"]

@@ -26,6 +26,7 @@ App="*res://autoloads/app.gd"
 SceneLoader="*res://autoloads/scene_loader/scene_loader.tscn"
 PinterestFetcher="*res://autoloads/plugins/pinterest_fetcher.gd"
 UrlImageLoader="*res://autoloads/plugins/url_image_loader.gd"
+PackHistory="*res://autoloads/pack_history.gd"
 
 [display]
 

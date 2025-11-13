@@ -1,31 +1,31 @@
-class_name PackContext extends RefCounted
+class_name PackResource extends Resource
 
 const SUPPORTED_EXTENSIONS := ["png", "jpeg", "jpg", "tiff", "PNG", "JPG", "JPEG"]
 
-var enabled: bool = true
-var source: Constants.Source = Constants.Source.FOLDER
-var pack_name: String = "Invalid"
-var path: String = ""
-var images: Array = []
-var image_count: int : 
+@export var enabled: bool = true
+@export var source: Constants.Source = Constants.Source.FOLDER
+@export var pack_name: String = "Invalid"
+@export var path: String = ""
+@export var images: Array[Dictionary] = []
+var image_count: int :
 	get():
 		return images.size()
 
 
-static func create_from_path(pack_path: String) -> Array[PackContext]:
-	var pack := PackContext.new()
+static func create_from_path(pack_path: String) -> Array[PackResource]:
+	var pack := PackResource.new()
 	var dir_name: String = pack_path.replace("\\", "/").split("/")[-1]
 	
 	pack.path = pack_path
 	pack.enabled = true
 	pack.source = Constants.Source.FOLDER
 	pack.pack_name = dir_name
-	pack.images = PackContext._recursive_load_dir(pack_path)
+	pack.images = PackResource._recursive_load_dir(pack_path)
 	return [pack]
 
 
-static func create_from_paths(paths: Array) -> Array[PackContext]:
-	var pack := PackContext.new()
+static func create_from_paths(paths: Array) -> Array[PackResource]:
+	var pack := PackResource.new()
 	
 	for pack_path: String in paths:
 		if pack_path.get_extension() not in SUPPORTED_EXTENSIONS:
@@ -40,19 +40,26 @@ static func create_from_paths(paths: Array) -> Array[PackContext]:
 	return [pack]
 
 
-static func create_from_urls(data: Dictionary) -> PackContext:
+static func create_from_urls(data: Dictionary) -> PackResource:
 	var pack_images: Array = data.get("images", [])
 	var board_name: String = data.get("board_name", "Unknown")
 	
-	var pack: PackContext = PackContext.new()
+	var pack: PackResource = PackResource.new()
 	pack.source = Constants.Source.PINTEREST
 	pack.pack_name = board_name
-	pack.images = pack_images
+	
+	# Convert Array to Array[Dictionary]
+	var typed_images: Array[Dictionary] = []
+	for img in pack_images:
+		if img is Dictionary:
+			typed_images.append(img)
+	pack.images = typed_images
+	
 	return pack
 
 
-static func _recursive_load_dir(base_dir_path: String, max_depth: int = 32) -> Array:
-	var result: Array = []
+static func _recursive_load_dir(base_dir_path: String, max_depth: int = 32) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
 	
 	if max_depth <= 0:
 		push_warning("Max depth reach!")
@@ -65,6 +72,6 @@ static func _recursive_load_dir(base_dir_path: String, max_depth: int = 32) -> A
 	
 	for dir_name: String in DirAccess.get_directories_at(base_dir_path):
 		var dir_path: String = base_dir_path.path_join(dir_name)
-		result.append_array(PackContext._recursive_load_dir(dir_path, max_depth-1))
+		result.append_array(PackResource._recursive_load_dir(dir_path, max_depth-1))
 	
 	return result
