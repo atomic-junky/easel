@@ -12,6 +12,9 @@ var _context_by_type: Dictionary = {}
 var _current_panel: SessionType = null
 var _suppress_switcher_signal: bool = false
 var _pinterest_fetcher: PinterestFetcher
+var _use_tabs: bool = true  # Enable tab-based interface
+var _tab_container: TabContainer = null
+var _original_property_container: Control = null
 
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
@@ -51,6 +54,11 @@ func _ready() -> void:
 
 	_initialize_session_panels()
 	_create_session_dialogs()
+	
+	# Restructure UI into tabs if enabled
+	if _use_tabs:
+		_create_tabbed_interface()
+	
 	visibility_changed.connect(_update)
 	_on_resized()
 	
@@ -117,6 +125,282 @@ func _create_session_dialogs() -> void:
 	save_session_dialog.add_filter("*.gsession", "GestureApp Session")
 	save_session_dialog.file_selected.connect(_on_save_session_file_selected)
 	add_child(save_session_dialog)
+
+
+func _create_tabbed_interface() -> void:
+	# Find the PropertyContainer (the main content area)
+	var property_container := main_vbox.get_node_or_null("PropertyContainer")
+	if not property_container:
+		printerr("Could not find PropertyContainer for tabbed interface")
+		return
+	
+	_original_property_container = property_container
+	var parent := property_container.get_parent()
+	var index := property_container.get_index()
+	
+	# Create TabContainer
+	_tab_container = TabContainer.new()
+	_tab_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	
+	# Remove PropertyContainer from parent
+	parent.remove_child(property_container)
+	
+	# Add TabContainer in its place
+	parent.add_child(_tab_container)
+	parent.move_child(_tab_container, index)
+	
+	# Create Tab 1: Session Management
+	_create_session_tab()
+	
+	# Create Tab 2: Pack Selection (contains the pack selector UI)
+	_create_pack_selection_tab(property_container)
+	
+	# Create Tab 3: Mode Selection (contains session type switcher)
+	_create_mode_selection_tab(property_container)
+
+
+func _create_session_tab() -> void:
+	var tab := VBoxContainer.new()
+	tab.name = "Session"
+	tab.add_theme_constant_override("separation", 15)
+	_tab_container.add_child(tab)
+	
+	# Title
+	var title_label := Label.new()
+	title_label.text = "Session Management"
+	title_label.add_theme_font_size_override("font_size", 20)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tab.add_child(title_label)
+	
+	# Buttons HBox
+	var button_hbox := HBoxContainer.new()
+	button_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	button_hbox.add_theme_constant_override("separation", 10)
+	tab.add_child(button_hbox)
+	
+	# New Session Button
+	var new_session_btn := Button.new()
+	new_session_btn.text = "New Session"
+	new_session_btn.pressed.connect(_on_new_session_pressed)
+	button_hbox.add_child(new_session_btn)
+	
+	# Import Session Button
+	var import_session_btn := Button.new()
+	import_session_btn.text = "Import Session"
+	import_session_btn.pressed.connect(open_import_session_dialog)
+	button_hbox.add_child(import_session_btn)
+	
+	# Session History Label
+	var history_label := Label.new()
+	history_label.text = "Previous Sessions"
+	history_label.add_theme_font_size_override("font_size", 16)
+	tab.add_child(history_label)
+	
+	# Scroll container for session history
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tab.add_child(scroll)
+	
+	var history_list := VBoxContainer.new()
+	history_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	history_list.add_theme_constant_override("separation", 5)
+	scroll.add_child(history_list)
+	
+	# Populate session history
+	_populate_session_history_in_tab(history_list)
+	
+	# Next Button
+	var next_btn := Button.new()
+	next_btn.text = "Next: Select Packs →"
+	next_btn.pressed.connect(_on_session_tab_next_pressed)
+	tab.add_child(next_btn)
+
+
+func _create_pack_selection_tab(original_container: Control) -> void:
+	var tab := VBoxContainer.new()
+	tab.name = "Packs"
+	tab.add_theme_constant_override("separation", 15)
+	_tab_container.add_child(tab)
+	
+	# Title
+	var title_label := Label.new()
+	title_label.text = "Select Image Packs"
+	title_label.add_theme_font_size_override("font_size", 20)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tab.add_child(title_label)
+	
+	# Move the pack selection UI (VBox with SelectPackButton) here
+	var vbox := original_container.get_node_or_null("VBox")
+	if vbox:
+		original_container.remove_child(vbox)
+		tab.add_child(vbox)
+	
+	# Add a section for pack history
+	var history_label := Label.new()
+	history_label.text = "Recent Packs (click to add)"
+	tab.add_child(history_label)
+	
+	var pack_history_scroll := ScrollContainer.new()
+	pack_history_scroll.custom_minimum_size = Vector2(0, 150)
+	tab.add_child(pack_history_scroll)
+	
+	var pack_history_list := VBoxContainer.new()
+	pack_history_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	pack_history_list.add_theme_constant_override("separation", 5)
+	pack_history_scroll.add_child(pack_history_list)
+	
+	# Populate pack history
+	_populate_pack_history_in_tab(pack_history_list)
+	
+	# Navigation buttons
+	var nav_hbox := HBoxContainer.new()
+	nav_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	nav_hbox.add_theme_constant_override("separation", 10)
+	tab.add_child(nav_hbox)
+	
+	var prev_btn := Button.new()
+	prev_btn.text = "← Previous"
+	prev_btn.pressed.connect(_on_pack_tab_prev_pressed)
+	nav_hbox.add_child(prev_btn)
+	
+	var next_btn := Button.new()
+	next_btn.text = "Next: Select Mode →"
+	next_btn.pressed.connect(_on_pack_tab_next_pressed)
+	nav_hbox.add_child(next_btn)
+
+
+func _create_mode_selection_tab(original_container: Control) -> void:
+	var tab := VBoxContainer.new()
+	tab.name = "Mode"
+	tab.add_theme_constant_override("separation", 15)
+	_tab_container.add_child(tab)
+	
+	# Title
+	var title_label := Label.new()
+	title_label.text = "Select Session Mode"
+	title_label.add_theme_font_size_override("font_size", 20)
+	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	tab.add_child(title_label)
+	
+	# Move SessionTypeSwitcher and Panel to this tab
+	var switcher := original_container.get_node_or_null("SessionTypeSwitcher")
+	var panel := original_container.get_node_or_null("Panel")
+	
+	if switcher:
+		original_container.remove_child(switcher)
+		tab.add_child(switcher)
+	
+	if panel:
+		original_container.remove_child(panel)
+		tab.add_child(panel)
+	
+	# Add Save Session button
+	var save_btn := Button.new()
+	save_btn.text = "💾 Save Session"
+	save_btn.pressed.connect(open_save_session_dialog)
+	tab.add_child(save_btn)
+	
+	# Navigation buttons
+	var nav_hbox := HBoxContainer.new()
+	nav_hbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	nav_hbox.add_theme_constant_override("separation", 10)
+	tab.add_child(nav_hbox)
+	
+	var prev_btn := Button.new()
+	prev_btn.text = "← Previous"
+	prev_btn.pressed.connect(_on_mode_tab_prev_pressed)
+	nav_hbox.add_child(prev_btn)
+
+
+func _populate_session_history_in_tab(container: VBoxContainer) -> void:
+	# Clear existing items
+	for child in container.get_children():
+		child.queue_free()
+	
+	var history := SessionHistory.get_history()
+	
+	if history.is_empty():
+		var empty_label := Label.new()
+		empty_label.text = "No previous sessions"
+		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		container.add_child(empty_label)
+		return
+	
+	# Create buttons for each session in history
+	for entry in history:
+		var btn := Button.new()
+		btn.text = entry.get("name", "Unknown")
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.pressed.connect(_on_session_history_item_pressed.bind(entry.get("path", "")))
+		container.add_child(btn)
+
+
+func _populate_pack_history_in_tab(container: VBoxContainer) -> void:
+	# Clear existing items
+	for child in container.get_children():
+		child.queue_free()
+	
+	var history: Array[PackResource] = PackHistory.get_history()
+	
+	if history.is_empty():
+		var empty_label := Label.new()
+		empty_label.text = "No packs in history"
+		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		container.add_child(empty_label)
+		return
+	
+	# Create buttons for recent packs (limit to 5)
+	var max_display := 5
+	for i in mini(history.size(), max_display):
+		var pack := history[i]
+		var btn := Button.new()
+		btn.text = "%s (%d images)" % [pack.pack_name, pack.image_count]
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.pressed.connect(_on_pack_history_add_pressed.bind(pack))
+		container.add_child(btn)
+
+
+# Tab navigation handlers
+func _on_session_tab_next_pressed() -> void:
+	if _tab_container:
+		_tab_container.current_tab = 1  # Go to Packs tab
+
+
+func _on_pack_tab_prev_pressed() -> void:
+	if _tab_container:
+		_tab_container.current_tab = 0  # Go to Session tab
+
+
+func _on_pack_tab_next_pressed() -> void:
+	if _tab_container:
+		_tab_container.current_tab = 2  # Go to Mode tab
+
+
+func _on_mode_tab_prev_pressed() -> void:
+	if _tab_container:
+		_tab_container.current_tab = 1  # Go to Packs tab
+
+
+func _on_new_session_pressed() -> void:
+	# Reset to a new session
+	_context = SessionResource.new()
+	_context_by_type.clear()
+	
+	# Clear packs
+	if pack_container:
+		for pack_node in pack_container.get_children():
+			pack_node.queue_free()
+	
+	# Go to packs tab
+	if _tab_container:
+		_tab_container.current_tab = 1
+	
+	_update()
+
+
+func _on_pack_history_add_pressed(pack: PackResource) -> void:
+	# Add pack from history to current session
+	_add_packs([pack])
 
 
 func _set_switcher_index(index: int) -> void:
