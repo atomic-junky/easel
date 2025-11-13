@@ -16,8 +16,8 @@ func setup() -> void:
 		}
 	)
 
-func get_context_type() -> SessionContext.Type:
-	return SessionContext.Type.STANDARD
+func get_context_type() -> SessionResource.Type:
+	return SessionResource.Type.STANDARD
 
 func get_mode_name() -> String:
 	return "Standard"

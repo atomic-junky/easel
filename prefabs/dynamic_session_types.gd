@@ -12,7 +12,7 @@ static var _image_order_scene := preload("res://scenes/menu/image_order_containe
 static func get_session_type_names() -> Array:
 	return ["Standard", "Class", "Relaxed", "Custom"]
 
-static func build(panel: Control, session_type: int, _context: SessionContext) -> Dictionary:
+static func build(panel: Control, session_type: int, _context: SessionResource) -> Dictionary:
 	# Clear previous content
 	for child in panel.get_children():
 		child.queue_free()
@@ -43,7 +43,7 @@ static func build(panel: Control, session_type: int, _context: SessionContext) -
 			panel.add_child(_label("Custom session (WIP)"))
 	return state
 
-static func apply(context: SessionContext, state: Dictionary) -> void:
+static func apply(context: SessionResource, state: Dictionary) -> void:
 	var t = state.type
 	var order = state.image_order
 	if order:
@@ -51,7 +51,7 @@ static func apply(context: SessionContext, state: Dictionary) -> void:
 		context.reverse = order.reverse
 	match t:
 		TYPE_STANDARD:
-			context.session_type = SessionContext.Type.STANDARD
+			context.session_type = SessionResource.Type.STANDARD
 			if state.number_switcher:
 				context.number_of_images = state.number_switcher.value
 			if state.time_switcher:
@@ -59,11 +59,11 @@ static func apply(context: SessionContext, state: Dictionary) -> void:
 			if context.number_of_images <= 0:
 				context.number_of_images = context.get_image_count()
 		TYPE_RELAXED:
-			context.session_type = SessionContext.Type.RELAXED
+			context.session_type = SessionResource.Type.RELAXED
 			context.number_of_images = context.get_image_count()
 			context.time_per_image = -1
 		TYPE_CLASS:
-			context.session_type = SessionContext.Type.CLASS
+			context.session_type = SessionResource.Type.CLASS
 			var duration: int = state.duration_switcher.value if state.duration_switcher else 30
 			var template: ClassSessionTemplate = ClassSessionTemplateRegistry.get_template(duration)
 			if template:
@@ -71,12 +71,12 @@ static func apply(context: SessionContext, state: Dictionary) -> void:
 				context.number_of_images = _count_template_images(template)
 				context.time_per_image = -1
 		TYPE_CUSTOM:
-			context.session_type = SessionContext.Type.CUSTOM
+			context.session_type = SessionResource.Type.CUSTOM
 			# Placeholder - custom pose list not implemented yet
 			context.number_of_images = context.get_image_count()
 			context.time_per_image = -1
 
-static func is_valid(state: Dictionary, context: SessionContext) -> bool:
+static func is_valid(state: Dictionary, context: SessionResource) -> bool:
 	match state.type:
 		TYPE_STANDARD:
 			return context.get_image_count(false) > 0

@@ -8,8 +8,8 @@ func setup() -> void:
 		}
 	)
 
-func get_context_type() -> SessionContext.Type:
-	return SessionContext.Type.RELAXED
+func get_context_type() -> SessionResource.Type:
+	return SessionResource.Type.RELAXED
 
 func get_mode_name() -> String:
 	return "Relaxed"

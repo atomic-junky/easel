@@ -1,6 +1,6 @@
 class_name Session extends Control
 
-signal done(session_context: SessionContext)
+signal done(session_context: SessionResource)
 
 @export var invisible_element: Array[Node] = []
 
@@ -20,7 +20,7 @@ signal done(session_context: SessionContext)
 @onready var count_label := %CountLabel
 @onready var paint_button := %PaintButton
 
-var _context: SessionContext
+var _context: SessionResource
 var queue: SessionQueue
 
 var _swipe_start := Vector2.ZERO
@@ -36,7 +36,7 @@ func _ready() -> void:
 		DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR)
 
 
-func load_args(args: SessionContext) -> void:
+func load_args(args: SessionResource) -> void:
 	setup()
 	if not is_node_ready():
 		await ready
@@ -44,7 +44,7 @@ func load_args(args: SessionContext) -> void:
 	start_session(args)
 
 
-func get_args() -> SessionContext:
+func get_args() -> SessionResource:
 	return _context
 
 
@@ -58,7 +58,7 @@ func setup() -> void:
 	_context = null
 
 
-func start_session(context: SessionContext) -> void:
+func start_session(context: SessionResource) -> void:
 	_on_paint_button_toggled(false)
 	paint_canvas.clear_canvas()
 	navigation_container.show()
@@ -66,7 +66,7 @@ func start_session(context: SessionContext) -> void:
 		navigation_container.hide()
 		file_location_button.hide()
 	
-	if context.session_type == SessionContext.Type.RELAXED:
+	if context.session_type == SessionResource.Type.RELAXED:
 		no_timer = true
 		pause_button.hide()
 	

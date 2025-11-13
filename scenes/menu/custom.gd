@@ -30,11 +30,11 @@ func _update_sequence_from_values() -> void:
 				if typeof(item) == TYPE_DICTIONARY:
 					_custom_sequence.append(item.duplicate(true))
 
-func load_from_context(context: SessionContext) -> void:
+func load_from_context(context: SessionResource) -> void:
 	super.load_from_context(context)
 	_update_sequence_from_values()
 
-func save_to_context(context: SessionContext) -> void:
+func save_to_context(context: SessionResource) -> void:
 	_update_sequence_from_values()
 	apply_fields_to_context(context)
 	
@@ -54,8 +54,8 @@ func is_valid() -> bool:
 			return true
 	return false
 
-func get_context_type() -> SessionContext.Type:
-	return SessionContext.Type.CUSTOM
+func get_context_type() -> SessionResource.Type:
+	return SessionResource.Type.CUSTOM
 
 func get_mode_name() -> String:
 	return "Custom"

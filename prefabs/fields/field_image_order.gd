@@ -33,11 +33,11 @@ func set_from_context(context: Object) -> void:
 		var shuffle_val = context.get(shuffle_key)
 		_image_order.set_shuffle_state(bool(shuffle_val) if shuffle_val != null else true)
 	else:
-		_image_order.set_shuffle_state(true)  # SessionContext default
+		_image_order.set_shuffle_state(true)  # SessionResource default
 	
 	# Apply reverse value from context or use context default (false)
 	if _has_prop(context, reverse_key):
 		var reverse_val = context.get(reverse_key)
 		_image_order.set_reverse_state(bool(reverse_val) if reverse_val != null else false)
 	else:
-		_image_order.set_reverse_state(false)  # SessionContext default
+		_image_order.set_reverse_state(false)  # SessionResource default

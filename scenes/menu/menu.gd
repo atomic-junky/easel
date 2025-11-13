@@ -1,10 +1,10 @@
 class_name Menu extends Control
 
-signal done(context: SessionContext)
+signal done(context: SessionResource)
 
 const PACK_OBJECT: PackedScene = preload("res://prefabs/pack/pack.tscn")
 
-var _context: SessionContext
+var _context: SessionResource
 var _active_session_panel_index: int = 0
 var _session_panels: Array[SessionType] = []
 var _session_type_index: Dictionary = {}
@@ -108,10 +108,10 @@ func _save_current_context() -> void:
 		_context_by_type[_context.session_type] = _context
 
 
-func _get_context_for(session_type: SessionContext.Type) -> SessionContext:
+func _get_context_for(session_type: SessionResource.Type) -> SessionResource:
 	if _context_by_type.has(session_type):
 		return _context_by_type[session_type]
-	var ctx := SessionContext.new()
+	var ctx := SessionResource.new()
 	ctx.session_type = session_type
 	if _context and _context.packs:
 		ctx.packs = _context.packs
@@ -158,10 +158,10 @@ func _switch_to_panel(index: int, sync_switcher: bool) -> void:
 	_update()
 
 
-func load_args(args: SessionContext) -> void:
+func load_args(args: SessionResource) -> void:
 	# Restore context when coming back from a session
 	_context = args
-	var previous_session_type := _context.session_type if args else SessionContext.Type.STANDARD
+	var previous_session_type := _context.session_type if args else SessionResource.Type.STANDARD
 	if args:
 		_context_by_type[args.session_type] = args
 
@@ -222,7 +222,7 @@ func _update() -> void:
 	if not is_node_ready():
 		return
 	if not _context:
-		_context = SessionContext.new()
+		_context = SessionResource.new()
 
 	# Guard: pack_container might not be ready if called too early
 	if pack_container:
@@ -286,9 +286,9 @@ func _on_pack_toggled(_pack: PackResource) -> void:
 	_update_labels()
 
 
-func get_args() -> SessionContext:
+func get_args() -> SessionResource:
 	if _context == null:
-		_context = SessionContext.new()
+		_context = SessionResource.new()
 	var panel := get_session_panel()
 	if panel:
 		panel.save_to_context(_context)
@@ -446,8 +446,8 @@ func _on_done_button_pressed() -> void:
 	done.emit(_context)
 
 
-## Map SessionContext.Type to panel index
-func _get_panel_index_for_type(session_type: SessionContext.Type) -> int:
+## Map SessionResource.Type to panel index
+func _get_panel_index_for_type(session_type: SessionResource.Type) -> int:
 	if _session_type_index.has(session_type):
 		return int(_session_type_index[session_type])
 	return 0

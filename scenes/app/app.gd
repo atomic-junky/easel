@@ -6,7 +6,7 @@ var menu_scene: String = "res://scenes/menu/menu.tscn"
 var session_scene: String = "res://scenes/session/session.tscn"
 var current_view: Control : get = _get_view
 
-var context: SessionContext
+var context: SessionResource
 
 func _ready():
 	_on_resized()
@@ -21,7 +21,7 @@ func _get_view() -> Control:
 	return aspect_ration.get_child(0)
 
 
-func _on_view_done(new_context: SessionContext = SessionContext.new()) -> void:
+func _on_view_done(new_context: SessionResource = SessionResource.new()) -> void:
 	context = new_context
 	var scene_path: String
 	if current_view is Menu:

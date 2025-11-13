@@ -1,4 +1,4 @@
-class_name SessionContext
+class_name SessionResource extends Resource
 
 enum Type {
 	STANDARD,
@@ -7,14 +7,14 @@ enum Type {
 	CUSTOM
 }
 
-var session_type: Type = Type.STANDARD
-var number_of_images: int = -1  # -1 means unset, will use field default
-var time_per_image: int = -1  # -1 means unset, will use field default
-var duration: int = -1  # -1 means unset, will use field default (for CLASS mode)
-var class_data: Array = []
-var shuffle: bool = true  # Default value for image ordering
-var reverse: bool = false  # Default value for image ordering
-var packs: Array[PackResource] = []
+@export var session_type: Type = Type.STANDARD
+@export var number_of_images: int = -1  # -1 means unset, will use field default
+@export var time_per_image: int = -1  # -1 means unset, will use field default
+@export var duration: int = -1  # -1 means unset, will use field default (for CLASS mode)
+@export var class_data: Array = []
+@export var shuffle: bool = true  # Default value for image ordering
+@export var reverse: bool = false  # Default value for image ordering
+@export var packs: Array[PackResource] = []
 
 
 func get_images_path() -> Array:
@@ -111,3 +111,32 @@ func _get_all_poses() -> Array:
 				"duration": pose.get("duration")
 			})
 	return poses
+
+
+## Save this session resource to a .gsession file
+func save_to_file(file_path: String) -> int:
+	# Ensure .gsession extension
+	if not file_path.ends_with(".gsession"):
+		file_path += ".gsession"
+	
+	var result := ResourceSaver.save(self, file_path)
+	if result == OK:
+		print("[SessionResource] Saved session to: ", file_path)
+	else:
+		printerr("[SessionResource] Failed to save session to: ", file_path, " error: ", result)
+	return result
+
+
+## Load a session resource from a .gsession file
+static func load_from_file(file_path: String) -> SessionResource:
+	if not FileAccess.file_exists(file_path):
+		printerr("[SessionResource] File does not exist: ", file_path)
+		return null
+	
+	var resource := ResourceLoader.load(file_path, "", ResourceLoader.CACHE_MODE_IGNORE)
+	if resource is SessionResource:
+		print("[SessionResource] Loaded session from: ", file_path)
+		return resource
+	else:
+		printerr("[SessionResource] Failed to load valid session from: ", file_path)
+		return null

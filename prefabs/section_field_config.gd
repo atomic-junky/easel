@@ -4,7 +4,7 @@ class_name SectionFieldConfig extends Resource
 
 enum Kind { INT_SWITCHER, TOGGLE, IMAGE_ORDER, TEMPLATE_SELECT }
 
-@export var key: String = ""            # Identifier used to apply into SessionContext
+@export var key: String = ""            # Identifier used to apply into SessionResource
 @export var kind: Kind = Kind.INT_SWITCHER
 @export var label: String = ""          # Display label
 @export var default_value: Variant       # Starting value

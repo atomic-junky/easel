@@ -76,7 +76,7 @@ func _build_field(fdata: Dictionary) -> void:
 		_field_container.add_child(node)
 
 ## Load UI from context values
-func load_from_context(context: SessionContext) -> void:
+func load_from_context(context: SessionResource) -> void:
 	if not context:
 		return
 	
@@ -94,13 +94,13 @@ func load_from_context(context: SessionContext) -> void:
 			field.set_from_context(context)
 
 ## Save UI values to context
-func save_to_context(context: SessionContext) -> void:
+func save_to_context(context: SessionResource) -> void:
 	if not context:
 		return
 	apply_context(context)
 
 ## Base generic application; subclasses can override for specialized logic
-func apply_context(context: SessionContext) -> void:
+func apply_context(context: SessionResource) -> void:
 	if not context:
 		return
 	context.session_type = get_context_type()
@@ -146,7 +146,7 @@ func is_valid() -> bool:
 @abstract func setup() -> void
 
 @abstract
-func get_context_type() -> SessionContext.Type
+func get_context_type() -> SessionResource.Type
 
 @abstract
 func get_mode_name() -> String

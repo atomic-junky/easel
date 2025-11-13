@@ -24,13 +24,13 @@ func _apply_template_for_duration(duration: int) -> void:
 	if template:
 		_class_session = template.session_sequence.duplicate(true)
 
-func load_from_context(context: SessionContext) -> void:
+func load_from_context(context: SessionResource) -> void:
 	# Apply the template based on saved duration before loading UI
 	if context and context.duration > 0:
 		_apply_template_for_duration(context.duration)
 	super.load_from_context(context)
 
-func save_to_context(context: SessionContext) -> void:
+func save_to_context(context: SessionResource) -> void:
 	# Read current duration from field and apply template
 	var values := collect_field_values()
 	if values.has("duration"):
@@ -51,8 +51,8 @@ func save_to_context(context: SessionContext) -> void:
 func is_valid() -> bool:
 	return not _class_session.is_empty()
 
-func get_context_type() -> SessionContext.Type:
-	return SessionContext.Type.CLASS
+func get_context_type() -> SessionResource.Type:
+	return SessionResource.Type.CLASS
 
 func get_mode_name() -> String:
 	return "Class Mode"
