@@ -11,6 +11,7 @@ var _session_type_index: Dictionary = {}
 var _context_by_type: Dictionary = {}
 var _current_panel: SessionType = null
 var _suppress_switcher_signal: bool = false
+var _pinterest_fetcher: PinterestFetcher
 
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
@@ -394,11 +395,20 @@ func _on_url_done_button_pressed() -> void:
 	pinterest_section_chech_box.disabled = true
 
 	var use_sections := pinterest_section_chech_box.button_pressed
-	var results: Array = await PinterestFetcher.fetch(
+	
+	# Create a new instance for this fetch
+	_pinterest_fetcher = PinterestFetcher.new()
+	add_child(_pinterest_fetcher)
+	
+	var results: Array = await _pinterest_fetcher.fetch(
 		url_input.text,
 		use_sections,
 		_on_url_fetcher_progress_callback
 	)
+	
+	# Clean up the fetcher
+	_pinterest_fetcher.queue_free()
+	_pinterest_fetcher = null
 
 	url_input_spiner_container.hide()
 	url_input_container.show()

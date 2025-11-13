@@ -20,6 +20,7 @@ signal refresh_done
 @onready var check_icon: Texture2D = preload("res://assets/icons/bookmark-check.svg")
 
 var _resource: PackResource
+var _pinterest_fetcher: PinterestFetcher
 
 
 func _from_context(
@@ -100,11 +101,19 @@ func _refresh_pack() -> void:
 			
 			print(_resource.path)
 			
-			var results: Array = await PinterestFetcher.fetch(
+			# Create a new instance for this fetch
+			_pinterest_fetcher = PinterestFetcher.new()
+			add_child(_pinterest_fetcher)
+			
+			var results: Array = await _pinterest_fetcher.fetch(
 				_resource.path,
 				_resource.use_pinterest_sections,
 				_on_pinterest_refresh_progress
 			)
+			
+			# Clean up the fetcher
+			_pinterest_fetcher.queue_free()
+			_pinterest_fetcher = null
 			
 			if results.is_empty():
 				push_error("PinterestFetcher return is empty!")

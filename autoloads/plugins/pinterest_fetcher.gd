@@ -1,6 +1,6 @@
-extends Node
+class_name PinterestFetcher
+extends AwaitableHTTPRequest
 
-var http_request: AwaitableHTTPRequest = AwaitableHTTPRequest.new()
 var _progress_callback: Callable
 
 # Constants for better maintainability
@@ -23,10 +23,6 @@ const RESOURCE_CONFIGS = {
 		"type_key": "section_id"
 	}
 }
-
-
-func _ready():
-	add_child(http_request)
 
 
 func get_board_options(url: String, res_id: String, bookmarks: Array, resource_type: ResourceType) -> Dictionary:
@@ -75,7 +71,7 @@ func get_request_headers(url: String, url_handler: String) -> PackedStringArray:
 
 
 func get_board_info(board_url: String) -> Dictionary:
-	var result: HTTPResult = await http_request.async_request(board_url)
+	var result: HTTPResult = await async_request(board_url)
 	var body = result.body_as_string()
 	
 	var board_data = _extract_board_data_from_html(body)
@@ -166,12 +162,12 @@ func _make_sections_request(url: String, board_id: String, domain: String, bookm
 	var final_url = "https://%s/resource/BoardSectionsResource/get/?%s" % [domain, _build_query_string(params_array)]
 	var headers = get_request_headers(url, "www/[username]/[slug].js")
 	
-	var result: HTTPResult = await http_request.async_request(final_url, headers, HTTPClient.METHOD_GET)
+	var result: HTTPResult = await async_request(final_url, headers, HTTPClient.METHOD_GET)
 	return _parse_api_response(result)
 
 
 func fetch_redirect_url(url: String) -> String:
-	var response: HTTPResult = await http_request.async_request(url)
+	var response: HTTPResult = await async_request(url)
 	var page_content: String = response.body_as_string()
 	
 	if not page_content.contains("api.pinterest.com/url_shortener"):
@@ -182,7 +178,7 @@ func fetch_redirect_url(url: String) -> String:
 	
 	# Follow redirect chain
 	var redirect_url = _extract_href(page_content, href_regex)
-	response = await http_request.async_request(redirect_url)
+	response = await async_request(redirect_url)
 	page_content = response.body_as_string()
 	redirect_url = _extract_href(page_content, href_regex)
 	
@@ -298,7 +294,7 @@ func _make_pins_request(url: String, board_id: String, domain: String, resource_
 	var final_url = "https://%s/resource/%s/get/?%s" % [domain, config["resource_request"], _build_query_string(params_array)]
 	var headers = get_request_headers(url, config["url_handler"])
 	
-	var result: HTTPResult = await http_request.async_request(final_url, headers, HTTPClient.METHOD_GET)
+	var result: HTTPResult = await async_request(final_url, headers, HTTPClient.METHOD_GET)
 	return _parse_api_response(result)
 
 
