@@ -825,4 +825,11 @@ func _on_save_session_file_selected(path: String) -> void:
 			var session_name := path.get_file().get_basename()
 			SessionHistory.add_session(session_name, path)
 			print("Session saved successfully to: ", path)
-	url_vbox.custom_minimum_size.x = 400.0
+
+
+func _on_session_history_item_pressed(path: String) -> void:
+	# Load a session from history
+	_on_import_session_file_selected(path)
+	# Switch to packs tab after loading
+	if _tab_container:
+		_tab_container.current_tab = 1
