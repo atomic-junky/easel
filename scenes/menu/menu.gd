@@ -1,5 +1,15 @@
 class_name Menu extends Control
 
+## Menu interface with tabbed navigation for session management, pack selection, and mode configuration.
+##
+## This menu supports:
+## - Tab 1 (Session): New session creation, session import (.gsession files), and session history
+## - Tab 2 (Packs): Image pack selection with quick access to recently used packs
+## - Tab 3 (Mode): Session type/mode selection with session export functionality
+##
+## The tabbed interface is created at runtime by restructuring existing UI elements.
+## Set _use_tabs = false to disable tabbed navigation and use the original layout.
+
 signal done(context: SessionResource)
 
 const PACK_OBJECT: PackedScene = preload("res://prefabs/pack/pack.tscn")

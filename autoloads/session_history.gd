@@ -1,6 +1,15 @@
 extends Node
 
-## Manages session history - stores the last 10 sessions saved by the user
+## Autoload singleton that manages session history.
+##
+## Tracks the last 10 saved sessions (.gsession files) for quick access.
+## History is stored as JSON in user://session_history/sessions.json
+##
+## Usage:
+##   SessionHistory.add_session("My Session", "user://sessions/my_session.gsession")
+##   var history := SessionHistory.get_history()  # Returns Array[Dictionary]
+##   for entry in history:
+##       print(entry["name"], " at ", entry["path"])
 
 const MAX_HISTORY_SIZE := 10
 const HISTORY_DIR := "user://session_history/"

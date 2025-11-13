@@ -1,5 +1,22 @@
 class_name SessionResource extends Resource
 
+## A saveable/loadable session configuration for GestureApp.
+##
+## SessionResource (formerly SessionContext) represents a complete session configuration
+## including session type, image packs, timing settings, and session-specific data.
+##
+## Can be saved to and loaded from .gsession files using:
+## - save_to_file(path: String) -> int
+## - load_from_file(path: String) -> SessionResource (static)
+##
+## Usage:
+##   var session := SessionResource.new()
+##   session.session_type = SessionResource.Type.STANDARD
+##   session.packs = [pack1, pack2]
+##   session.save_to_file("user://my_session.gsession")
+##
+##   var loaded := SessionResource.load_from_file("user://my_session.gsession")
+
 enum Type {
 	STANDARD,
 	CLASS,
