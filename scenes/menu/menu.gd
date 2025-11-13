@@ -15,6 +15,8 @@ var _pinterest_fetcher: PinterestFetcher
 
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
+@onready var import_session_dialog: FileDialog = null  # Will be created dynamically
+@onready var save_session_dialog: FileDialog = null  # Will be created dynamically
 @onready var main_vbox: VBoxContainer = %MainVBox
 @onready var info_label: Label = %InfoLabel
 @onready var session_type_switcher: OptionSwitcher = %SessionTypeSwitcher
@@ -48,6 +50,7 @@ func _ready() -> void:
 		)
 
 	_initialize_session_panels()
+	_create_session_dialogs()
 	visibility_changed.connect(_update)
 	_on_resized()
 	
@@ -96,6 +99,24 @@ func _initialize_session_panels() -> void:
 
 	session_type_switcher.use_dynamic_options = true
 	session_type_switcher.set_options_array(options)
+
+
+func _create_session_dialogs() -> void:
+	# Create Import Session Dialog
+	import_session_dialog = FileDialog.new()
+	import_session_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	import_session_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	import_session_dialog.add_filter("*.gsession", "GestureApp Session")
+	import_session_dialog.file_selected.connect(_on_import_session_file_selected)
+	add_child(import_session_dialog)
+	
+	# Create Save Session Dialog
+	save_session_dialog = FileDialog.new()
+	save_session_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
+	save_session_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	save_session_dialog.add_filter("*.gsession", "GestureApp Session")
+	save_session_dialog.file_selected.connect(_on_save_session_file_selected)
+	add_child(save_session_dialog)
 
 
 func _set_switcher_index(index: int) -> void:
@@ -470,4 +491,54 @@ func _on_resized() -> void:
 	pack_selector_panel.custom_minimum_size.x = 650.0
 	pack_selector_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	url_container.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	url_vbox.custom_minimum_size.x = 400.0
+
+
+## Session Import/Export Functions
+
+func open_import_session_dialog() -> void:
+	if import_session_dialog:
+		import_session_dialog.popup_centered()
+
+
+func open_save_session_dialog() -> void:
+	if save_session_dialog:
+		save_session_dialog.popup_centered()
+
+
+func _on_import_session_file_selected(path: String) -> void:
+	var loaded_session := SessionResource.load_from_file(path)
+	if loaded_session:
+		_context = loaded_session
+		_context_by_type[_context.session_type] = _context
+		
+		# Update UI with loaded session
+		_update()
+		
+		# Switch to the correct session type
+		var target_panel_index := _get_panel_index_for_type(_context.session_type)
+		if target_panel_index != _active_session_panel_index:
+			_set_switcher_index(target_panel_index)
+		else:
+			# Already on correct panel, just bind and update
+			var panel := get_session_panel()
+			if panel:
+				panel.load_from_context(_context)
+	else:
+		printerr("Failed to load session from: ", path)
+
+
+func _on_save_session_file_selected(path: String) -> void:
+	# Ensure we have the latest context
+	var panel := get_session_panel()
+	if panel and _context:
+		panel.save_to_context(_context)
+	
+	if _context:
+		var result := _context.save_to_file(path)
+		if result == OK:
+			# Extract session name from path
+			var session_name := path.get_file().get_basename()
+			SessionHistory.add_session(session_name, path)
+			print("Session saved successfully to: ", path)
 	url_vbox.custom_minimum_size.x = 400.0
