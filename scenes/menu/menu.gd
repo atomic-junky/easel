@@ -339,27 +339,7 @@ func _populate_history_list() -> void:
 		history_pack_list.add_child(pack_node)
 		# Show refresh button, hide delete button in history view
 		pack_node._from_context(pack, false, true)
-		# Connect refresh signal
-		pack_node.refresh_request.connect(_on_refresh_pack_pressed.bind(pack))
-
-
-func _on_refresh_pack_pressed(pack: PackResource) -> void:
-	match pack.source:
-		Constants.Source.FOLDER:
-			if DirAccess.dir_exists_absolute(pack.path):
-				pack.images = PackResource._recursive_load_dir(pack.path)
-				_populate_history_list()
-		Constants.Source.IMAGES:
-			# For image packs, filter out deleted files
-			var valid_images: Array[Dictionary] = []
-			for img in pack.images:
-				if FileAccess.file_exists(img.get("path", "")):
-					valid_images.append(img)
-			pack.images = valid_images
-			_populate_history_list()
-		Constants.Source.PINTEREST:
-			# Pinterest packs can't be refreshed from local files
-			pass
+		# Pack handles refresh internally, no need to connect the signal
 
 
 func _on_history_add_selected_pressed() -> void:
@@ -431,7 +411,10 @@ func _on_url_done_button_pressed() -> void:
 			printerr(pack.get("data", "Fetching failure (no data)"))
 			return
 		
-		var pack_resource: PackResource = PackResource.create_from_urls(pack.get("data", {}))
+		var pack_resource: PackResource = PackResource.create_from_urls(
+			pack.get("data", {}),
+			use_sections
+		)
 		_add_packs([pack_resource])
 	_update()
 

@@ -7,6 +7,7 @@ const SUPPORTED_EXTENSIONS := ["png", "jpeg", "jpg", "tiff", "PNG", "JPG", "JPEG
 @export var pack_name: String = "Invalid"
 @export var path: String = ""
 @export var images: Array[Dictionary] = []
+@export var use_pinterest_sections: bool = false
 var image_count: int :
 	get():
 		return images.size()
@@ -40,13 +41,16 @@ static func create_from_paths(paths: Array) -> Array[PackResource]:
 	return [pack]
 
 
-static func create_from_urls(data: Dictionary) -> PackResource:
+static func create_from_urls(data: Dictionary, use_sections: bool = false) -> PackResource:
 	var pack_images: Array = data.get("images", [])
 	var board_name: String = data.get("board_name", "Unknown")
+	var url: String = data.get("url", "")
 	
 	var pack: PackResource = PackResource.new()
 	pack.source = Constants.Source.PINTEREST
 	pack.pack_name = board_name
+	pack.path = url
+	pack.use_pinterest_sections = use_sections
 	
 	# Convert Array to Array[Dictionary]
 	var typed_images: Array[Dictionary] = []

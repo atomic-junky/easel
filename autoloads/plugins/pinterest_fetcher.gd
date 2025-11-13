@@ -280,7 +280,16 @@ func collect_pins(url: String, board_id: String, board_name: String, domain: Str
 				
 		_progress_callback.call("Collecting pins (%s found)..." % [images.size()])
 	
-	return _build_result("success", {"images": images, "board_name": board_name})
+	# Construct full URL if url is relative
+	var full_url = url
+	if not url.begins_with("http"):
+		full_url = "https://" + domain + url
+	
+	return _build_result("success", {
+		"images": images,
+		"board_name": board_name,
+		"url": full_url
+	})
 
 
 func _make_pins_request(url: String, board_id: String, domain: String, resource_type: ResourceType, bookmarks: Array) -> Dictionary:

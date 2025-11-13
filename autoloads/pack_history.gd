@@ -16,8 +16,12 @@ func _ready() -> void:
 
 
 ## Add a pack to history (most recent first)
-func add_pack(pack: PackResource) -> void:
+func add_pack(pack: PackResource, save_immediately: bool = true) -> void:
+	print("[PackHistory] add_pack called for: ", pack.pack_name,
+		" save_immediately=", save_immediately)
+	
 	if not pack or pack.image_count <= 0:
+		print("[PackHistory] Pack rejected: no images")
 		return
 	
 	# Create a new resource copy to avoid reference issues
@@ -27,24 +31,33 @@ func add_pack(pack: PackResource) -> void:
 	pack_copy.pack_name = pack.pack_name
 	pack_copy.path = pack.path
 	pack_copy.images = pack.images.duplicate(true)
+	pack_copy.use_pinterest_sections = pack.use_pinterest_sections
+	
+	print("[PackHistory] Current history size before filter: ", _history.size())
 	
 	# Remove duplicate if already exists (compare by path and source)
 	_history = _history.filter(func(item: PackResource) -> bool:
 		return not (item.path == pack_copy.path and item.source == pack_copy.source)
 	)
 	
+	print("[PackHistory] History size after filter: ", _history.size())
+	
 	# Add to front
 	_history.push_front(pack_copy)
-	if _history.size() >= MAX_HISTORY_SIZE:
+	print("[PackHistory] History size after push_front: ", _history.size())
+	
+	if _history.size() > MAX_HISTORY_SIZE:
 		_history.resize(MAX_HISTORY_SIZE)
 	
-	_save_history()
+	if save_immediately:
+		_save_history()
 
 
 ## Add multiple packs to history
 func add_packs(packs: Array[PackResource]) -> void:
 	for pack in packs:
-		add_pack(pack)
+		add_pack(pack, false)  # Don't save after each pack
+	_save_history()  # Save once at the end
 
 
 ## Get history as array of PackResource

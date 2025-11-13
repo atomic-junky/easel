@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://d1pq0dja3bw03"]
+[gd_scene load_steps=7 format=3 uid="uid://d1pq0dja3bw03"]
 
 [ext_resource type="Script" uid="uid://pf4jayk64oi6" path="res://prefabs/pack/pack.gd" id="1_nhums"]
 [ext_resource type="Texture2D" uid="uid://b8ndl4nn7l3tf" path="res://assets/icons/folder.svg" id="2_nhums"]
 [ext_resource type="Texture2D" uid="uid://cn51e1voued6q" path="res://assets/icons/bookmark-add.svg" id="3_iauwq"]
 [ext_resource type="Texture2D" uid="uid://d1thixkvuxux4" path="res://assets/icons/trash.svg" id="3_psi4j"]
 [ext_resource type="Texture2D" uid="uid://b5i2f16iyub6s" path="res://assets/icons/refresh.svg" id="4_ngtud"]
+[ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="5_spiner"]
 
 [node name="Pack" type="PanelContainer"]
 theme_type_variation = &"PackPanelContainer"
@@ -66,6 +67,12 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 icon = ExtResource("4_ngtud")
+
+[node name="RefreshSpiner" parent="HBox/ButtonsContainer" instance=ExtResource("5_spiner")]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
 
 [node name="DeleteButton" type="Button" parent="HBox/ButtonsContainer"]
 unique_name_in_owner = true

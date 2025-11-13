@@ -3,6 +3,7 @@ class_name Pack extends PanelContainer
 signal delete_request
 signal refresh_request
 signal toggled
+signal refresh_done
 
 @onready var check_box: CheckBox = %CheckBox
 @onready var icon_rect: TextureRect = %IconRect
@@ -10,6 +11,7 @@ signal toggled
 @onready var decsc_label: Label = %Description
 @onready var delete_button: Button = %DeleteButton
 @onready var refresh_button: Button = %RefreshButton
+@onready var refresh_spiner: Control = %RefreshSpiner
 
 @onready var folder_icon: Texture2D = preload("res://assets/icons/folder.svg")
 @onready var image_icon: Texture2D = preload("res://assets/icons/image.svg")
@@ -53,7 +55,83 @@ func _on_button_pressed() -> void:
 
 
 func _on_refresh_button_pressed() -> void:
+	# Show spinner, hide button
+	refresh_button.visible = false
+	refresh_spiner.visible = true
+	
+	await _refresh_pack()
+	
+	# Update the display with new image count
+	var desc_label: String = "%s images found."
+	if _resource.source == Constants.Source.PINTEREST:
+		desc_label = "%s pins found."
+	decsc_label.text = desc_label % _resource.image_count
+	
+	# Hide spinner, show button
+	refresh_spiner.visible = false
+	refresh_button.visible = true
+	
 	refresh_request.emit()
+
+
+func _refresh_pack() -> void:
+	if not _resource:
+		refresh_done.emit()
+		return
+	
+	match _resource.source:
+		Constants.Source.FOLDER:
+			if DirAccess.dir_exists_absolute(_resource.path):
+				_resource.images = PackResource._recursive_load_dir(_resource.path)
+			
+		Constants.Source.IMAGES:
+			# For image packs, filter out deleted files
+			var valid_images: Array[Dictionary] = []
+			for img in _resource.images:
+				if FileAccess.file_exists(img.get("path", "")):
+					valid_images.append(img)
+			_resource.images = valid_images
+			
+		Constants.Source.PINTEREST:
+			# Refresh Pinterest pack by fetching from URL
+			if _resource.path.is_empty():
+				push_error("PackResource path is empty!")
+				refresh_done.emit()
+			
+			print(_resource.path)
+			
+			var results: Array = await PinterestFetcher.fetch(
+				_resource.path,
+				_resource.use_pinterest_sections,
+				_on_pinterest_refresh_progress
+			)
+			
+			if results.is_empty():
+				push_error("PinterestFetcher return is empty!")
+				refresh_done.emit()
+				return
+			
+			var pack_data = results[0]
+			if pack_data.is_empty() or pack_data.get("status") != "success":
+				refresh_done.emit()
+				return 
+			
+			var data: Dictionary = pack_data.get("data", {})
+			var pack_images: Array = data.get("images", [])
+			
+			# Convert Array to Array[Dictionary]
+			var typed_images: Array[Dictionary] = []
+			for img in pack_images:
+				if img is Dictionary:
+					typed_images.append(img)
+			
+			_resource.images = typed_images
+	refresh_done.emit()
+
+
+func _on_pinterest_refresh_progress(message: String) -> void:
+	# Update description with progress message
+	decsc_label.text = message
 
 
 func _on_check_box_toggled(toggled_on: bool) -> void:
