@@ -1,4 +1,4 @@
-class_name Menu extends Control
+class_name MenuBackup extends Control
 
 ## Menu interface with tabbed navigation for session management, pack selection, and mode configuration.
 ##

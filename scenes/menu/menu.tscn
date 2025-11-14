@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b805udtrxhmnd" path="res://scenes/menu/menu.gd" id="1_0rb32"]
 [ext_resource type="Script" uid="uid://b08vxne14bjfa" path="res://prefabs/responsive_margin_container.gd" id="1_nvwcl"]
+[ext_resource type="Script" uid="uid://bm5l251jb33u0" path="res://scenes/menu/menu_stepper.gd" id="2_stepper"]
 [ext_resource type="PackedScene" uid="uid://dyxpp3gldlg8y" path="res://prefabs/option_switcher/option_switcher.tscn" id="3_fkryp"]
 [ext_resource type="FontFile" uid="uid://cus4jsf1mbr0y" path="res://assets/fonts/InterDisplay/InterDisplay-Medium.ttf" id="3_kaijy"]
 [ext_resource type="Script" uid="uid://bjirgrn1kbejr" path="res://scenes/menu/standard.gd" id="5_i1lnr"]
@@ -11,7 +12,6 @@
 [ext_resource type="Texture2D" uid="uid://7iashyxj0ocr" path="res://assets/icons/clear.svg" id="9_h8ew4"]
 [ext_resource type="Script" uid="uid://dd1m4u7ijravb" path="res://scenes/menu/custom.gd" id="9_rcuxh"]
 [ext_resource type="PackedScene" uid="uid://chvpqk2heieyt" path="res://prefabs/dimer.tscn" id="10_h8ew4"]
-[ext_resource type="Texture2D" uid="uid://c26y8tjfxft4g" path="res://assets/icons/settings.svg" id="10_rcuxh"]
 [ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="11_4rn7p"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nvwcl"]
@@ -10522,10 +10522,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 40
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 script = ExtResource("1_nvwcl")
 metadata/_custom_type_script = "uid://b08vxne14bjfa"
 
@@ -10535,7 +10535,7 @@ custom_minimum_size = Vector2(490, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
-theme_override_constants/separation = 30
+theme_override_constants/separation = 15
 
 [node name="Label" type="Label" parent="MainSafeMargin/MainVBox"]
 layout_mode = 2
@@ -10561,27 +10561,209 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_y4i35")
 script = SubResource("GDScript_rcuxh")
 
-[node name="PropertyContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox"]
+[node name="MenuStepper" type="VBoxContainer" parent="MainSafeMargin/MainVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("2_stepper")
+
+[node name="StepContainer" type="Control" parent="MainSafeMargin/MainVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="SessionStep" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Create or Load Session"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="ButtonsGrid" type="GridContainer" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 15
+theme_override_constants/v_separation = 15
+columns = 2
+
+[node name="NewSessionButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep/ButtonsGrid"]
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+text = "🆕 New Session"
+
+[node name="ImportSessionButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep/ButtonsGrid"]
+custom_minimum_size = Vector2(180, 50)
+layout_mode = 2
+text = "📂 Import Session"
+
+[node name="Spacer2" type="Control" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HistorySection" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="HistoryLabel" type="Label" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep/HistorySection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "📜 Recent Sessions"
+
+[node name="HistoryScroll" type="ScrollContainer" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep/HistorySection"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HistoryList" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/SessionStep/HistorySection/HistoryScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="PacksStep" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Title" type="Label" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Select Image Packs"
+horizontal_alignment = 1
+
+[node name="ContentHBox" type="HBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 15
 
-[node name="VBox" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer"]
+[node name="SourcesPanel" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/SourcesPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Sources"
+
+[node name="FolderButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/SourcesPanel"]
+layout_mode = 2
+text = "📁 Folder"
+
+[node name="ImagesButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/SourcesPanel"]
+layout_mode = 2
+text = "🖼 Images"
+
+[node name="PinterestButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/SourcesPanel"]
+layout_mode = 2
+text = "📌 Pinterest"
+
+[node name="LibraryButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/SourcesPanel"]
+layout_mode = 2
+disabled = true
+text = "📚 Library"
+
+[node name="HistoryButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/SourcesPanel"]
+layout_mode = 2
+text = "📜 History"
+
+[node name="PacksPanel" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/PacksPanel"]
 layout_mode = 2
 
-[node name="SelectPackButton" type="Button" parent="MainSafeMargin/MainVBox/PropertyContainer/VBox"]
+[node name="Label" type="Label" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/PacksPanel/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-text = "Select packs"
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "Selected Packs"
 
-[node name="InfoLabel" type="Label" parent="MainSafeMargin/MainVBox/PropertyContainer/VBox"]
+[node name="ClearButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/PacksPanel/HBoxContainer"]
+layout_mode = 2
+icon = ExtResource("9_h8ew4")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/PacksPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PackContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/PacksPanel/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Pack" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/ContentHBox/PacksPanel/ScrollContainer/PackContainer" instance=ExtResource("9_bk4j0")]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 theme_type_variation = &"LabelSecondary"
+theme_override_font_sizes/font_size = 14
 text = "No pack selected"
+horizontal_alignment = 1
 
-[node name="SessionTypeSwitcher" parent="MainSafeMargin/MainVBox/PropertyContainer" instance=ExtResource("3_fkryp")]
+[node name="NavigationButtons" type="HBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="PreviousButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/NavigationButtons"]
+custom_minimum_size = Vector2(150, 45)
+layout_mode = 2
+text = "⬅ Previous"
+
+[node name="NextButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/PacksStep/NavigationButtons"]
+custom_minimum_size = Vector2(150, 45)
+layout_mode = 2
+text = "Next ➡"
+
+[node name="ModeStep" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Choose Session Mode"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="SessionTypeSwitcher" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep" instance=ExtResource("3_fkryp")]
 unique_name_in_owner = true
 layout_mode = 2
 title = "Session Type"
@@ -10590,65 +10772,60 @@ second_label = "Relaxed"
 third_label = "Class Mode"
 fourth_label = "Custom"
 
-[node name="Panel" type="PanelContainer" parent="MainSafeMargin/MainVBox/PropertyContainer"]
+[node name="Panel" type="PanelContainer" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_0m5w4")
 
-[node name="VBox" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel"]
+[node name="VBox" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep/Panel"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="Standard" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox"]
+[node name="Standard" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep/Panel/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("5_i1lnr")
 
-[node name="Relaxed" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox"]
+[node name="Relaxed" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep/Panel/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("7_5n576")
 
-[node name="Class" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox"]
+[node name="Class" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep/Panel/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("7_y4i35")
 
-[node name="Custom" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox"]
+[node name="Custom" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep/Panel/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("9_rcuxh")
 
-[node name="DoneButtonContiainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox"]
+[node name="DoneButtonContiainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep/Panel/VBox"]
 layout_mode = 2
 size_flags_vertical = 8
 alignment = 2
 
-[node name="DoneButton" type="Button" parent="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox/DoneButtonContiainer"]
+[node name="DoneButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep/Panel/VBox/DoneButtonContiainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Let's draw!"
+theme_override_font_sizes/font_size = 18
+text = "🎨 Let's Draw!"
 
-[node name="HBox" type="HBoxContainer" parent="MainSafeMargin"]
-visible = false
+[node name="PreviousButton" type="Button" parent="MainSafeMargin/MainVBox/StepContainer/ModeStep"]
+custom_minimum_size = Vector2(150, 45)
 layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 0
-alignment = 2
-
-[node name="Button" type="Button" parent="MainSafeMargin/HBox"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-icon = ExtResource("10_rcuxh")
+size_flags_horizontal = 4
+text = "⬅ Previous"
 
 [node name="PackSelectorContainer" type="Control" parent="."]
 unique_name_in_owner = true
@@ -10682,104 +10859,6 @@ theme_override_constants/margin_right = 40
 theme_override_constants/margin_bottom = 40
 script = ExtResource("1_nvwcl")
 metadata/_custom_type_script = "uid://b08vxne14bjfa"
-
-[node name="PackSelectorPanel" type="PanelContainer" parent="PackSelectorContainer/SafeMarginContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(650, 0)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_0m5w4")
-
-[node name="VBox" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel"]
-layout_mode = 2
-theme_override_constants/separation = 10
-alignment = 1
-
-[node name="VBox2" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox"]
-custom_minimum_size = Vector2(125, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label2" type="Label" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "Sources"
-
-[node name="HFlowContainer" type="HFlowContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="FolderButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Folder"
-
-[node name="ImagesButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Images"
-
-[node name="PinterestButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Pinterest"
-
-[node name="LibraryButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 8
-disabled = true
-text = "Library"
-
-[node name="HistoryButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 8
-text = "History"
-
-[node name="VBox" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox"]
-custom_minimum_size = Vector2(250, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox"]
-layout_mode = 2
-
-[node name="Label2" type="Label" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "Packs"
-
-[node name="ClearButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/HBoxContainer"]
-layout_mode = 2
-icon = ExtResource("9_h8ew4")
-
-[node name="ScrollContainer" type="ScrollContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="PackContainer" type="VBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/ScrollContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Pack" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/ScrollContainer/PackContainer" instance=ExtResource("9_bk4j0")]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox"]
-layout_mode = 2
-alignment = 1
-
-[node name="PackDoneButton" type="Button" parent="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-text = "Done"
 
 [node name="Dimer" parent="PackSelectorContainer" instance=ExtResource("10_h8ew4")]
 unique_name_in_owner = true
@@ -10951,16 +11030,6 @@ filters = PackedStringArray("*.png,*.jpg,*.jpeg, *.tiff")
 use_native_dialog = true
 
 [connection signal="resized" from="." to="." method="_on_resized"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/PropertyContainer/VBox/SelectPackButton" to="." method="_on_select_pack_button_pressed"]
-[connection signal="value_changed" from="MainSafeMargin/MainVBox/PropertyContainer/SessionTypeSwitcher" to="." method="_on_session_type_switcher_value_changed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/PropertyContainer/Panel/VBox/DoneButtonContiainer/DoneButton" to="." method="_on_done_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/FolderButton" to="." method="_on_folder_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/ImagesButton" to="." method="_on_images_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/PinterestButton" to="." method="_on_pinterest_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/LibraryButton" to="." method="_on_library_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox2/HFlowContainer/HistoryButton" to="." method="_on_history_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/VBox/HBoxContainer/ClearButton" to="." method="_on_clear_button_pressed"]
-[connection signal="pressed" from="PackSelectorContainer/SafeMarginContainer/PackSelectorPanel/VBox/HBoxContainer/PackDoneButton" to="." method="_on_pack_done_button_pressed"]
 [connection signal="pressed" from="PackSelectorContainer/UrlContainer/PanelContainer/UrlVBox/UrlInputContainer/UrlDoneButton" to="." method="_on_url_done_button_pressed"]
 [connection signal="pressed" from="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ButtonRow/SelectAllButton" to="." method="_on_history_select_all_pressed"]
 [connection signal="pressed" from="PackSelectorContainer/HistoryContainer/PanelContainer/VBox/ButtonRow/SelectNoneButton" to="." method="_on_history_select_none_pressed"]
