@@ -13,7 +13,7 @@ enum StepStatus {
 	AVAILABLE   # Can proceed to this step
 }
 
-@export var steps: Array[String] = ["Session", "Packs", "Mode"]
+@export var steps: Array[String] = ["Packs", "Mode"]
 @export var current_step: int = 0
 
 var _step_buttons: Array[Button] = []

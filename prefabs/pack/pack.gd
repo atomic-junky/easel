@@ -2,6 +2,7 @@ class_name Pack extends PanelContainer
 
 signal delete_request
 signal refresh_request
+signal add_pack_request
 signal toggled
 signal refresh_done
 
@@ -9,9 +10,11 @@ signal refresh_done
 @onready var icon_rect: TextureRect = %IconRect
 @onready var title_label: Label = %Title
 @onready var decsc_label: Label = %Description
-@onready var delete_button: Button = %DeleteButton
-@onready var refresh_button: Button = %RefreshButton
 @onready var refresh_spiner: Control = %RefreshSpiner
+@onready var menu_button: MenuButton = %MenuButton
+@onready var holo_overlay: Panel = %HoloOL
+@onready var add_pack_container: HBoxContainer = %AddPackContainer
+@onready var add_pack_button: Button = %AddPackButton
 
 @onready var folder_icon: Texture2D = preload("res://assets/icons/folder.svg")
 @onready var image_icon: Texture2D = preload("res://assets/icons/image.svg")
@@ -23,18 +26,18 @@ var _resource: PackResource
 var _pinterest_fetcher: PinterestFetcher
 
 
+func _ready() -> void:
+	var mb_popup: PopupMenu = menu_button.get_popup()
+	mb_popup.id_pressed.connect(_on_mb_popup_id_pressed)
+
+
 func _from_context(
 	pack: PackResource,
-	show_delete: bool = true,
-	show_refresh: bool = false
+	is_holo: bool = false
 ) -> void:
 	_resource = pack
 	check_box.button_pressed = pack.enabled
 	title_label.text = pack.pack_name
-	
-	# Control button visibility
-	delete_button.visible = show_delete
-	refresh_button.visible = show_refresh
 	
 	var desc_label: String = "%s images found."
 	match pack.source:
@@ -49,29 +52,25 @@ func _from_context(
 			pass
 	
 	decsc_label.text = desc_label % pack.image_count
-
-
-func _on_button_pressed() -> void:
-	delete_request.emit()
+	
+	holo_overlay.visible = is_holo
+	add_pack_container.visible = is_holo
+	menu_button.visible = not is_holo
+	
+	if is_holo:
+		check_box.button_pressed = false
+		check_box.disabled = true
+		theme_type_variation += "Holo"
 
 
 func _on_refresh_button_pressed() -> void:
-	# Show spinner, hide button
-	refresh_button.visible = false
+	# Show spinner
 	refresh_spiner.visible = true
 	
 	await _refresh_pack()
 	
-	# Update the display with new image count
-	var desc_label: String = "%s images found."
-	if _resource.source == Constants.Source.PINTEREST:
-		desc_label = "%s pins found."
-	decsc_label.text = desc_label % _resource.image_count
-	
-	# Hide spinner, show button
+	# Hide spinner
 	refresh_spiner.visible = false
-	refresh_button.visible = true
-	
 	refresh_request.emit()
 
 
@@ -98,8 +97,6 @@ func _refresh_pack() -> void:
 			if _resource.path.is_empty():
 				push_error("PackResource path is empty!")
 				refresh_done.emit()
-			
-			print(_resource.path)
 			
 			# Create a new instance for this fetch
 			_pinterest_fetcher = PinterestFetcher.new()
@@ -136,6 +133,8 @@ func _refresh_pack() -> void:
 			
 			_resource.images = typed_images
 	refresh_done.emit()
+	
+	_from_context(_resource)
 
 
 func _on_pinterest_refresh_progress(message: String) -> void:
@@ -150,3 +149,19 @@ func _on_check_box_toggled(toggled_on: bool) -> void:
 
 func _on_save_button_pressed() -> void:
 	pass # Replace with function body.
+
+
+func _on_mb_popup_id_pressed(id: int) -> void:
+	match id:
+		-1: return
+		0: return
+		1: # Refresh
+			_refresh_pack()
+		2: # Export
+			pass
+		3: # Delete
+			delete_request.emit()
+
+
+func _on_add_pack_button_pressed() -> void:
+	add_pack_request.emit()

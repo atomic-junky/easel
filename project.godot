@@ -31,7 +31,8 @@ SessionHistory="*res://autoloads/session_history.gd"
 [display]
 
 window/size/resizable=false
-window/stretch/aspect="ignore"
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 window/handheld/orientation=1
 window/size/width=600
 window/size/height=1024

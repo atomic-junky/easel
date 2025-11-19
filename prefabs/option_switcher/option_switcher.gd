@@ -134,6 +134,7 @@ func _update() -> void:
 	
 	custom_button.visible = use_custom_button
 	custom_value.suffix = custom_suffix
+	label.visible = not title.is_empty()
 	label.text = title
 	
 	for button: Button in _buttons:

@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5qx8h7jbvn2r"]
+
+[ext_resource type="Script" path="res://prefabs/collapsible_section.gd" id="1_collapsible"]
+
+[node name="CollapsibleSection" type="VBoxContainer"]
+script = ExtResource("1_collapsible")
+section_title = "Section"
+is_expanded = true
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2

@@ -1,11 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://d1pq0dja3bw03"]
+[gd_scene load_steps=6 format=3 uid="uid://d1pq0dja3bw03"]
 
 [ext_resource type="Script" uid="uid://pf4jayk64oi6" path="res://prefabs/pack/pack.gd" id="1_nhums"]
 [ext_resource type="Texture2D" uid="uid://b8ndl4nn7l3tf" path="res://assets/icons/folder.svg" id="2_nhums"]
-[ext_resource type="Texture2D" uid="uid://cn51e1voued6q" path="res://assets/icons/bookmark-add.svg" id="3_iauwq"]
-[ext_resource type="Texture2D" uid="uid://d1thixkvuxux4" path="res://assets/icons/trash.svg" id="3_psi4j"]
-[ext_resource type="Texture2D" uid="uid://b5i2f16iyub6s" path="res://assets/icons/refresh.svg" id="4_ngtud"]
 [ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="5_spiner"]
+[ext_resource type="Texture2D" uid="uid://bsjxdn6vi2d3h" path="res://assets/icons/v_dots.svg" id="6_7aq8l"]
+[ext_resource type="Texture2D" uid="uid://bgv333kfjdvj0" path="res://assets/icons/plus.svg" id="6_baia8"]
 
 [node name="Pack" type="PanelContainer"]
 theme_type_variation = &"PackPanelContainer"
@@ -57,29 +56,42 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="SaveButton" type="Button" parent="HBox/ButtonsContainer"]
-visible = false
-layout_mode = 2
-icon = ExtResource("3_iauwq")
-
-[node name="RefreshButton" type="Button" parent="HBox/ButtonsContainer"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-icon = ExtResource("4_ngtud")
-
 [node name="RefreshSpiner" parent="HBox/ButtonsContainer" instance=ExtResource("5_spiner")]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(26, 26)
 layout_mode = 2
 
-[node name="DeleteButton" type="Button" parent="HBox/ButtonsContainer"]
+[node name="MenuButton" type="MenuButton" parent="HBox/ButtonsContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-icon = ExtResource("3_psi4j")
+icon = ExtResource("6_7aq8l")
+item_count = 4
+popup/item_0/text = "Refresh"
+popup/item_0/id = 1
+popup/item_1/text = "Export"
+popup/item_1/id = 2
+popup/item_2/id = 0
+popup/item_2/separator = true
+popup/item_3/text = "Delete"
+popup/item_3/id = 3
+
+[node name="HoloOL" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PackHoloOL"
+
+[node name="AddPackContainer" type="HBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+alignment = 2
+
+[node name="AddPackButton" type="Button" parent="AddPackContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("6_baia8")
 
 [connection signal="toggled" from="HBox/CheckBoxContainer/CheckBox" to="." method="_on_check_box_toggled"]
-[connection signal="pressed" from="HBox/ButtonsContainer/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="pressed" from="HBox/ButtonsContainer/RefreshButton" to="." method="_on_refresh_button_pressed"]
-[connection signal="pressed" from="HBox/ButtonsContainer/DeleteButton" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="AddPackContainer/AddPackButton" to="." method="_on_add_pack_button_pressed"]

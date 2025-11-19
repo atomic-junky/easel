@@ -19,36 +19,24 @@ var _session_type_index: Dictionary = {}
 var _context_by_type: Dictionary = {}
 var _current_panel: SessionType = null
 var _suppress_switcher_signal: bool = false
-var _pinterest_fetcher: PinterestFetcher
-var _stepper: MenuStepper = null
-var _current_step_container: Control = null
+@onready var packs_foldable: FoldableContainer = %PacksFoldable
+@onready var settings_foldable: FoldableContainer = %SettingsFoldable
 
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
 @onready var import_session_dialog: FileDialog = null
 @onready var save_session_dialog: FileDialog = null
-@onready var session_step: Control = null
 @onready var packs_step: Control = null
 @onready var mode_step: Control = null
 @onready var main_vbox: VBoxContainer = %MainVBox
-@onready var info_label: Label = %InfoLabel
 @onready var session_type_switcher: OptionSwitcher = %SessionTypeSwitcher
 @onready var session_panel_container: VBoxContainer = (
 	session_type_switcher.get_parent().get_node("Panel/VBox")
 )
 @onready var pack_selector: Control = %PackSelectorContainer
 @onready var pack_container: Control = %PackContainer
-@onready var dimer: ColorRect = %Dimer
-@onready var url_container: Control = %UrlContainer
-@onready var url_vbox: VBoxContainer = %UrlVBox
-@onready var url_label: Label = %UrlLabel
-@onready var url_input_container: Control = %UrlInputContainer
-@onready var url_input: LineEdit = %UrlInput
-@onready var url_input_spiner_container: Control = %UrlInputSpinerContainer
-@onready var pinterest_section_chech_box: CheckBox = %PinterestSectionCheckBox
-@onready var history_container: Control = %HistoryContainer
-@onready var history_scroll: ScrollContainer = %HistoryScroll
-@onready var history_pack_list: VBoxContainer = %HistoryPackList
+@onready var tabbar: CustomTabBar = %TabBar
+@onready var done_button: Button = %DoneButton
 
 ## end variables
 
@@ -63,30 +51,12 @@ func _ready() -> void:
 	_initialize_session_panels()
 	_create_session_dialogs()
 	
-	_setup_stepper()
-	
 	visibility_changed.connect(_update)
 	_on_resized()
-	
-	# Connect dimer click to close overlays
-	dimer.gui_input.connect(_on_dimer_input)
 
-	if _session_panels.is_empty():
-		_update()
-		return
+	_update()
 
 	_set_switcher_index(0)
-
-
-func _on_dimer_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			# Close any open overlay
-			if url_container.visible:
-				dimer.hide()
-				url_container.hide()
-			elif history_container.visible:
-				_on_history_cancel_pressed()
 
 
 func _initialize_session_panels() -> void:
@@ -133,122 +103,12 @@ func _create_session_dialogs() -> void:
 		add_child(save_session_dialog)
 
 
-func _setup_stepper() -> void:
-	# Get the stepper and step containers
-	_stepper = %MenuStepper
-	if not _stepper:
-		push_warning("MenuStepper not found in scene")
-		return
-	
-	_current_step_container = %StepContainer
-	session_step = %SessionStep
-	packs_step = %PacksStep
-	mode_step = %ModeStep
-	
-	# Connect stepper signals
-	_stepper.step_changed.connect(_on_step_changed)
-	_stepper.step_completed.connect(_on_step_completed)
-	
-	# Connect Session step buttons
-	var new_session_btn = session_step.get_node_or_null("ButtonsGrid/NewSessionButton")
-	if new_session_btn:
-		new_session_btn.pressed.connect(_on_new_session_pressed)
-	
-	var import_session_btn = session_step.get_node_or_null("ButtonsGrid/ImportSessionButton")
-	if import_session_btn:
-		import_session_btn.pressed.connect(open_import_session_dialog)
-	
-	# Connect Packs step source buttons (integrated directly in the step)
-	var folder_btn = packs_step.get_node_or_null("ContentHBox/SourcesPanel/FolderButton")
-	if folder_btn:
-		folder_btn.pressed.connect(_on_folder_button_pressed)
-	
-	var images_btn = packs_step.get_node_or_null("ContentHBox/SourcesPanel/ImagesButton")
-	if images_btn:
-		images_btn.pressed.connect(_on_images_button_pressed)
-	
-	var pinterest_btn = packs_step.get_node_or_null("ContentHBox/SourcesPanel/PinterestButton")
-	if pinterest_btn:
-		pinterest_btn.pressed.connect(_on_pinterest_button_pressed)
-	
-	var history_btn = packs_step.get_node_or_null("ContentHBox/SourcesPanel/HistoryButton")
-	if history_btn:
-		history_btn.pressed.connect(_on_history_button_pressed)
-	
-	var clear_btn = packs_step.get_node_or_null("ContentHBox/PacksPanel/HBoxContainer/ClearButton")
-	if clear_btn:
-		clear_btn.pressed.connect(_on_clear_button_pressed)
-	
-	var packs_prev_btn = packs_step.get_node_or_null("NavigationButtons/PreviousButton")
-	if packs_prev_btn:
-		packs_prev_btn.pressed.connect(_on_packs_previous_pressed)
-	
-	var packs_next_btn = packs_step.get_node_or_null("NavigationButtons/NextButton")
-	if packs_next_btn:
-		packs_next_btn.pressed.connect(_on_packs_next_pressed)
-	
-	# Connect Mode step navigation
-	var mode_prev_btn = mode_step.get_node_or_null("PreviousButton")
-	if mode_prev_btn:
-		mode_prev_btn.pressed.connect(_on_mode_previous_pressed)
-	
-	var done_btn = mode_step.get_node_or_null("Panel/VBox/DoneButtonContiainer/DoneButton")
-	if done_btn:
-		done_btn.pressed.connect(_on_done_pressed)
-	
-	# Show initial step
-	_show_step(0)
-
-
-func _show_step(step_index: int) -> void:
-	# Hide all steps
-	if session_step:
-		session_step.hide()
-	if packs_step:
-		packs_step.hide()
-	if mode_step:
-		mode_step.hide()
-	
-	# Show current step
-	match step_index:
-		0:
-			if session_step:
-				session_step.show()
-		1:
-			if packs_step:
-				packs_step.show()
-		2:
-			if mode_step:
-				mode_step.show()
-
-
-func _on_step_changed(step_index: int) -> void:
-	_show_step(step_index)
-	_update()
-
-
-func _on_step_completed(_step_index: int) -> void:
-	# Handle step completion if needed
-	pass
-
-
-func _on_packs_previous_pressed() -> void:
-	if _stepper:
-		_stepper.go_to_previous_step()
-
-
-func _on_packs_next_pressed() -> void:
-	if not _can_proceed_from_packs():
-		push_warning("Cannot proceed: No packs selected")
-		return
-	
-	if _stepper:
-		_stepper.go_to_next_step()
-
-
-func _on_mode_previous_pressed() -> void:
-	if _stepper:
-		_stepper.go_to_previous_step()
+func _configure_foldable_sections() -> void:
+	"""Ensure foldable sections start with the expected visibility"""
+	if packs_foldable:
+		packs_foldable.folded = false
+	if settings_foldable:
+		settings_foldable.folded = true
 
 
 func _on_done_pressed() -> void:
@@ -265,24 +125,6 @@ func _on_done_pressed() -> void:
 func _can_proceed_from_packs() -> bool:
 	# Check if at least one pack is selected
 	return _context and _context.packs and not _context.packs.is_empty()
-
-
-func _on_new_session_pressed() -> void:
-	# Reset to a new session
-	_context = SessionResource.new()
-	_context_by_type.clear()
-	
-	# Clear packs
-	if pack_container:
-		for pack_node in pack_container.get_children():
-			pack_node.queue_free()
-	
-	# Unlock and go to packs step
-	if _stepper:
-		_stepper.unlock_next_step()
-		_stepper.go_to_next_step()
-	
-	_update()
 
 
 func _set_switcher_index(index: int) -> void:
@@ -407,7 +249,6 @@ func _update() -> void:
 	if not _context:
 		_context = SessionResource.new()
 
-	# Guard: pack_container might not be ready if called too early
 	if pack_container:
 		for pack in pack_container.get_children():
 			pack.queue_free()
@@ -418,36 +259,55 @@ func _update() -> void:
 			pack_container.add_child(new_pack)
 		new_pack._from_context(pack)
 		new_pack.delete_request.connect(_on_pack_delete_request.bind(pack))
-		new_pack.toggled.connect(_on_pack_toggled.bind(pack))
-
-	var panel := get_session_panel()
-	var valid := false
-	if panel and panel.has_method("is_valid"):
-		valid = panel.is_valid()
+		#new_pack.toggled.connect(_on_pack_toggled.bind(pack))
 	
-	# Update done button state in ModeStep if we're on that step
-	if _stepper and _stepper.current_step == 2 and mode_step:
-		var done_btn = mode_step.get_node_or_null("Panel/VBox/DoneButtonContiainer/DoneButton")
-		if done_btn:
-			done_btn.disabled = not valid or _context.get_image_count() <= 0
-
-	_update_labels()
-
-
-func _update_labels() -> void:
-	var pack_count: int = _context.get_packs().size()
 	var image_count: int = _context.get_image_count(false)
-	var more_than_one_pack: bool = pack_count >= 1
 	var more_than_one_image: bool = image_count >= 1
+	tabbar.disable_tab(1, not more_than_one_image)
+	done_button.disabled = not more_than_one_image
+	
+	if _context.packs.size() <= 0:
+		var margin: MarginContainer = MarginContainer.new()
+		var label: Label = Label.new()
+		label.text = "No pack selected"
+		label.theme_type_variation = "LabelSecondary"
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		margin.add_child(label)
+		pack_container.add_child(margin)
 
-	if pack_count <= 0:
-		info_label.text = "No pack selected"
-		return
-	var info_text: String = ""
-	info_text += "%s images" if more_than_one_image else "%s image"
-	info_text += " in %s packs" if more_than_one_pack else " in %s packs"
+	_load_history()
 
-	info_label.text = info_text % [image_count, pack_count]
+
+func _load_history() -> void:
+	var packs: Array[PackResource] = PackHistory.get_history()
+	
+	var packs_path: Array = _context.packs.map(func(p: PackResource): return p.path)
+	var history_pack_count: int = 0
+	for pack: PackResource in packs:
+		if history_pack_count >= 3:
+			return
+		
+		if pack.path in packs_path:
+			continue
+		
+		if history_pack_count <= 0:
+			var hbox: HBoxContainer = HBoxContainer.new()
+			var label: Label = Label.new()
+			var separator: HSeparator = HSeparator.new()
+			label.text = "History"
+			separator.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			hbox.add_child(separator)
+			hbox.add_child(label)
+			hbox.add_child(separator.duplicate())
+			pack_container.add_child(hbox)
+		
+		var new_pack: Pack = PACK_OBJECT.instantiate()
+		if pack_container:
+			pack_container.add_child(new_pack)
+		new_pack._from_context(pack, true)
+		new_pack.add_pack_request.connect(_on_holo_add_pack.bind(pack))
+		history_pack_count+=1
 
 
 func _add_packs(packs: Array[PackResource]) -> void:
@@ -460,10 +320,6 @@ func _add_packs(packs: Array[PackResource]) -> void:
 	# Add to history
 	PackHistory.add_packs(packs)
 	
-	# Unlock next step if we're on packs step and have packs
-	if _stepper and _stepper.current_step == 1 and _can_proceed_from_packs():
-		_stepper.unlock_next_step()
-	
 	_update()
 
 
@@ -472,8 +328,9 @@ func _on_pack_delete_request(pack: PackResource) -> void:
 	_update()
 
 
-func _on_pack_toggled(_pack: PackResource) -> void:
-	_update_labels()
+func _on_holo_add_pack(pack: PackResource) -> void:
+	_add_packs([pack])
+	_update()
 
 
 func get_args() -> SessionResource:
@@ -490,137 +347,16 @@ func _on_folder_button_pressed() -> void: folder_dialog.popup_centered()
 func _on_images_button_pressed() -> void: images_dialog.popup_centered()
 
 
-func _on_pinterest_button_pressed() -> void:
-	dimer.show()
-	url_container.show()
-	url_input_container.show()
-	url_input_spiner_container.hide()
-	url_input.clear()
-	url_input.grab_click_focus()
-	url_label.text = "Enter url"
+func _on_sources_show_more_toggled(
+	button_pressed: bool,
+	extra_sources: Control,
+	toggle_button: Button
+) -> void:
+	if extra_sources:
+		extra_sources.visible = button_pressed
+	if toggle_button:
+		toggle_button.text = "Show less" if button_pressed else "Show more"
 
-
-func _on_library_button_pressed() -> void:
-	pass # Replace with function body.
-
-
-func _on_history_button_pressed() -> void:
-	dimer.show()
-	history_container.show()
-	_populate_history_list()
-
-
-func _populate_history_list() -> void:
-	# Clear existing items
-	for child in history_pack_list.get_children():
-		child.queue_free()
-	
-	var history: Array[PackResource] = PackHistory.get_history()
-	
-	if history.is_empty():
-		var empty_label := Label.new()
-		empty_label.text = "No packs in history"
-		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		history_pack_list.add_child(empty_label)
-		return
-	
-	# Create Pack instances for each pack in history
-	for pack in history:
-		var pack_node: Pack = PACK_OBJECT.instantiate()
-		history_pack_list.add_child(pack_node)
-		# Show refresh button, hide delete button in history view
-		pack_node._from_context(pack, false, true)
-		# Pack handles refresh internally, no need to connect the signal
-
-
-func _on_history_add_selected_pressed() -> void:
-	var selected_packs: Array[PackResource] = []
-	
-	for pack_node in history_pack_list.get_children():
-		if pack_node is Pack and pack_node.check_box.button_pressed:
-			var index := pack_node.get_index()
-			var history := PackHistory.get_history()
-			if index < history.size():
-				selected_packs.append(history[index])
-	
-	if not selected_packs.is_empty():
-		_add_packs(selected_packs)
-	
-	_on_history_cancel_pressed()
-
-
-func _on_history_cancel_pressed() -> void:
-	dimer.hide()
-	history_container.hide()
-
-
-func _on_history_select_all_pressed() -> void:
-	for pack_node in history_pack_list.get_children():
-		if pack_node is Pack:
-			pack_node.check_box.button_pressed = true
-
-
-func _on_history_select_none_pressed() -> void:
-	for pack_node in history_pack_list.get_children():
-		if pack_node is Pack:
-			pack_node.check_box.button_pressed = false
-
-
-func _on_folder_dialog_dir_selected(dir: String) -> void:
-	_add_packs(PackResource.create_from_path(dir))
-
-
-func _on_image_dialog_files_selected(paths: PackedStringArray) -> void:
-	_add_packs(PackResource.create_from_paths(paths))
-
-
-func _on_clear_button_pressed() -> void:
-	_context.packs.clear()
-	_update()
-
-
-func _on_url_done_button_pressed() -> void:
-	url_input_container.hide()
-	url_input_spiner_container.show()
-	pinterest_section_chech_box.disabled = true
-
-	var use_sections := pinterest_section_chech_box.button_pressed
-	
-	# Create a new instance for this fetch
-	_pinterest_fetcher = PinterestFetcher.new()
-	add_child(_pinterest_fetcher)
-	
-	var results: Array = await _pinterest_fetcher.fetch(
-		url_input.text,
-		use_sections,
-		_on_url_fetcher_progress_callback
-	)
-	
-	# Clean up the fetcher
-	_pinterest_fetcher.queue_free()
-	_pinterest_fetcher = null
-
-	url_input_spiner_container.hide()
-	url_input_container.show()
-	dimer.hide()
-	url_container.hide()
-	pinterest_section_chech_box.disabled = false
-
-	for pack in results:
-		if pack.is_empty() or pack.get("status") != "success":
-			printerr(pack.get("data", "Fetching failure (no data)"))
-			return
-		
-		var pack_resource: PackResource = PackResource.create_from_urls(
-			pack.get("data", {}),
-			use_sections
-		)
-		_add_packs([pack_resource])
-	_update()
-
-
-func _on_url_fetcher_progress_callback(message: String) -> void:
-	url_label.text = message
 
 func _on_done_button_pressed() -> void:
 	# Sync the context with the active panel before caching it
@@ -645,13 +381,9 @@ func _on_resized() -> void:
 	if size.x <= 490 + 80:
 		main_vbox.custom_minimum_size.x = 0.0
 		main_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		url_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		url_vbox.custom_minimum_size.x = 0.0
 		return
 	main_vbox.custom_minimum_size.x = 474.0
 	main_vbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	url_container.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	url_vbox.custom_minimum_size.x = 400.0
 
 
 ## Session Import/Export Functions
@@ -684,11 +416,6 @@ func _on_import_session_file_selected(path: String) -> void:
 			var panel := get_session_panel()
 			if panel:
 				panel.load_from_context(_context)
-		
-		# Unlock next step and advance if on session step
-		if _stepper and _stepper.current_step == 0:
-			_stepper.unlock_next_step()
-			_stepper.go_to_next_step()
 	else:
 		printerr("Failed to load session from: ", path)
 
