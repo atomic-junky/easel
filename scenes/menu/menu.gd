@@ -19,8 +19,6 @@ var _session_type_index: Dictionary = {}
 var _context_by_type: Dictionary = {}
 var _current_panel: SessionType = null
 var _suppress_switcher_signal: bool = false
-@onready var packs_foldable: FoldableContainer = %PacksFoldable
-@onready var settings_foldable: FoldableContainer = %SettingsFoldable
 
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
@@ -30,10 +28,6 @@ var _suppress_switcher_signal: bool = false
 @onready var mode_step: Control = null
 @onready var main_vbox: VBoxContainer = %MainVBox
 @onready var session_type_switcher: OptionSwitcher = %SessionTypeSwitcher
-@onready var session_panel_container: VBoxContainer = (
-	session_type_switcher.get_parent().get_node("Panel/VBox")
-)
-@onready var pack_selector: Control = %PackSelectorContainer
 @onready var pack_container: Control = %PackContainer
 @onready var tabbar: CustomTabBar = %TabBar
 @onready var done_button: Button = %DoneButton
@@ -48,41 +42,13 @@ func _ready() -> void:
 			60
 		)
 
-	_initialize_session_panels()
 	_create_session_dialogs()
 	
 	visibility_changed.connect(_update)
 	_on_resized()
-
 	_update()
 
 	_set_switcher_index(0)
-
-
-func _initialize_session_panels() -> void:
-	_session_panels.clear()
-	_session_type_index.clear()
-	if session_panel_container == null:
-		return
-
-	for child in session_panel_container.get_children():
-		if child is SessionType:
-			var panel: SessionType = child
-			panel.hide()
-			_session_panels.append(panel)
-			_session_type_index[panel.get_context_type()] = _session_panels.size() - 1
-
-	if _session_panels.is_empty():
-		return
-
-	var options: Array[OptionData] = []
-	for i in _session_panels.size():
-		var mode_name := _session_panels[i].get_mode_name()
-		var option: OptionData = OptionData.new(mode_name, i + 1, true)
-		options.append(option)
-
-	session_type_switcher.use_dynamic_options = true
-	session_type_switcher.set_options_array(options)
 
 
 func _create_session_dialogs() -> void:
@@ -101,14 +67,6 @@ func _create_session_dialogs() -> void:
 		save_session_dialog.add_filter("*.gsession", "GestureApp Session")
 		save_session_dialog.file_selected.connect(_on_save_session_file_selected)
 		add_child(save_session_dialog)
-
-
-func _configure_foldable_sections() -> void:
-	"""Ensure foldable sections start with the expected visibility"""
-	if packs_foldable:
-		packs_foldable.folded = false
-	if settings_foldable:
-		settings_foldable.folded = true
 
 
 func _on_done_pressed() -> void:
@@ -197,8 +155,6 @@ func load_args(args: SessionResource) -> void:
 	# Ensure node is ready before updating UI
 	if not is_node_ready():
 		await ready
-	if _session_panels.is_empty():
-		_initialize_session_panels()
 
 	# Switch to the correct panel for this context's session type
 	if _context:
@@ -259,9 +215,9 @@ func _update() -> void:
 			pack_container.add_child(new_pack)
 		new_pack._from_context(pack)
 		new_pack.delete_request.connect(_on_pack_delete_request.bind(pack))
-		#new_pack.toggled.connect(_on_pack_toggled.bind(pack))
+		new_pack.toggled.connect(_update)
 	
-	var image_count: int = _context.get_image_count(false)
+	var image_count: int = _context.get_image_count(true)
 	var more_than_one_image: bool = image_count >= 1
 	tabbar.disable_tab(1, not more_than_one_image)
 	done_button.disabled = not more_than_one_image
@@ -340,22 +296,6 @@ func get_args() -> SessionResource:
 	if panel:
 		panel.save_to_context(_context)
 	return _context
-
-# Pack source buttons
-
-func _on_folder_button_pressed() -> void: folder_dialog.popup_centered()
-func _on_images_button_pressed() -> void: images_dialog.popup_centered()
-
-
-func _on_sources_show_more_toggled(
-	button_pressed: bool,
-	extra_sources: Control,
-	toggle_button: Button
-) -> void:
-	if extra_sources:
-		extra_sources.visible = button_pressed
-	if toggle_button:
-		toggle_button.text = "Show less" if button_pressed else "Show more"
 
 
 func _on_done_button_pressed() -> void:

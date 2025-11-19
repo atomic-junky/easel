@@ -4,7 +4,7 @@ const PACK_OBJECT: PackedScene = preload("res://prefabs/pack/pack.tscn")
 const ADD_ICON: Texture2D = preload("res://assets/icons/plus.svg")
 const CLOSE_ICON: Texture2D = preload("res://assets/icons/exit.svg")
 
-@onready var menu: Menu = $"../../../../../.."
+@onready var menu: Menu = $"../../../../../../.."
 
 @onready var add_pack_button: Button = %AddPackButton
 

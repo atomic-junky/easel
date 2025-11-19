@@ -10520,21 +10520,23 @@ theme_override_constants/margin_bottom = 20
 script = ExtResource("1_nvwcl")
 metadata/_custom_type_script = "uid://b08vxne14bjfa"
 
-[node name="MainVBox" type="VBoxContainer" parent="MainSafeMargin"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(550, 0)
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MainSafeMargin"]
 layout_mode = 2
-size_flags_horizontal = 4
+ratio = 0.7369
+
+[node name="MainVBox" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 15
 
-[node name="Label" type="Label" parent="MainSafeMargin/MainVBox"]
+[node name="Label" type="Label" parent="MainSafeMargin/AspectRatioContainer/MainVBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 38
 text = "GestureApp"
 horizontal_alignment = 1
 
-[node name="VersionLabel" type="Label" parent="MainSafeMargin/MainVBox/Label"]
+[node name="VersionLabel" type="Label" parent="MainSafeMargin/AspectRatioContainer/MainVBox/Label"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -10552,161 +10554,161 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("StyleBoxFlat_y4i35")
 script = SubResource("GDScript_rcuxh")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="TabBar" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer" node_paths=PackedStringArray("tabs")]
+[node name="TabBar" type="HBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer" node_paths=PackedStringArray("tabs")]
 unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("4_kaijy")
 tabs = [NodePath("../PanelContainer/VBoxContainer/Packs"), NodePath("../PanelContainer/VBoxContainer/Settings")]
 
-[node name="PanelContainer" type="PanelContainer" parent="MainSafeMargin/MainVBox/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"MenuPanelContainer"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Packs" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer"]
+[node name="Packs" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 15
 script = ExtResource("5_rcuxh")
 
-[node name="ContentHBox" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs"]
+[node name="ContentHBox" type="HBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 15
 
-[node name="PacksPanel" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox"]
+[node name="PacksPanel" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 10
 
-[node name="PacksHeader" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel"]
+[node name="PacksHeader" type="HBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader"]
+[node name="Label" type="Label" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 text = "Pack List"
 
-[node name="AddPackButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader"]
+[node name="AddPackButton" type="Button" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader"]
 unique_name_in_owner = true
 layout_mode = 2
 toggle_mode = true
 icon = ExtResource("5_y4i35")
 
-[node name="ClearButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader"]
+[node name="ClearButton" type="Button" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader"]
 visible = false
 layout_mode = 2
 icon = ExtResource("9_h8ew4")
 
-[node name="AddPackContainer" type="PanelContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel"]
+[node name="AddPackContainer" type="PanelContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_type_variation = &"PackPanelContainer"
 
-[node name="SourceButtonContainer" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer"]
+[node name="SourceButtonContainer" type="HBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="FolderButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer"]
+[node name="FolderButton" type="Button" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Folder"
 
-[node name="ImagesButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer"]
+[node name="ImagesButton" type="Button" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Images"
 
-[node name="PinterestButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer"]
+[node name="PinterestButton" type="Button" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Pinterest"
 
-[node name="PinterestUrlContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer"]
+[node name="PinterestUrlContainer" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="UrlInputContainer" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer"]
+[node name="UrlInputContainer" type="HBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="UrlInput" type="LineEdit" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer"]
+[node name="UrlInput" type="LineEdit" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Url"
 
-[node name="UrlDoneButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer"]
+[node name="UrlDoneButton" type="Button" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Done"
 
-[node name="UrlInputSpinerContainer" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer"]
+[node name="UrlInputSpinerContainer" type="HBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 alignment = 1
 
-[node name="Spiner" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputSpinerContainer" instance=ExtResource("11_4rn7p")]
+[node name="Spiner" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputSpinerContainer" instance=ExtResource("11_4rn7p")]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 
-[node name="PinterestSectionCheckBox" type="CheckBox" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer"]
+[node name="PinterestSectionCheckBox" type="CheckBox" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 text = "Include board sections"
 
-[node name="PinterestUrlMessageLabel" type="Label" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer"]
+[node name="PinterestUrlMessageLabel" type="Label" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PackContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/ScrollContainer"]
+[node name="PackContainer" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/ScrollContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Settings" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer"]
+[node name="Settings" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 20
 
-[node name="Title" type="Label" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings"]
+[node name="Title" type="Label" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings"]
 visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Choose Session Mode"
 horizontal_alignment = 1
 
-[node name="Spacer1" type="Control" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings"]
+[node name="Spacer1" type="Control" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings"]
 visible = false
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
-[node name="SessionTypeSwitcher" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings" instance=ExtResource("3_fkryp")]
+[node name="SessionTypeSwitcher" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings" instance=ExtResource("3_fkryp")]
 unique_name_in_owner = true
 layout_mode = 2
 first_label = "Standard"
@@ -10714,83 +10716,45 @@ second_label = "Relaxed"
 third_label = "Class Mode"
 fourth_label = "Custom"
 
-[node name="Panel" type="PanelContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_type_variation = &"MenuPanelContainer"
-
-[node name="VBox" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/Panel"]
+[node name="VBox" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="Standard" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/Panel/VBox"]
+[node name="Standard" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("5_i1lnr")
 
-[node name="Relaxed" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/Panel/VBox"]
+[node name="Relaxed" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("7_5n576")
 
-[node name="Class" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/Panel/VBox"]
+[node name="Class" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/VBox"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("7_y4i35")
 
-[node name="Custom" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/Panel/VBox"]
+[node name="Custom" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/VBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("9_rcuxh")
 
-[node name="DoneButtonContiainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox"]
+[node name="DoneButtonContiainer" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer/MainVBox"]
 layout_mode = 2
 
-[node name="DoneButton" type="Button" parent="MainSafeMargin/MainVBox/DoneButtonContiainer"]
+[node name="DoneButton" type="Button" parent="MainSafeMargin/AspectRatioContainer/MainVBox/DoneButtonContiainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Let's Draw!"
-
-[node name="PackSelectorContainer" type="Control" parent="."]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Panel" type="Panel" parent="PackSelectorContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_nvwcl")
-
-[node name="SafeMarginContainer" type="MarginContainer" parent="PackSelectorContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 40
-theme_override_constants/margin_top = 40
-theme_override_constants/margin_right = 40
-theme_override_constants/margin_bottom = 40
-script = ExtResource("1_nvwcl")
-metadata/_custom_type_script = "uid://b08vxne14bjfa"
 
 [node name="FolderDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
@@ -10816,11 +10780,11 @@ filters = PackedStringArray("*.png,*.jpg,*.jpeg, *.tiff")
 use_native_dialog = true
 
 [connection signal="resized" from="." to="." method="_on_resized"]
-[connection signal="toggled" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader/AddPackButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_add_pack_button_toggled"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/FolderButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_folder_button_pressed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/ImagesButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_images_button_pressed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/PinterestButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_pinterest_button_pressed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer/UrlDoneButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_url_done_button_pressed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/DoneButtonContiainer/DoneButton" to="." method="_on_done_button_pressed"]
-[connection signal="dir_selected" from="FolderDialog" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_folder_dialog_dir_selected"]
-[connection signal="files_selected" from="ImageDialog" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_image_dialog_files_selected"]
+[connection signal="toggled" from="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader/AddPackButton" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_add_pack_button_toggled"]
+[connection signal="pressed" from="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/FolderButton" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_folder_button_pressed"]
+[connection signal="pressed" from="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/ImagesButton" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_images_button_pressed"]
+[connection signal="pressed" from="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/PinterestButton" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_pinterest_button_pressed"]
+[connection signal="pressed" from="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer/UrlDoneButton" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_url_done_button_pressed"]
+[connection signal="pressed" from="MainSafeMargin/AspectRatioContainer/MainVBox/DoneButtonContiainer/DoneButton" to="." method="_on_done_button_pressed"]
+[connection signal="dir_selected" from="FolderDialog" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_folder_dialog_dir_selected"]
+[connection signal="files_selected" from="ImageDialog" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_image_dialog_files_selected"]
