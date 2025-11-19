@@ -15,14 +15,14 @@ jobs:
     name: Windows Export 🪟
     runs-on: ubuntu-latest
     container:
-      image: docker://barichello/godot-ci:4.4.1
+      image: docker://barichello/godot-ci:4.5.1
     steps:
       - name: Setup WINE and rcedit 🍷
         run: |
           chown root:root -R ~
           godot --headless --quit
-          echo 'export/windows/wine = "/usr/bin/wine64-stable"' >> ~/.config/godot/editor_settings-4.4.tres
-          echo 'export/windows/rcedit = "/opt/rcedit.exe"' >> ~/.config/godot/editor_settings-4.4.tres
+          echo 'export/windows/wine = "/usr/bin/wine64-stable"' >> ~/.config/godot/editor_settings-4.5.tres
+          echo 'export/windows/rcedit = "/opt/rcedit.exe"' >> ~/.config/godot/editor_settings-4.5.tres
 
       - name: Checkout 🛎️
         uses: actions/checkout@v5
