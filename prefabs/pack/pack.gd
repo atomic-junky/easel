@@ -24,6 +24,7 @@ signal refresh_done
 
 var _resource: PackResource
 var _pinterest_fetcher: PinterestFetcher
+var _is_holo: bool = false
 
 
 func _ready() -> void:
@@ -36,6 +37,7 @@ func _from_context(
 	is_holo: bool = false
 ) -> void:
 	_resource = pack
+	_is_holo = is_holo
 	check_box.button_pressed = pack.enabled
 	title_label.text = pack.pack_name
 	
@@ -59,6 +61,7 @@ func _from_context(
 	
 	if is_holo:
 		check_box.button_pressed = false
+		pack.enabled = true
 		check_box.disabled = true
 		theme_type_variation += "Holo"
 
@@ -143,7 +146,7 @@ func _on_pinterest_refresh_progress(message: String) -> void:
 
 
 func _on_check_box_toggled(toggled_on: bool) -> void:
-	_resource.enabled = toggled_on
+	_resource.enabled = toggled_on if not _is_holo else true
 	toggled.emit()
 
 
