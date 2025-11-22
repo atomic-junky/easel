@@ -17,4 +17,9 @@ func _on_toggled(toggled_on: bool) -> void:
 		animation_player.play_backwards("switch")
 	
 	if not has_focus():
-		animation_player.seek(animation_player.current_animation_length, true)
+		skip_animation()
+
+func skip_animation() -> void:
+	if not animation_player.is_playing():
+		return
+	animation_player.seek(animation_player.current_animation_length, true)

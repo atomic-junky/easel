@@ -66,8 +66,9 @@ func get_images_path() -> Array:
 			result.append(pose_data)
 		return result
 
-	# STANDARD and other types: use number_of_images and time_per_image
-	# Use a local variable to avoid modifying the context's number_of_images
+	if session_type == Type.RELAXED:
+		number_of_images = image_count
+
 	var actual_count: int = number_of_images
 	if actual_count < 0:
 		actual_count = image_count
@@ -85,6 +86,8 @@ func get_images_path() -> Array:
 			"name": next_image.get("name", "Unknown")
 		})
 	return result
+		
+		
 
 
 func get_images_path_raw() -> Array:

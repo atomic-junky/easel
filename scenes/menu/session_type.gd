@@ -15,7 +15,7 @@ var _field_container: VBoxContainer = null
 var _field_datas: Dictionary = {}
 var _fields_ready: bool = false
 
-## API: Call in _ready or setup to declare a field
+
 func define_field(
 	fname: String,
 	field_type: String,
@@ -93,11 +93,6 @@ func load_from_context(context: SessionResource) -> void:
 		if field.has_method("set_from_context"):
 			field.set_from_context(context)
 
-## Save UI values to context
-func save_to_context(context: SessionResource) -> void:
-	if not context:
-		return
-	apply_context(context)
 
 ## Base generic application; subclasses can override for specialized logic
 func apply_context(context: SessionResource) -> void:
@@ -138,6 +133,13 @@ func apply_fields_to_context(context: Object) -> void:
 	for k in values.keys():
 		if props.has(k):
 			context.set(k, values[k])
+
+
+func get_context() -> SessionResource:
+	var context: SessionResource = SessionResource.new()
+	context.session_type = get_context_type()
+	apply_fields_to_context(context)
+	return context
 
 
 func is_valid() -> bool:

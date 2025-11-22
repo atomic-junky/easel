@@ -120,7 +120,7 @@ static func _add_switcher(
 
 static func _spacer() -> Control:
 	var c := Control.new()
-	c.custom_minimum_size.y = 8
+	c.custom_minimum_sizecustom_minimum_size.y = 8
 	return c
 
 static func _label(text: String) -> Label:

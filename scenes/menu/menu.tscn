@@ -10,12 +10,10 @@
 [ext_resource type="Texture2D" uid="uid://bgv333kfjdvj0" path="res://assets/icons/plus.svg" id="5_y4i35"]
 [ext_resource type="Script" uid="uid://by3nb5xv0w4an" path="res://scenes/menu/relaxed.gd" id="7_5n576"]
 [ext_resource type="Script" uid="uid://bsjd13i2xi6x8" path="res://scenes/menu/class.gd" id="7_y4i35"]
+[ext_resource type="Script" uid="uid://df503hvhx0lwr" path="res://scenes/menu/settings.gd" id="9_64m6r"]
 [ext_resource type="Texture2D" uid="uid://7iashyxj0ocr" path="res://assets/icons/clear.svg" id="9_h8ew4"]
 [ext_resource type="Script" uid="uid://dd1m4u7ijravb" path="res://scenes/menu/custom.gd" id="9_rcuxh"]
 [ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="11_4rn7p"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nvwcl"]
-bg_color = Color(0.109804, 0.109804, 0.109804, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y4i35"]
 content_margin_left = 5.0
@@ -10494,21 +10492,15 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_0rb32")
 
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_nvwcl")
-
 [node name="MainSafeMargin" type="MarginContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
 anchor_bottom = 1.0
+offset_left = -576.0
+offset_right = 576.0
 offset_bottom = -59.564575
 grow_horizontal = 2
 grow_vertical = 2
@@ -10522,7 +10514,7 @@ metadata/_custom_type_script = "uid://b08vxne14bjfa"
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="MainSafeMargin"]
 layout_mode = 2
-ratio = 0.7369
+ratio = 0.9187
 
 [node name="MainVBox" type="VBoxContainer" parent="MainSafeMargin/AspectRatioContainer"]
 unique_name_in_owner = true
@@ -10695,18 +10687,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 20
-
-[node name="Title" type="Label" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings"]
-visible = false
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "Choose Session Mode"
-horizontal_alignment = 1
-
-[node name="Spacer1" type="Control" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings"]
-visible = false
-custom_minimum_size = Vector2(0, 10)
-layout_mode = 2
+script = ExtResource("9_64m6r")
 
 [node name="SessionTypeSwitcher" parent="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings" instance=ExtResource("3_fkryp")]
 unique_name_in_owner = true
@@ -10785,6 +10766,7 @@ use_native_dialog = true
 [connection signal="pressed" from="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/ImagesButton" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_images_button_pressed"]
 [connection signal="pressed" from="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/PinterestButton" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_pinterest_button_pressed"]
 [connection signal="pressed" from="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer/UrlDoneButton" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_url_done_button_pressed"]
+[connection signal="value_changed" from="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/SessionTypeSwitcher" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings" method="_on_session_type_switcher_value_changed"]
 [connection signal="pressed" from="MainSafeMargin/AspectRatioContainer/MainVBox/DoneButtonContiainer/DoneButton" to="." method="_on_done_button_pressed"]
 [connection signal="dir_selected" from="FolderDialog" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_folder_dialog_dir_selected"]
 [connection signal="files_selected" from="ImageDialog" to="MainSafeMargin/AspectRatioContainer/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_image_dialog_files_selected"]

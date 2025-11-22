@@ -8,7 +8,6 @@ signal packs_changed
 const PACK_OBJECT: PackedScene = preload("res://prefabs/pack/pack.tscn")
 
 var _context: SessionResource
-var _pinterest_fetcher: PinterestFetcher
 
 @onready var pack_container: VBoxContainer = %PackContainer
 @onready var pack_history_container: VBoxContainer = %PackHistoryContainer
@@ -59,9 +58,9 @@ func _populate_pack_history() -> void:
 		var pack := history[i]
 		var pack_node: Pack = PACK_OBJECT.instantiate()
 		pack_history_container.add_child(pack_node)
-		pack_node._from_context(pack, false, true)
+		pack_node._from_context(pack, true)
 		# Make it smaller for history display
-		pack_node.custom_minimum_size = Vector2(0, 60)
+		#pack_node.custom_minimum_size = Vector2(0, 60)
 		# Connect to add this pack when clicked
 		pack_node.refresh_request.connect(_on_pack_history_add_request.bind(pack))
 

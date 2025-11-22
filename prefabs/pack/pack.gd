@@ -1,10 +1,18 @@
 class_name Pack extends PanelContainer
 
+const URL_REGEX: String = '^(ftp|http|https)://[^ " ]+$'
+
 signal delete_request
 signal refresh_request
 signal add_pack_request
 signal toggled
 signal refresh_done
+
+static var _preview_queue: Array = []
+static var _preview_worker_thread: Thread = null
+static var _preview_worker_running: bool = false
+static var _preview_queue_mutex: Mutex = Mutex.new()
+static var _preview_cache: Dictionary = {}
 
 @onready var check_box: CheckBox = %CheckBox
 @onready var icon_rect: TextureRect = %IconRect
@@ -22,14 +30,23 @@ signal refresh_done
 @onready var add_icon: Texture2D = preload("res://assets/icons/bookmark-add.svg")
 @onready var check_icon: Texture2D = preload("res://assets/icons/bookmark-check.svg")
 
+@onready var preview_rects: Array[TextureRect] = [
+	%PreviewRect01,
+	%PreviewRect02,
+	%PreviewRect03,
+]
+
 var _resource: PackResource
 var _pinterest_fetcher: PinterestFetcher
 var _is_holo: bool = false
+var _url_regex: RegEx = RegEx.new()
 
 
 func _ready() -> void:
 	var mb_popup: PopupMenu = menu_button.get_popup()
 	mb_popup.id_pressed.connect(_on_mb_popup_id_pressed)
+	
+	_url_regex.compile(URL_REGEX)
 
 
 func _from_context(
@@ -64,6 +81,103 @@ func _from_context(
 		pack.enabled = true
 		check_box.disabled = true
 		theme_type_variation += "Holo"
+	
+	_queue_preview_images()
+
+func _queue_preview_images() -> void:
+	for idx in preview_rects.size():
+		var rect: TextureRect = preview_rects[idx]
+		if not rect or idx >= _resource.image_count:
+			break
+		var im_data: Dictionary = _resource.images[idx]
+		var path: String = str(im_data.get("path", ""))
+		if path == "":
+			continue
+		var is_url: bool = _url_regex.search(path) != null
+		if _apply_cached_preview(path, rect):
+			continue
+		_enqueue_preview(path, rect, is_url, self)
+
+
+static func _enqueue_preview(path: String, rect: TextureRect, is_url: bool, pack: Pack) -> void:
+	if path == "" or not is_instance_valid(pack) or not is_instance_valid(rect):
+		return
+	_preview_queue_mutex.lock()
+	_preview_queue.append({
+		"path": path,
+		"rect_ref": weakref(rect),
+		"is_url": is_url,
+		"pack_ref": weakref(pack),
+	})
+	var should_start: bool = not _preview_worker_running
+	if should_start:
+		_preview_worker_running = true
+	_preview_queue_mutex.unlock()
+	if should_start:
+		var thread: Thread = Thread.new()
+		_preview_worker_thread = thread
+		thread.start(_preview_worker_loop)
+
+
+
+static func _preview_worker_loop() -> void:
+	while true:
+		_preview_queue_mutex.lock()
+		if _preview_queue.is_empty():
+			_preview_worker_running = false
+			_preview_worker_thread = null
+			_preview_queue_mutex.unlock()
+			return
+		var task: Dictionary = _preview_queue.pop_front()
+		_preview_queue_mutex.unlock()
+		var pack_ref: WeakRef = task.get("pack_ref") as WeakRef
+		var rect_ref: WeakRef = task.get("rect_ref") as WeakRef
+		var pack: Pack = pack_ref.get_ref() as Pack if pack_ref != null else null
+		var rect: TextureRect = rect_ref.get_ref() as TextureRect if rect_ref != null else null
+		if not is_instance_valid(pack) or not is_instance_valid(rect):
+			continue
+		var path: String = str(task.get("path", ""))
+		if path == "":
+			continue
+		if task.get("is_url"):
+			pack.call_thread_safe("_fetch_url_texture", path, rect)
+			continue
+		for _i in range(4):
+			var im: Image = Image.load_from_file(path)
+			if im and not im.is_empty():
+				if is_instance_valid(pack):
+					pack.call_thread_safe("_post_thread_load_image", im, rect, path)
+				break
+
+static func _apply_cached_preview(path: String, rect: TextureRect) -> bool:
+	if path == "":
+		return false
+	var cached_texture: Texture2D = _preview_cache.get(path)
+	if cached_texture and cached_texture is Texture2D:
+		rect.texture = cached_texture
+		return true
+	return false
+
+
+func _post_thread_load_image(source: Variant, rect: TextureRect, path: String) -> void:
+	if not is_instance_valid(rect):
+		return
+	var texture: Texture2D
+	if source is Texture2D:
+		texture = source
+	elif source is Image:
+		texture = ImageTexture.create_from_image(source)
+	else:
+		return
+	rect.texture = texture
+	if path != "" and texture:
+		_preview_cache[path] = texture
+
+
+func _fetch_url_texture(path: String, rect: TextureRect) -> void:
+	var texture: Texture2D = await UrlImageLoader.get_image(path)
+	if texture and is_instance_valid(rect):
+		_post_thread_load_image(texture, rect, path)
 
 
 func _on_refresh_button_pressed() -> void:
@@ -123,7 +237,7 @@ func _refresh_pack() -> void:
 			var pack_data = results[0]
 			if pack_data.is_empty() or pack_data.get("status") != "success":
 				refresh_done.emit()
-				return 
+				return
 			
 			var data: Dictionary = pack_data.get("data", {})
 			var pack_images: Array = data.get("images", [])

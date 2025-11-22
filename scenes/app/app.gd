@@ -32,12 +32,15 @@ func _on_view_done(new_context: SessionResource = SessionResource.new()) -> void
 	await SceneLoader.switch_scene(aspect_ration, current_view, scene_path)
 
 
+func _set_aspect() -> void:
+	var vp_size: Vector2 = get_viewport_rect().size
+	aspect_ration.ratio = vp_size.x/vp_size.y
+
 func _on_resized() -> void:
 	if not is_node_ready():
 		return
-	
-	var vp_size: Vector2 = get_viewport_rect().size
-	aspect_ration.ratio = vp_size.x/vp_size.y
+		
+	_set_aspect()
 
 
 func _on_aspect_ratio_container_child_entered_tree(node: Node) -> void:

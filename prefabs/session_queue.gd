@@ -68,7 +68,7 @@ func get_current_filename() -> String:
 
 
 func get_from_cache(idx: int, callback: Callable) -> Dictionary:
-	if _queue[idx].get("type") == "break":
+	if _queue.has(idx) and _queue[idx].get("type") == "break":
 		return {
 			"status": "break",
 			"duration": _queue[idx].get("duration")

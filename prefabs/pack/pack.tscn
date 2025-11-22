@@ -7,6 +7,9 @@
 [ext_resource type="Texture2D" uid="uid://bgv333kfjdvj0" path="res://assets/icons/plus.svg" id="6_baia8"]
 
 [node name="Pack" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 55)
+offset_right = 227.0
+offset_bottom = 55.0
 theme_type_variation = &"PackPanelContainer"
 script = ExtResource("1_nhums")
 
@@ -22,21 +25,130 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="Control" type="Control" parent="HBox"]
+visible = false
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+
+[node name="PreviewRect03" type="TextureRect" parent="HBox/Control"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.32941177)
+texture_filter = 4
+custom_minimum_size = Vector2(37, 45)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1.6820602
+offset_top = -23.081768
+offset_right = 35.31794
+offset_bottom = 21.918232
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 0.15707964
+pivot_offset = Vector2(18, 45)
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PreviewRect02" type="TextureRect" parent="HBox/Control"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.65882355)
+texture_filter = 6
+custom_minimum_size = Vector2(37, 45)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -36.68206
+offset_top = -23.081768
+offset_right = 0.31793976
+offset_bottom = 21.918232
+grow_horizontal = 2
+grow_vertical = 2
+rotation = -0.15707964
+pivot_offset = Vector2(18, 45)
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PreviewRect01" type="TextureRect" parent="HBox/Control"]
+unique_name_in_owner = true
+texture_filter = 6
+custom_minimum_size = Vector2(37, 45)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -19.182058
+offset_top = -24.656433
+offset_right = 17.81794
+offset_bottom = 20.343567
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(18, 45)
+expand_mode = 1
+stretch_mode = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBox"]
+visible = false
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="PreviewRect01" type="TextureRect" parent="HBox/HBoxContainer"]
+texture_filter = 6
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+
+[node name="PreviewRect02" type="TextureRect" parent="HBox/HBoxContainer/VBoxContainer"]
+texture_filter = 6
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PreviewRect03" type="TextureRect" parent="HBox/HBoxContainer/VBoxContainer"]
+texture_filter = 6
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 6
+
 [node name="VBox" type="VBoxContainer" parent="HBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+alignment = 1
 
-[node name="HBox" type="HBoxContainer" parent="HBox/VBox"]
+[node name="VBox" type="VBoxContainer" parent="HBox/VBox"]
 layout_mode = 2
 
-[node name="IconRect" type="TextureRect" parent="HBox/VBox/HBox"]
+[node name="HBox" type="HBoxContainer" parent="HBox/VBox/VBox"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="IconRect" type="TextureRect" parent="HBox/VBox/VBox/HBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(17, 0)
+custom_minimum_size = Vector2(19, 0)
 layout_mode = 2
 texture = ExtResource("2_nhums")
 expand_mode = 1
+stretch_mode = 5
 
-[node name="Title" type="Label" parent="HBox/VBox/HBox"]
+[node name="Title" type="Label" parent="HBox/VBox/VBox/HBox"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -86,6 +198,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
+mouse_filter = 2
 alignment = 2
 
 [node name="AddPackButton" type="Button" parent="AddPackContainer"]

@@ -100,7 +100,6 @@ func _ready() -> void:
 	value_changed.emit(value)
 
 
-
 func _update() -> void:
 	if Engine.is_editor_hint():
 		_update_editor()
@@ -155,6 +154,16 @@ func _get_value() -> int:
 			return _button_values[i]
 	
 	return -1
+
+
+func set_value(idx: int) -> void:
+	if idx < 0:
+		_update_buttons(custom_button, false)
+	else:
+		print(_buttons[idx].text)
+		_update_buttons(_buttons[idx], false)
+	
+
 
 func _update_button_size() -> void:
 	var max_button_size: float = 0.0
