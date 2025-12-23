@@ -6,7 +6,7 @@ func setup() -> void:
 	ClassSessionTemplateRegistry.initialize()
 	var durations := ClassSessionTemplateRegistry.get_available_durations()
 	define_field(
-		"duration", "switcher", durations,
+		"session_duration", "switcher", durations,
 		"Session duration", " min"
 	)
 	define_field(
@@ -45,7 +45,7 @@ func save_to_context(context: SessionResource) -> void:
 	var number_of_images: int = 0
 	for pose in _class_session:
 		number_of_images += pose.get("amount", 1)
-	context.class_data = _class_session
+	context.sequence = _class_session
 	context.number_of_images = number_of_images
 
 func is_valid() -> bool:
@@ -56,3 +56,35 @@ func get_context_type() -> SessionResource.Type:
 
 func get_mode_name() -> String:
 	return "Class Mode"
+
+# Génère la séquence pour le mode Class
+func generate_sequence(context: SessionResource) -> Array:
+	var all_images: Array = context.get_images_path_raw()
+	if context.shuffle:
+		all_images.shuffle()
+	elif context.reverse:
+		all_images.reverse()
+	var result: Array = []
+	var seq: Array = context.sequence
+	if seq.size() == 0 and all_images.size() > 0:
+		for next_image in all_images:
+			result.append({
+				"type": "pose",
+				"duration": 60,
+				"path": next_image.get("path", ""),
+				"name": next_image.get("name", "Unknown"),
+			})
+		return result
+	for i in range(seq.size()):
+		var item: Dictionary = seq[i]
+		var pose_type: String = String(item.get("type", "pose"))
+		var pose_duration: int = int(item.get("duration", 60))
+		var pose_data: Dictionary = {"type": pose_type, "duration": pose_duration}
+		if pose_type == "pose":
+			if all_images.is_empty():
+				break
+			var next_image = all_images.pop_front()
+			pose_data["path"] = next_image.get("path", "")
+			pose_data["name"] = next_image.get("name", "Unknown")
+		result.append(pose_data)
+	return result

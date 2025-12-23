@@ -26,66 +26,18 @@ enum Type {
 
 @export var session_type: Type = Type.STANDARD
 @export var number_of_images: int = -1  # -1 means unset, will use field default
-@export var time_per_image: int = -1  # -1 means unset, will use field default
+## time_per_image supprimé, la durée est toujours lue depuis le champ 'duration' du dictionnaire de la séquence
 @export var duration: int = -1  # -1 means unset, will use field default (for CLASS mode)
-@export var class_data: Array = []
+@export var sequence: Array = []
 @export var shuffle: bool = true  # Default value for image ordering
 @export var reverse: bool = false  # Default value for image ordering
 @export var packs: Array[PackResource] = []
+@export var settings: Dictionary = {}
 
 
 func get_images_path() -> Array:
-	var all_images: Array = get_images_path_raw()
-	var image_count: int = all_images.size()
-
-	if shuffle:
-		all_images.shuffle()
-	elif reverse:
-		all_images.reverse()
-
-	var result: Array = []
-
-	# For CLASS and CUSTOM sessions, follow the sequence exactly as defined
-	if session_type in [Type.CLASS, Type.CUSTOM]:
-		var seq: Array = _get_all_poses()
-		for idx in seq.size():
-			var item: Dictionary = seq[idx]
-			var pose_type: String = String(item.get("type", "pose"))
-			var pose_duration: int = int(item.get("duration", time_per_image))
-			var pose_data: Dictionary = {
-				"type": pose_type,
-				"duration": pose_duration
-			}
-			if pose_type == "pose":
-				# Guard against empty image pool
-				if all_images.is_empty():
-					break
-				var next_image: Dictionary = all_images.pop_front()
-				pose_data["path"] = next_image.get("path", "")
-				pose_data["name"] = next_image.get("name", "Unknown")
-			result.append(pose_data)
-		return result
-
-	if session_type == Type.RELAXED:
-		number_of_images = image_count
-
-	var actual_count: int = number_of_images
-	if actual_count < 0:
-		actual_count = image_count
-	if actual_count > image_count:
-		actual_count = image_count
-
-	for _i in actual_count:
-		if all_images.is_empty():
-			break
-		var next_image: Dictionary = all_images.pop_front()
-		result.append({
-			"type": "pose",
-			"duration": time_per_image,
-			"path": next_image.get("path", ""),
-			"name": next_image.get("name", "Unknown")
-		})
-	return result
+	# Retourne la séquence telle qu'elle est
+	return sequence
 		
 		
 
@@ -111,26 +63,14 @@ func get_packs() -> Array[PackResource]:
 
 
 func get_pose_type(idx: int) -> String:
-	if session_type in [Type.CLASS, Type.CUSTOM]:
-		return _get_all_poses()[idx]["type"]
-	return "pose"
+	return sequence[idx]["type"]
 
 
 func get_pose_duration(idx: int) -> int:
-	if session_type in [Type.CLASS, Type.CUSTOM]:
-		return _get_all_poses()[idx]["duration"]
-	return time_per_image
+	return sequence[idx]["duration"]
 
 
-func _get_all_poses() -> Array:
-	var poses: Array = []
-	for pose: Dictionary in class_data:
-		for _i in pose.get("amount", 1):
-			poses.append({
-				"type": pose.get("type"),
-				"duration": pose.get("duration")
-			})
-	return poses
+## La séquence est déjà une liste de dictionnaires, pas besoin de transformer
 
 
 ## Save this session resource to a .gsession file

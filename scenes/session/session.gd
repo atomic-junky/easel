@@ -20,15 +20,13 @@ signal done(session_context: SessionResource)
 @onready var count_label := %CountLabel
 @onready var paint_button := %PaintButton
 
-var _context: SessionResource
-var queue: SessionQueue
-
-var _swipe_start := Vector2.ZERO
-var _swipe_min_distance := 50
-
 var is_drawing: bool = false
 var is_pause: bool = false
+var _context: SessionResource
+var queue: SessionQueue
 var no_timer: bool = false
+var _swipe_start := Vector2.ZERO
+var _swipe_min_distance := 50
 
 
 func _ready() -> void:
@@ -70,9 +68,35 @@ func start_session(context: SessionResource) -> void:
 		no_timer = true
 		pause_button.hide()
 	
+	# Génère la séquence finale avec les chemins d'images avant de charger la queue
+	var session_type_script: Script = null
+	match context.session_type:
+		SessionResource.Type.STANDARD:
+			session_type_script = load("res://scenes/menu/standard.gd")
+		SessionResource.Type.CLASS:
+			session_type_script = load("res://scenes/menu/class.gd")
+		SessionResource.Type.RELAXED:
+			session_type_script = load("res://scenes/menu/relaxed.gd")
+		SessionResource.Type.CUSTOM:
+			session_type_script = load("res://scenes/menu/custom.gd")
+		_:
+			session_type_script = null
+	if session_type_script:
+		var generator = session_type_script.new()
+		var generated_sequence = generator.generate_sequence(context)
+		context.sequence = generated_sequence
 	_context = context
-	var _queue: Array = context.get_images_path()
-	queue.load_queue(_queue)
+	queue.load_queue(context)
+	# If the generated queue is empty, avoid starting the session flow
+	if queue.size() == 0:
+		message_label.show()
+		message_label.text = "No images available for this session."
+		spiner.hide()
+		# Keep navigation hidden and don't start timers/process
+		navigation_container.hide()
+		set_process(false)
+		set_process_input(false)
+		return
 	mouse_move_timer.start()
 	
 	set_process(true)
@@ -93,7 +117,9 @@ func _process(_delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if (event is InputEventMouseMotion and abs(event.velocity) >= Vector2.ONE) or event is InputEventScreenTouch:
+	var is_mouse_motion = event is InputEventMouseMotion and abs(event.velocity) >= Vector2.ONE
+	var is_screen_touch = event is InputEventScreenTouch
+	if is_mouse_motion or is_screen_touch:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		var tween: Tween = create_tween()
 		tween.set_parallel()
@@ -130,7 +156,7 @@ func _input(event: InputEvent) -> void:
 
 
 func current_image() -> void:
-	change_image(queue.current)
+	change_image(queue.current.bind(_on_item_loaded))
 
 
 func next_image() -> void:
@@ -138,60 +164,64 @@ func next_image() -> void:
 		print("Reach the end")
 		return
 	
-	change_image(queue.next)
+	change_image(queue.next.bind(_on_item_loaded))
 
 
 func previous_image() -> void:
 	if not queue.has_previous():
 		return
 	
-	change_image(queue.previous)
+	change_image(queue.previous.bind(_on_item_loaded))
 
 
 func change_image(image_callable: Callable) -> void:
 	texture_container.texture = null
 	spiner.show()
-	var data: Dictionary = image_callable.call(_image_loaded_callback)
-	_on_image_loaded(data)
-	# If image is already cached and loaded, display it immediately
-	if data.get("status") == "success" and data.has("texture"):
-		texture_container.texture = data.get("texture")
+	var item: Dictionary = image_callable.call()
+	_on_item_loaded(item)
 
 
-func _image_loaded_callback(data: Dictionary) -> void:
-	_on_image_loaded.call_deferred(data)
 
 
-func _on_image_loaded(data: Dictionary) -> void:
+
+func _on_item_loaded(item: Dictionary) -> void:
 	spiner.hide()
 	message_label.hide()
 	is_pause = false
-	match data.get("status"):
+	var status = item.get("status", "unknown")
+	var item_duration = item.get("duration", 60)
+	match status:
 		"break":
 			message_label.show()
 			message_label.text = "Break"
 			is_pause = true
+			texture_container.texture = null
 		"fail":
-			message_label.text = data.get("message")
 			message_label.show()
-			printerr(data.get("message"))
+			message_label.text = item.get("message", "Image not found")
+			texture_container.texture = null
 		"loading":
 			spiner.show()
 		"success":
-			# Show texture if it's for the current image
-			if data.get("index") == queue._queue_idx:
-				texture_container.texture = data.get("texture")
-			# If no texture is showing and we have one cached for current index, show it
-			elif texture_container.texture == null:
-				var cached = queue._cache.get(queue._queue_idx, {})
-				if cached.get("status") == "success" and cached.has("texture"):
-					texture_container.texture = cached.get("texture")
+			if item.has("texture") and item["texture"]:
+				texture_container.texture = item["texture"]
+			else:
+				message_label.show()
+				message_label.text = "Image not found"
+				texture_container.texture = null
 		_:
-			printerr("Unknown status %s" % data.get("status"))
-	_update()
+			message_label.show()
+			message_label.text = "Unknown status: %s" % status
+			texture_container.texture = null
+	_update(item_duration)
 
 
-func _update() -> void:
+func _update(item_duration := 60) -> void:
+	if queue.size() == 0:
+		file_location_button.text = ""
+		count_label.text = "0/0"
+		return
+
 	var file_name: String = queue.get_current_filename()
 	if file_name.length() > 48:
 		file_name = file_name.left(45)
@@ -202,20 +232,23 @@ func _update() -> void:
 			file_name = file_name.right(45)
 			file_name = "..." + file_name
 	file_location_button.text = file_name
-	
-	if not no_timer and (not texture_container.texture == null or is_pause):
-		timer.wait_time = _context.get_pose_duration(queue._queue_idx)
-		timer.paused = false
-		timer.start()
-	elif texture_container.texture == null:
-		timer.start()
+
+	# Timer logic
+	if not no_timer and not is_pause:
+		if item_duration > 0:
+			timer.wait_time = item_duration
+			timer.paused = false
+			timer.start()
+		# No need for else after return above
+	else:
+		timer.stop()
 		timer.paused = true
-	
-	var canvas_idx: String = _get_canvas_index(queue._queue_idx)
+
+	var canvas_idx: String = _get_canvas_index(queue.get_current_index())
 	paint_canvas.create_canvas(canvas_idx)
 	paint_canvas.switch_canvas(canvas_idx)
-	
-	count_label.text = "%s/%s" % [queue._queue_idx+1, queue.size()]
+
+	count_label.text = "%s/%s" % [queue.get_current_index()+1, queue.size()]
 
 
 func _on_timer_timeout() -> void:
@@ -276,7 +309,7 @@ func _on_file_location_button_pressed() -> void:
 
 
 func _on_brush_size_slider_value_changed(value: float) -> void:
-	paint_canvas.brush_size = value
+	paint_canvas.brush_size = int(value)
 
 
 func get_current_image() -> Image:
@@ -292,7 +325,7 @@ func _on_rotate_left_button_pressed() -> void:
 	var im: Image = get_current_image()
 	if im:
 		im.rotate_90(COUNTERCLOCKWISE)
-		queue._cache[queue._queue_idx]["texture"] = ImageTexture.create_from_image(im)
+		queue.set_cached_texture(queue.get_current_index(), ImageTexture.create_from_image(im))
 	current_image()
 
 
@@ -300,7 +333,7 @@ func _on_rotate_right_button_pressed() -> void:
 	var im: Image = get_current_image()
 	if im:
 		im.rotate_90(CLOCKWISE)
-		queue._cache[queue._queue_idx]["texture"] = ImageTexture.create_from_image(im)
+		queue.set_cached_texture(queue.get_current_index(), ImageTexture.create_from_image(im))
 	current_image()
 
 

@@ -25,32 +25,42 @@ func _notification(what: int) -> void:
 			await _thread.wait_to_finish()
 
 
-func load_queue(queue: Array) -> void:
+func load_queue(queue_or_context) -> void:
+	# Accept either a pre-built queue Array or a SessionResource and build it here
 	_queue_idx = 0
-	_queue = queue
+	if queue_or_context is SessionResource:
+		_queue = queue_or_context.sequence
+	elif typeof(queue_or_context) == TYPE_ARRAY:
+		_queue = queue_or_context
+	else:
+		_queue = []
+
 	if _thread == null:
 		_thread = Thread.new()
 		_thread.start(_background_loader)
 
 
 func current(callback: Callable) -> Dictionary:
-	var result = get_from_cache(_queue_idx, callback)
-	return result
+	if _queue.size() == 0:
+		return {"status": "fail", "message": "Empty queue"}
+	return get_from_cache(_queue_idx, callback)
 
 
 func next(callback: Callable) -> Dictionary:
+	if _queue.size() == 0:
+		return {"status": "fail", "message": "Empty queue"}
 	if _queue_idx < _queue.size() - 1:
 		_queue_idx += 1
-		var result = get_from_cache(_queue_idx, callback)
-		return result
+		return get_from_cache(_queue_idx, callback)
 	return {}
 
 
 func previous(callback: Callable) -> Dictionary:
+	if _queue.size() == 0:
+		return {"status": "fail", "message": "Empty queue"}
 	if _queue_idx > 0:
 		_queue_idx -= 1
-		var result = get_from_cache(_queue_idx, callback)
-		return result
+		return get_from_cache(_queue_idx, callback)
 	return {}
 
 
@@ -60,27 +70,27 @@ func size() -> int: return _queue.size()
 
 
 func get_current_location() -> String:
-	return _queue[_queue_idx].get("path", "") if _queue.size() >= _queue_idx else ""
+	return _queue[_queue_idx].get("path", "") if _queue_idx < _queue.size() else ""
 
 
 func get_current_filename() -> String:
-	return _queue[_queue_idx].get("name", "Unknown") if _queue.size() >= _queue_idx else "Unknown"
+	return _queue[_queue_idx].get("name", "Unknown") if _queue_idx < _queue.size() else "Unknown"
 
 
 func get_from_cache(idx: int, callback: Callable) -> Dictionary:
-	if _queue.has(idx) and _queue[idx].get("type") == "break":
-		return {
-			"status": "break",
-			"duration": _queue[idx].get("duration")
-		}
-	
+	# Validate index
+	if idx < 0 or idx >= _queue.size():
+		return {"status": "fail", "message": "Index out of range"}
+
+	var item: Dictionary = _queue[idx]
+	if item.get("type") == "break":
+		return {"status": "break", "duration": item.get("duration")}
+
 	if _cache.has(idx):
 		return _cache[idx]
 
 	_enqueue_load(idx, callback)
-	_cache[idx] = {
-		"status": "loading"
-	}
+	_cache[idx] = {"status": "loading"}
 	return _cache[idx]
 
 
@@ -171,3 +181,40 @@ func _clean_cache() -> void:
 		var idx: int = el.get("index")
 		if not idx in unload_range:
 			_load_queue.erase(idx)
+
+
+# Public accessors to avoid exposing internals directly
+func get_current_index() -> int:
+	return _queue_idx
+
+func get_current_item() -> Dictionary:
+	return get_item(_queue_idx)
+
+func get_item(idx: int) -> Dictionary:
+	if idx >= 0 and idx < _queue.size():
+		return _queue[idx]
+	return {}
+
+func get_item_duration(idx: int) -> int:
+	var it := get_item(idx)
+	if it.size() == 0:
+		return -1
+	return int(it.get("duration", -1))
+
+func get_item_path(idx: int) -> String:
+	return str(get_item(idx).get("path", ""))
+
+func get_item_name(idx: int) -> String:
+	return str(get_item(idx).get("name", "Unknown"))
+
+func get_cached(idx: int) -> Dictionary:
+	return _cache.get(idx, {})
+
+func set_cached_texture(idx: int, texture: Texture2D) -> void:
+	var path = get_item_path(idx)
+	_cache[idx] = {
+		"status": "success",
+		"index": idx,
+		"texture": texture,
+		"path": path
+	}

@@ -21,3 +21,31 @@ func get_context_type() -> SessionResource.Type:
 
 func get_mode_name() -> String:
 	return "Standard"
+
+# Génère la séquence pour le mode Standard
+func generate_sequence(context: SessionResource) -> Array:
+	var all_images: Array = context.get_images_path_raw()
+	var image_count: int = all_images.size()
+	if context.shuffle:
+		all_images.shuffle()
+	elif context.reverse:
+		all_images.reverse()
+
+	var result: Array = []
+	var actual_count: int = context.number_of_images
+	if actual_count < 0:
+		actual_count = image_count
+	if actual_count > image_count:
+		actual_count = image_count
+
+	for _i in range(actual_count):
+		if all_images.is_empty():
+			break
+		var next_image = all_images.pop_front()
+		result.append({
+			"type": "pose",
+			"duration": context.duration if context.duration > 0 else 60,
+			"path": next_image.get("path", ""),
+			"name": next_image.get("name", "Unknown"),
+		})
+	return result

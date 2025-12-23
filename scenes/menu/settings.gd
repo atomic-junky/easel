@@ -41,7 +41,6 @@ func switch_session_from_type(session_type: SessionResource.Type) -> void:
 		break
 		
 	_current_session_container.show()
-	print(_current_session_container.get_index())
 	session_type_switcher.set_value(_current_session_container.get_index())
 
 
