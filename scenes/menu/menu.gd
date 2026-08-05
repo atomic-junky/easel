@@ -17,17 +17,12 @@ var _context_by_type: Dictionary = {}
 var _current_panel: SessionType = null
 
 @onready var settings: Control = %Settings
-@onready var folder_dialog: FileDialog = %FolderDialog
-@onready var images_dialog: FileDialog = %ImageDialog
 @onready var import_session_dialog: FileDialog = null
 @onready var save_session_dialog: FileDialog = null
-@onready var packs_step: Control = null
-@onready var mode_step: Control = null
 @onready var main_vbox: VBoxContainer = %MainVBox
-@onready var session_type_switcher: OptionSwitcher = %SessionTypeSwitcher
 @onready var pack_container: Control = %PackContainer
 @onready var tabbar: CustomTabBar = %TabBar
-@onready var done_button: Button = %DoneButton
+@onready var next_button: Button = %NextButton
 
 ## end variables
 
@@ -38,39 +33,14 @@ func _ready() -> void:
 		main_vbox.add_theme_constant_override("separation",
 			60
 		)
-
-	_create_session_dialogs()
 	
 	visibility_changed.connect(_update)
 	_on_resized()
 	_update()
 
 
-func _create_session_dialogs() -> void:
-	pass
-	#if not import_session_dialog:
-		#import_session_dialog = FileDialog.new()
-		#import_session_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-		#import_session_dialog.access = FileDialog.ACCESS_FILESYSTEM
-		#import_session_dialog.add_filter("*.gsession", "GestureApp Session")
-		#import_session_dialog.file_selected.connect(_on_import_session_file_selected)
-		#add_child(import_session_dialog)
-	#
-	#if not save_session_dialog:
-		#save_session_dialog = FileDialog.new()
-		#save_session_dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
-		#save_session_dialog.access = FileDialog.ACCESS_FILESYSTEM
-		#save_session_dialog.add_filter("*.gsession", "GestureApp Session")
-		#save_session_dialog.file_selected.connect(_on_save_session_file_selected)
-		#add_child(save_session_dialog)
-
-
-func _on_done_pressed() -> void:
-	settings.apply_context(_context)
-	
-	# Emit done signal to launch session
-	if _context:
-		done.emit(_context)
+func _on_next_button_pressed() -> void:
+	tabbar.get_child(1).button_pressed = true
 
 
 func _can_proceed_from_packs() -> bool:
@@ -131,7 +101,7 @@ func _update() -> void:
 	var image_count: int = _context.get_image_count(true)
 	var more_than_one_image: bool = image_count >= 1
 	tabbar.disable_tab(1, not more_than_one_image)
-	done_button.disabled = not more_than_one_image
+	next_button.disabled = not more_than_one_image
 	
 	if _context.packs.size() <= 0:
 		var margin: MarginContainer = MarginContainer.new()
@@ -208,7 +178,6 @@ func get_args() -> SessionResource:
 
 
 func _on_done_button_pressed() -> void:
-	# Sync the context with the active panel before caching it
 	settings.apply_context(_context)
 	_context_by_type[_context.session_type] = _context
 	done.emit(_context)
@@ -222,7 +191,8 @@ func _on_resized() -> void:
 		main_vbox.custom_minimum_size.x = 0.0
 		main_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		return
-	main_vbox.custom_minimum_size.x = 474.0
+	
+	main_vbox.custom_minimum_size.x = 490
 	main_vbox.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 
 

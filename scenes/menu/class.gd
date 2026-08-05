@@ -30,24 +30,6 @@ func load_from_context(context: SessionResource) -> void:
 		_apply_template_for_duration(context.duration)
 	super.load_from_context(context)
 
-func save_to_context(context: SessionResource) -> void:
-	# Read current duration from field and apply template
-	var values := collect_field_values()
-	if values.has("duration"):
-		var dur := int(values["duration"])
-		context.duration = dur
-		_apply_template_for_duration(dur)
-	
-	# Now apply all fields generically
-	apply_fields_to_context(context)
-	
-	# Set class-specific data
-	var number_of_images: int = 0
-	for pose in _class_session:
-		number_of_images += pose.get("amount", 1)
-	context.sequence = _class_session
-	context.number_of_images = number_of_images
-
 func is_valid() -> bool:
 	return not _class_session.is_empty()
 
@@ -57,7 +39,6 @@ func get_context_type() -> SessionResource.Type:
 func get_mode_name() -> String:
 	return "Class Mode"
 
-# Génère la séquence pour le mode Class
 func generate_sequence(context: SessionResource) -> Array:
 	var all_images: Array = context.get_images_path_raw()
 	if context.shuffle:

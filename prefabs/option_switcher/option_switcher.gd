@@ -43,11 +43,9 @@ signal value_changed(value: int)
 @export_subgroup("Fifth option", "fifth_")
 @export var fifth_label: String = ""
 @export var fifth_value: int = 5
-@export var fifth_enabled: bool = false
 @export_subgroup("Sixth option", "sixth_")
 @export var sixth_label: String = ""
 @export var sixth_value: int = 6
-@export var sixth_enabled: bool = false
 
 @onready var buttons_container: Control = %ButtonsContainer
 @onready var custom_value_container: Control = %CustomValueContainer
@@ -79,11 +77,15 @@ var _buttons_enabled: Array :
 	get():
 		if use_dynamic_options and not options.is_empty():
 			var enabled_array: Array = options.map(func(opt: OptionData): return opt.enabled)
-			# Pad with false if we have fewer than 6 options
 			while enabled_array.size() < 6:
 				enabled_array.append(false)
 			return enabled_array
-		return [true, true, true, true, fifth_enabled, sixth_enabled]
+			
+		var enabled: Array = []
+		for blabel: String in _button_labels:
+			enabled.append(not blabel.is_empty())
+		return enabled
+		
 
 var _last_toggled_button: Button
 var value: int : get = _get_value

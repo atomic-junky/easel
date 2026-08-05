@@ -135,7 +135,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.3),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Color(0.192157, 0.192157, 0.192157, 1), Color(0.639216, 0.564706, 0.964706, 1)]
+"values": [Color(0.192157, 0.192157, 0.192157, 1), Color(0.91330606, 0.32086813, 0.3623615, 1)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false

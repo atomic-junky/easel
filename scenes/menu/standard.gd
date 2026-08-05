@@ -2,7 +2,7 @@ extends SessionType
 
 func setup() -> void:
 	define_field(
-		"number_of_images", "switcher", [5, 10, 20, 50],
+		"number_of_images", "switcher", [10, 20, 30, 50],
 		"Images", ""
 	)
 	define_field(
@@ -22,7 +22,6 @@ func get_context_type() -> SessionResource.Type:
 func get_mode_name() -> String:
 	return "Standard"
 
-# Génère la séquence pour le mode Standard
 func generate_sequence(context: SessionResource) -> Array:
 	var all_images: Array = context.get_images_path_raw()
 	var image_count: int = all_images.size()

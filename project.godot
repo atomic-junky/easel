@@ -8,13 +8,17 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="GestureApp"
 config/version="0.0.2-alpha"
 run/main_scene="res://scenes/app/app.tscn"
-config/features=PackedStringArray("4.5")
-boot_splash/fullsize=false
+config/features=PackedStringArray("4.7")
+boot_splash/stretch_mode=0
 boot_splash/use_filter=false
 boot_splash/image="uid://b4pu8yxomwywq"
 config/icon="uid://dtxlo5ebacbd0"
@@ -30,8 +34,7 @@ SessionHistory="*res://autoloads/session_history.gd"
 
 [display]
 
-window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
+window/stretch/aspect="ignore"
 window/handheld/orientation=1
 window/size/width=600
 window/size/height=1024

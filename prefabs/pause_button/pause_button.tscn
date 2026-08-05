@@ -11,7 +11,7 @@ corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5o1ji"]
-bg_color = Color(0.639216, 0.564706, 0.964706, 1)
+bg_color = Color(0.91330606, 0.32086813, 0.3623615, 1)
 
 [node name="PauseButton" type="Button"]
 custom_minimum_size = Vector2(90, 0)

@@ -145,10 +145,14 @@ func get_context() -> SessionResource:
 func is_valid() -> bool:
 	return true
 
-@abstract func setup() -> void
+@abstract 
+func setup() -> void
 
 @abstract
 func get_context_type() -> SessionResource.Type
 
 @abstract
 func get_mode_name() -> String
+
+@abstract
+func generate_sequence(context: SessionResource) -> Array
