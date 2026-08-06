@@ -1,12 +1,15 @@
-class_name Pack extends PanelContainer
+class_name Pack extends Button
 
 const URL_REGEX: String = '^(ftp|http|https)://[^ " ]+$'
 
 signal delete_request
 signal refresh_request
 signal add_pack_request
-signal toggled
+signal selection_changed
 signal refresh_done
+signal refresh_progress(message: String)
+
+const TINT_COUNT: int = 5
 
 static var _preview_queue: Array = []
 static var _preview_worker_thread: Thread = null
@@ -14,15 +17,13 @@ static var _preview_worker_running: bool = false
 static var _preview_queue_mutex: Mutex = Mutex.new()
 static var _preview_cache: Dictionary = {}
 
-@onready var check_box: CheckBox = %CheckBox
+@onready var mosaic: PanelContainer = %Mosaic
 @onready var icon_rect: TextureRect = %IconRect
+@onready var badge: PanelContainer = %Badge
+@onready var badge_label: Label = %BadgeLabel
 @onready var title_label: Label = %Title
 @onready var decsc_label: Label = %Description
-@onready var refresh_spiner: Control = %RefreshSpiner
-@onready var menu_button: MenuButton = %MenuButton
-@onready var holo_overlay: Panel = %HoloOL
-@onready var add_pack_container: HBoxContainer = %AddPackContainer
-@onready var add_pack_button: Button = %AddPackButton
+@onready var actions: HBoxContainer = %Actions
 
 @onready var folder_icon: Texture2D = preload("res://assets/icons/folder.svg")
 @onready var image_icon: Texture2D = preload("res://assets/icons/image.svg")
@@ -43,9 +44,8 @@ var _url_regex: RegEx = RegEx.new()
 
 
 func _ready() -> void:
-	var mb_popup: PopupMenu = menu_button.get_popup()
-	mb_popup.id_pressed.connect(_on_mb_popup_id_pressed)
-	
+	pressed.connect(_on_pressed)
+
 	_url_regex.compile(URL_REGEX)
 
 
@@ -55,10 +55,10 @@ func _from_context(
 ) -> void:
 	_resource = pack
 	_is_holo = is_holo
-	check_box.button_pressed = pack.enabled
+	button_pressed = pack.enabled
 	title_label.text = pack.pack_name
-	
-	var desc_label: String = "%s images found."
+
+	var desc_label: String = "%s images"
 	match pack.source:
 		Constants.Source.FOLDER:
 			icon_rect.texture = folder_icon
@@ -66,23 +66,27 @@ func _from_context(
 			icon_rect.texture = image_icon
 		Constants.Source.PINTEREST:
 			icon_rect.texture = pinterest_icon
-			desc_label = "%s pins found."
+			desc_label = "%s pins"
 		Constants.Source.LIBRARY:
 			pass
-	
+
 	decsc_label.text = desc_label % pack.image_count
-	
-	holo_overlay.visible = is_holo
-	add_pack_container.visible = is_holo
-	menu_button.visible = not is_holo
-	
+
+	# Stable per-pack pastel so a grid of cards is not one flat block.
+	mosaic.theme_type_variation = "PackCardClip%d" % (absi(pack.path.hash()) % TINT_COUNT)
+
 	if is_holo:
-		check_box.button_pressed = false
+		button_pressed = false
+		toggle_mode = false
 		pack.enabled = true
-		check_box.disabled = true
-		theme_type_variation += "Holo"
-	
+
 	_queue_preview_images()
+
+
+## Shows the selection rank, or hides the badge when rank <= 0.
+func set_badge(rank: int) -> void:
+	badge.visible = rank > 0
+	badge_label.text = str(rank)
 
 func _queue_preview_images() -> void:
 	for idx in preview_rects.size():
@@ -180,14 +184,9 @@ func _fetch_url_texture(path: String, rect: TextureRect) -> void:
 		_post_thread_load_image(texture, rect, path)
 
 
-func _on_refresh_button_pressed() -> void:
-	# Show spinner
-	refresh_spiner.visible = true
-	
+## Refreshes this pack, showing the spinner while it runs.
+func refresh() -> void:
 	await _refresh_pack()
-	
-	# Hide spinner
-	refresh_spiner.visible = false
 	refresh_request.emit()
 
 
@@ -255,30 +254,30 @@ func _refresh_pack() -> void:
 
 
 func _on_pinterest_refresh_progress(message: String) -> void:
-	# Update description with progress message
-	decsc_label.text = message
+	refresh_progress.emit(message)
 
 
-func _on_check_box_toggled(toggled_on: bool) -> void:
+func _on_toggled(toggled_on: bool) -> void:
 	_resource.enabled = toggled_on if not _is_holo else true
-	toggled.emit()
+	_pop()
+	selection_changed.emit()
+	actions.visible = !toggled_on
 
 
-func _on_save_button_pressed() -> void:
-	pass # Replace with function body.
+## Short squash so picking a pack feels physical.
+func _pop() -> void:
+	pivot_offset = size / 2.0
+	var tween: Tween = create_tween()
+	tween.tween_property(self, "scale", Vector2(1.05, 1.05), 0.08) \
+		.set_trans(Tween.TRANS_QUAD)
+	tween.tween_property(self, "scale", Vector2.ONE, 0.18) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
-func _on_mb_popup_id_pressed(id: int) -> void:
-	match id:
-		-1: return
-		0: return
-		1: # Refresh
-			_refresh_pack()
-		2: # Export
-			pass
-		3: # Delete
-			delete_request.emit()
+func _on_pressed() -> void:
+	if _is_holo:
+		add_pack_request.emit()
 
 
-func _on_add_pack_button_pressed() -> void:
-	add_pack_request.emit()
+func _on_delete_button_pressed() -> void:
+	delete_request.emit()

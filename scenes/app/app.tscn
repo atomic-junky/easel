@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://c324hect6sylf" path="res://scenes/menu/menu.tscn" id="2_38mom"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_38mom"]
-bg_color = Color(0.109804, 0.109804, 0.109804, 1)
+bg_color = Color(0.07450981, 0.07450981, 0.08235294, 1)
 
 [node name="App" type="Control"]
 layout_mode = 3
@@ -21,8 +21,6 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1.0
-offset_right = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_38mom")

@@ -1,20 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://dyxpp3gldlg8y"]
+[gd_scene load_steps=2 format=3 uid="uid://dyxpp3gldlg8y"]
 
 [ext_resource type="Script" uid="uid://p1jvnk0k5u2f" path="res://prefabs/option_switcher/option_switcher.gd" id="1_oj872"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i1lnr"]
-bg_color = Color(0.141176, 0.141176, 0.141176, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oj872"]
-bg_color = Color(0.141176, 0.141176, 0.141176, 1)
 
 [node name="OptionSwitcher" type="VBoxContainer"]
 offset_right = 175.0
 offset_bottom = 50.0
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
 script = ExtResource("1_oj872")
 
 [node name="Label" type="Label" parent="."]
@@ -25,16 +17,15 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
-clip_children = 1
+clip_children = 2
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_i1lnr")
+theme_type_variation = &"SwitcherPanel"
 
-[node name="ButtonsContainer" type="HFlowContainer" parent="HBoxContainer/PanelContainer"]
+[node name="ButtonsContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/h_separation = 2
-theme_override_constants/v_separation = 2
+theme_override_constants/separation = 5
 
 [node name="FirstButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
 unique_name_in_owner = true
@@ -91,13 +82,13 @@ text = "4"
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_oj872")
+theme_type_variation = &"SwitcherBG"
 
 [node name="CustomValueContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 5
 
 [node name="MinusButton" type="Button" parent="HBoxContainer/PanelContainer/CustomValueContainer"]
 layout_mode = 2
@@ -122,6 +113,7 @@ text = "+"
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+theme_type_variation = &"ButtonSoft"
 toggle_mode = true
 text = "Custom"
 

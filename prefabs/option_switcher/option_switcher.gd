@@ -96,7 +96,7 @@ func _ready() -> void:
 	_last_toggled_button = _buttons[0]
 	custom_value.value = _get_value()
 	custom_value.get_line_edit().text_changed.connect(_on_custom_value_value_changed)
-	custom_value.get_line_edit().theme_type_variation = "LineEditSwitcher"
+	custom_value.get_line_edit().theme_type_variation = "LineEditValue"
 	custom_button.pressed.connect(_update_buttons.bind(custom_button))
 	_update()
 	value_changed.emit(value)
@@ -138,8 +138,7 @@ func _update() -> void:
 	label.visible = not title.is_empty()
 	label.text = title
 	
-	for button: Button in _buttons:
-		button.custom_minimum_size.x = 0.0
+	_update_button_size()
 
 
 func _get_value() -> int:
@@ -162,18 +161,27 @@ func set_value(idx: int) -> void:
 	if idx < 0:
 		_update_buttons(custom_button, false)
 	else:
-		print(_buttons[idx].text)
 		_update_buttons(_buttons[idx], false)
 	
 
 
+## Gives every visible option the width of the widest one, as in the design.
 func _update_button_size() -> void:
-	var max_button_size: float = 0.0
+	if not is_inside_tree():
+		return
+
 	for button: Button in _buttons:
-		max_button_size = max(max_button_size, button.size.x)
-	
+		button.custom_minimum_size.x = 0.0
+
+	await get_tree().process_frame
+
+	var widest: float = 0.0
 	for button: Button in _buttons:
-		button.custom_minimum_size.x = max_button_size
+		if button.visible:
+			widest = maxf(widest, button.size.x)
+
+	for button: Button in _buttons:
+		button.custom_minimum_size.x = widest
 
 
 func _update_editor() -> void:

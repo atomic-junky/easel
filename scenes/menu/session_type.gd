@@ -5,6 +5,7 @@ signal fields_built
 
 var _field_bucket: Dictionary = {
 	"switcher": preload("res://prefabs/fields/field_switcher.gd"),
+	"choice": preload("res://prefabs/fields/field_choice.gd"),
 	"toggle": preload("res://prefabs/fields/field_toggle.gd"),
 	"number": preload("res://prefabs/fields/field_int.gd"),
 	"image_order": preload("res://prefabs/fields/field_image_order.gd"),
@@ -54,26 +55,25 @@ func _build_fields() -> void:
 		
 	_field_container = VBoxContainer.new()
 	_field_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_field_container.add_theme_constant_override("separation", 6)
+	_field_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_field_container.add_theme_constant_override("separation", 15)
 	add_child(_field_container)
-	
+
 	for fname: String in _field_datas.keys():
-		var fdata: Dictionary = _field_datas[fname]
-		_build_field(fdata)
+		var node: Node = _build_field(_field_datas[fname])
+		if node:
+			_field_container.add_child(node)
 
 	_fields_ready = true
 
 ## Build a single field from definition
-func _build_field(fdata: Dictionary) -> void:
+func _build_field(fdata: Dictionary) -> Node:
 	var script: GDScript = _field_bucket.get(fdata.get("type"))
-	var node: Node
 	if not script:
-		node = Label.new()
-		node.text = "Missing field type: " + fdata.get("type")
-	else:
-		node = script.new(fdata)
-	if node:
-		_field_container.add_child(node)
+		var missing: Label = Label.new()
+		missing.text = "Missing field type: " + fdata.get("type")
+		return missing
+	return script.new(fdata)
 
 ## Load UI from context values
 func load_from_context(context: SessionResource) -> void:

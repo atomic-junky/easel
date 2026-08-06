@@ -1,7 +1,7 @@
 extends Node
 
-# Reference DPI for a 23.8" 1920x1080 display
-const BASE_SCALE_DPI: float = 92.56
+# The design size is authored for a 1920x1080 display.
+const BASE_SCREEN_SIZE: Vector2i = Vector2i(1920, 1080)
 
 # Application preferences config
 var preferences: ConfigFile = ConfigFile.new()
@@ -10,7 +10,7 @@ var preferences: ConfigFile = ConfigFile.new()
 func _ready() -> void:
 	_load_preferences()
 	_update_window(true)
-	get_window().connect("size_changed", Callable(self, "_on_window_size_changed"))
+	get_window().size_changed.connect(_on_window_size_changed)
 
 
 func _on_window_size_changed() -> void:
@@ -18,13 +18,24 @@ func _on_window_size_changed() -> void:
 
 
 func _update_window(update_size: bool = false) -> void:
-	var screen_size: Vector2i = DisplayServer.window_get_size()
-	var scale_factor: float = _get_auto_display_scale()
-	if update_size:
-		DisplayServer.window_set_size(screen_size * scale_factor)
-		get_window().move_to_center()
-	
-	get_window().content_scale_factor = scale_factor
+	var window: Window = get_window()
+	var window_id: int = maxi(0, window.get_window_id())
+	window.content_scale_factor = _get_auto_display_scale(window_id)
+
+	if not update_size:
+		return
+
+	# Open at the same share of the screen as the design size takes on 1080p,
+	# instead of scaling the window by the DPI factor (which double-counts it).
+	var screen_id: int = DisplayServer.window_get_current_screen(window_id)
+	var screen_size: Vector2 = DisplayServer.screen_get_size(screen_id)
+	if screen_size == Vector2.ZERO:
+		return
+
+	var window_size: Vector2 = DisplayServer.window_get_size(window_id)
+	var ratio: Vector2 = screen_size / Vector2(BASE_SCREEN_SIZE)
+	DisplayServer.window_set_size(Vector2i(window_size * ratio))
+	window.move_to_center()
 
 
 func _load_preferences() -> void:
@@ -39,11 +50,11 @@ func _load_preferences() -> void:
 
 ## Returns the optimal window scale factor for the current screen.
 ## Logic adapted from Godot editor/editor_settings.cpp:1564.
-func _get_auto_display_scale() -> float:
+func _get_auto_display_scale(window_id: int = 0) -> float:
 	var os_name := OS.get_name()
-	var screen: int = DisplayServer.window_get_current_screen()
+	var screen: int = DisplayServer.window_get_current_screen(window_id)
 	var screen_size: Vector2i = DisplayServer.screen_get_size(screen)
-	
+
 	if os_name in ["Linux", "FreeBSD", "NetBSD", "OpenBSD", "BSD"]:
 		if DisplayServer.get_name() == "Wayland":
 			var main_window_scale: float = DisplayServer.screen_get_scale(
@@ -63,6 +74,9 @@ func _get_auto_display_scale() -> float:
 		return DisplayServer.screen_get_scale()
 	if screen_size == Vector2i():
 		return 1.0  # Invalid screen size
+	if os_name == "Windows":
+		# Windows reports the user's scaling setting through the screen DPI.
+		return DisplayServer.screen_get_dpi(screen) / 96.0
 	var smallest_dimension: int = min(screen_size.x, screen_size.y)
 	var dpi: float = DisplayServer.screen_get_dpi(screen)
 	if dpi >= 192.0 and smallest_dimension >= 1440:

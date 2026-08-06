@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://dc0cxppb2idjc"]
+[gd_scene format=3 uid="uid://dgrc3gscl6olv"]
 
 [sub_resource type="GDScript" id="GDScript_yci7v"]
 script/source = "@tool
@@ -116,8 +116,8 @@ func get_content_container() -> Control:
 	return _content_container
 "
 
-[node name="CollapsibleSection" type="VBoxContainer"]
+[node name="CollapsibleSection" type="VBoxContainer" unique_id=1429385837]
 script = SubResource("GDScript_yci7v")
 
-[node name="Content" type="VBoxContainer" parent="."]
+[node name="Content" type="VBoxContainer" parent="." unique_id=1206973804]
 layout_mode = 2

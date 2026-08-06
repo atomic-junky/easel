@@ -1,8 +1,8 @@
 extends Node
 
-## Manages pack history - stores the last 10 packs used by the user
+## Manages pack history, stores the last 32 packs used by the user
 
-const MAX_HISTORY_SIZE := 10
+const MAX_HISTORY_SIZE: int = 32
 const HISTORY_DIR := "user://pack_history/"
 
 var _history: Array[PackResource] = []
@@ -53,6 +53,20 @@ func add_pack(pack: PackResource, save_immediately: bool = true) -> void:
 	if save_immediately:
 		_save_history()
 	
+
+## Removes a pack from history. Matched by path rather than by identity, because
+## _clean_history replaces the stored resources with deep copies on every save.
+func erase_pack(pack: PackResource) -> void:
+	var kept: Array[PackResource] = []
+	for item: PackResource in _history:
+		if item.path != pack.path:
+			kept.append(item)
+
+	if kept.size() == _history.size():
+		return
+
+	_history = kept
+	_save_history()
 
 
 ## Add multiple packs to history

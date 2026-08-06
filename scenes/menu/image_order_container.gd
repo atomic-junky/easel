@@ -25,7 +25,6 @@ func set_shuffle_state(toggled_on: bool) -> void:
 	if not is_node_ready():
 		await ready
 	_shuffle_button.button_pressed = toggled_on
-	_shuffle_button.skip_animation()
 	_order_container.visible = not toggled_on
 	shuffle = toggled_on
 
@@ -34,5 +33,4 @@ func set_reverse_state(toggled_on: bool) -> void:
 	if not is_node_ready():
 		await ready
 	_reverse_button.button_pressed = toggled_on
-	_reverse_button.skip_animation()
 	reverse = toggled_on

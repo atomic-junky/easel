@@ -1,98 +1,104 @@
 extends VBoxContainer
 
-const PACK_OBJECT: PackedScene = preload("res://prefabs/pack/pack.tscn")
-const ADD_ICON: Texture2D = preload("res://assets/icons/plus.svg")
-const CLOSE_ICON: Texture2D = preload("res://assets/icons/exit.svg")
+## Contents of the "Add a new Pack" modal.
 
-@onready var menu: Menu = $"../../../../../.."
+const SOURCE_LOCAL: int = 1
+const SOURCE_PINTEREST: int = 2
 
-@onready var add_pack_button: Button = %AddPackButton
+@onready var menu: Menu = owner
+@onready var modal: Modal = %AddPackModal
 
-@onready var add_pack_container := %AddPackContainer
-@onready var source_button_container := %SourceButtonContainer
-@onready var pinterest_url_container := %PinterestUrlContainer
-
-@onready var pinterest_url_input_container := %UrlInputContainer
-@onready var pinterest_url_spinner_container := %UrlInputSpinerContainer
-@onready var pinterest_url_input := %UrlInput
-@onready var pinterest_url_done_button := %UrlDoneButton
-@onready var pinterest_url_section_checkbox := %PinterestSectionCheckBox
-@onready var pinterest_url_message_label := %PinterestUrlMessageLabel
+@onready var local_container: Control = %LocalContainer
+@onready var pinterest_container: Control = %PinterestContainer
+@onready var url_input: LineEdit = %UrlInput
+@onready var url_spinner: Control = %UrlInputSpinerContainer
+@onready var section_row: Control = %SectionRow
+@onready var section_checkbox: Button = %PinterestSectionCheckBox
+@onready var message_label: Label = %PinterestUrlMessageLabel
+@onready var done_button: Button = %AddPackDoneButton
 
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
 
+var _source: int = SOURCE_LOCAL
 
-func _on_add_pack_button_toggled(toggled_on: bool) -> void:
-	add_pack_container.visible = toggled_on
-	source_button_container.show()
-	pinterest_url_container.hide()
-	add_pack_button.icon = CLOSE_ICON if toggled_on else ADD_ICON
+
+func _ready() -> void:
+	url_input.text_changed.connect(_on_url_text_changed)
+	_apply_source(_source)
+
+
+## The switcher emits on its own _ready, which runs before ours.
+func _on_source_switcher_value_changed(value: int) -> void:
+	if not is_node_ready():
+		await ready
+	_apply_source(value)
+
+
+func _apply_source(value: int) -> void:
+	_source = value
+	local_container.visible = value == SOURCE_LOCAL
+	pinterest_container.visible = value == SOURCE_PINTEREST
+	_update_done_button()
+
+
+func _on_url_text_changed(_text: String) -> void:
+	_update_done_button()
+
+
+func _update_done_button() -> void:
+	done_button.disabled = _source != SOURCE_PINTEREST or url_input.text.strip_edges().is_empty()
+
 
 func _on_folder_button_pressed() -> void: folder_dialog.popup_centered()
 func _on_images_button_pressed() -> void: images_dialog.popup_centered()
 
+
 func _on_folder_dialog_dir_selected(dir: String) -> void:
 	menu._add_packs(PackResource.create_from_path(dir))
-	add_pack_button.button_pressed = false
+	modal.close()
+
 
 func _on_image_dialog_files_selected(paths: PackedStringArray) -> void:
 	menu._add_packs(PackResource.create_from_paths(paths))
-	add_pack_button.button_pressed = false
-
-func _on_pinterest_button_pressed() -> void:
-	source_button_container.hide()
-	pinterest_url_container.show()
-	pinterest_url_input_container.show()
-	pinterest_url_spinner_container.hide()
-	
-	pinterest_url_input.text = ""
+	modal.close()
 
 
-func _on_url_done_button_pressed() -> void:
-	pinterest_url_input_container.hide()
-	pinterest_url_spinner_container.show()
-	
-	pinterest_url_input_container.hide()
-	pinterest_url_spinner_container.show()
-	pinterest_url_message_label.show()
-	pinterest_url_section_checkbox.hide()
+func _on_done_button_pressed() -> void:
+	_set_fetching(true)
 
-	var use_sections: bool = pinterest_url_section_checkbox.button_pressed
-	
-	# Create a new instance for this fetch
-	var _pinterest_fetcher = PinterestFetcher.new()
-	add_child(_pinterest_fetcher)
-	
-	var results: Array = await _pinterest_fetcher.fetch(
-		pinterest_url_input.text,
+	var use_sections: bool = section_checkbox.button_pressed
+	var fetcher: PinterestFetcher = PinterestFetcher.new()
+	add_child(fetcher)
+
+	var results: Array = await fetcher.fetch(
+		url_input.text,
 		use_sections,
 		_on_url_fetcher_progress_callback
 	)
-	
-	# Clean up the fetcher
-	_pinterest_fetcher.queue_free()
-	_pinterest_fetcher = null
 
-	pinterest_url_spinner_container.hide()
-	pinterest_url_input_container.show()
-	pinterest_url_section_checkbox.show()
-	pinterest_url_message_label.hide()
-	
-	add_pack_button.button_pressed = false
+	fetcher.queue_free()
+	_set_fetching(false)
 
 	for pack in results:
 		if pack.is_empty() or pack.get("status") != "success":
 			printerr(pack.get("data", "Fetching failure (no data)"))
 			return
-		
-		var pack_resource: PackResource = PackResource.create_from_urls(
-			pack.get("data", {}),
-			use_sections
-		)
-		menu._add_packs([pack_resource])
-	menu._update()
+
+		menu._add_packs([PackResource.create_from_urls(pack.get("data", {}), use_sections)])
+
+	url_input.text = ""
+	_update_done_button()
+	modal.close()
+
+
+func _set_fetching(active: bool) -> void:
+	url_input.visible = not active
+	section_row.visible = not active
+	url_spinner.visible = active
+	message_label.visible = active
+	done_button.disabled = active
 
 
 func _on_url_fetcher_progress_callback(message: String) -> void:
-	pinterest_url_message_label.text = message
+	message_label.text = message

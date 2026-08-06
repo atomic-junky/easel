@@ -2,12 +2,18 @@ extends SessionType
 
 func setup() -> void:
 	define_field(
-		"number_of_images", "switcher", [10, 20, 30, 50],
-		"Images", ""
+		"number_of_images", "choice", [10, 20, 30, 50],
+		"Images", "", {
+			"custom_min": 1, "custom_max": 999, "custom_step": 1
+		}
 	)
 	define_field(
-		"time_per_image", "switcher", [30, 60, 120, 300],
-		"Time per images", " s"
+		"time_per_image", "choice", [30, 60, 120, 300],
+		"Time per image", "", {
+			"labels": ["30 s", "1 min", "2 min", "5 min"],
+			"custom_min": 5, "custom_max": 3600, "custom_step": 5,
+			"custom_suffix": "s"
+		}
 	)
 	define_field(
 		"image_order", "image_order", [], "", "", {

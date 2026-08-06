@@ -36,19 +36,18 @@ SessionHistory="*res://autoloads/session_history.gd"
 
 window/stretch/aspect="ignore"
 window/handheld/orientation=1
-window/size/width=600
-window/size/height=1024
+window/size/width=1152
+window/size/height=648
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/FreeControl/plugin.cfg", "res://addons/awaitable_http_request/plugin.cfg")
+enabled=PackedStringArray("res://addons/awaitable_http_request/plugin.cfg")
 
 [gui]
 
 theme/default_font_hinting=2
 theme/default_font_multichannel_signed_distance_field=true
-theme/custom="uid://c4tjtr1l5tu78"
-theme/custom_font="uid://cus4jsf1mbr0y"
+theme/custom="res://ui/default_theme.tres"
 
 [importer_defaults]
 
@@ -106,5 +105,5 @@ common/enable_pause_aware_picking=true
 [rendering]
 
 textures/vram_compression/import_etc2_astc=true
-environment/default_clear_color=Color(0.113725, 0.12549, 0.176471, 1)
+environment/default_clear_color=Color(0.0745098, 0.0745098, 0.0823529, 1)
 environment/default_environment="res://default_env.tres"

@@ -1,210 +1,166 @@
-[gd_scene load_steps=6 format=3 uid="uid://d1pq0dja3bw03"]
+[gd_scene format=3 uid="uid://d1pq0dja3bw03"]
 
 [ext_resource type="Script" uid="uid://pf4jayk64oi6" path="res://prefabs/pack/pack.gd" id="1_nhums"]
 [ext_resource type="Texture2D" uid="uid://b8ndl4nn7l3tf" path="res://assets/icons/folder.svg" id="2_nhums"]
-[ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="5_spiner"]
-[ext_resource type="Texture2D" uid="uid://bsjxdn6vi2d3h" path="res://assets/icons/v_dots.svg" id="6_7aq8l"]
-[ext_resource type="Texture2D" uid="uid://bgv333kfjdvj0" path="res://assets/icons/plus.svg" id="6_baia8"]
+[ext_resource type="Texture2D" uid="uid://d1thixkvuxux4" path="res://assets/icons/trash.svg" id="7_trash"]
 
-[node name="Pack" type="PanelContainer"]
-custom_minimum_size = Vector2(0, 55)
-offset_right = 227.0
-offset_bottom = 55.0
-theme_type_variation = &"PackPanelContainer"
+[node name="Pack" type="Button" unique_id=209143035]
+custom_minimum_size = Vector2(198, 140)
+offset_right = 198.0
+offset_bottom = 140.0
+theme_type_variation = &"PackCard"
+toggle_mode = true
 script = ExtResource("1_nhums")
 
-[node name="HBox" type="HBoxContainer" parent="."]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="CheckBoxContainer" type="VBoxContainer" parent="HBox"]
-layout_mode = 2
-alignment = 1
-
-[node name="CheckBox" type="CheckBox" parent="HBox/CheckBoxContainer"]
+[node name="Mosaic" type="PanelContainer" parent="." unique_id=595238067]
 unique_name_in_owner = true
-layout_mode = 2
-
-[node name="Control" type="Control" parent="HBox"]
-visible = false
-custom_minimum_size = Vector2(75, 0)
-layout_mode = 2
-
-[node name="PreviewRect03" type="TextureRect" parent="HBox/Control"]
-unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0.32941177)
-texture_filter = 4
-custom_minimum_size = Vector2(37, 45)
+clip_children = 2
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -1.6820602
-offset_top = -23.081768
-offset_right = 35.31794
-offset_bottom = 21.918232
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = -3.0
+offset_bottom = -3.0
 grow_horizontal = 2
 grow_vertical = 2
-rotation = 0.15707964
-pivot_offset = Vector2(18, 45)
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 6
+mouse_filter = 2
+theme_type_variation = &"PackCardClip0"
 
-[node name="PreviewRect02" type="TextureRect" parent="HBox/Control"]
-unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0.65882355)
-texture_filter = 6
-custom_minimum_size = Vector2(37, 45)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -36.68206
-offset_top = -23.081768
-offset_right = 0.31793976
-offset_bottom = 21.918232
-grow_horizontal = 2
-grow_vertical = 2
-rotation = -0.15707964
-pivot_offset = Vector2(18, 45)
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 6
+[node name="HBox" type="HBoxContainer" parent="Mosaic" unique_id=1196960311]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
 
-[node name="PreviewRect01" type="TextureRect" parent="HBox/Control"]
+[node name="PreviewRect01" type="TextureRect" parent="Mosaic/HBox" unique_id=224798165]
 unique_name_in_owner = true
 texture_filter = 6
-custom_minimum_size = Vector2(37, 45)
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -19.182058
-offset_top = -24.656433
-offset_right = 17.81794
-offset_bottom = 20.343567
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(18, 45)
-expand_mode = 1
-stretch_mode = 6
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HBox"]
-visible = false
-custom_minimum_size = Vector2(75, 0)
-layout_mode = 2
-theme_override_constants/separation = 1
-
-[node name="PreviewRect01" type="TextureRect" parent="HBox/HBoxContainer"]
-texture_filter = 6
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-expand_mode = 1
-stretch_mode = 6
-
-[node name="VBoxContainer" type="VBoxContainer" parent="HBox/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 1
-
-[node name="PreviewRect02" type="TextureRect" parent="HBox/HBoxContainer/VBoxContainer"]
-texture_filter = 6
-layout_mode = 2
-size_flags_vertical = 3
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
 
-[node name="PreviewRect03" type="TextureRect" parent="HBox/HBoxContainer/VBoxContainer"]
-texture_filter = 6
-layout_mode = 2
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 6
-
-[node name="VBox" type="VBoxContainer" parent="HBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-alignment = 1
-
-[node name="VBox" type="VBoxContainer" parent="HBox/VBox"]
-layout_mode = 2
-
-[node name="HBox" type="HBoxContainer" parent="HBox/VBox/VBox"]
-layout_mode = 2
-size_flags_vertical = 2
-
-[node name="IconRect" type="TextureRect" parent="HBox/VBox/VBox/HBox"]
+[node name="Right" type="VBoxContainer" parent="Mosaic/HBox" unique_id=462022157]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(19, 0)
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="PreviewRect02" type="TextureRect" parent="Mosaic/HBox/Right" unique_id=409019515]
+unique_name_in_owner = true
+texture_filter = 6
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="PreviewRect03" type="TextureRect" parent="Mosaic/HBox/Right" unique_id=1193064235]
+unique_name_in_owner = true
+texture_filter = 6
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="LabelPanel" type="PanelContainer" parent="." unique_id=478665213]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = -42.0
+offset_right = -6.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_type_variation = &"PackCardLabel"
+
+[node name="IconRect" type="TextureRect" parent="LabelPanel" unique_id=12427282]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+mouse_filter = 2
 texture = ExtResource("2_nhums")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Title" type="Label" parent="HBox/VBox/VBox/HBox"]
+[node name="VBox" type="VBoxContainer" parent="LabelPanel" unique_id=137072635]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="Title" type="Label" parent="LabelPanel/VBox" unique_id=1245398152]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 theme_type_variation = &"LabelPackTitle"
 text = "Poses"
+horizontal_alignment = 1
 clip_text = true
 text_overrun_behavior = 3
 
-[node name="Description" type="Label" parent="HBox/VBox"]
+[node name="Description" type="Label" parent="LabelPanel/VBox" unique_id=1571872113]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"LabelPackInfos"
-text = "66 Images"
+text = "66 images"
+horizontal_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="HBox"]
+[node name="TopBar" type="HBoxContainer" parent="." unique_id=414518941]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 7.0
+offset_right = 38.0
+offset_bottom = 39.0
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Actions" type="HBoxContainer" parent="TopBar" unique_id=1841169350]
+unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/separation = 4
 
-[node name="RefreshSpiner" parent="HBox/ButtonsContainer" instance=ExtResource("5_spiner")]
+[node name="DeleteButton" type="Button" parent="TopBar/Actions" unique_id=651256359]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_type_variation = &"PackActionDanger"
+icon = ExtResource("7_trash")
+icon_alignment = 1
+
+[node name="Badge" type="PanelContainer" parent="." unique_id=177439444]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-
-[node name="MenuButton" type="MenuButton" parent="HBox/ButtonsContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-icon = ExtResource("6_7aq8l")
-item_count = 4
-popup/item_0/text = "Refresh"
-popup/item_0/id = 1
-popup/item_1/text = "Export"
-popup/item_1/id = 2
-popup/item_2/id = 0
-popup/item_2/separator = true
-popup/item_3/text = "Delete"
-popup/item_3/id = 3
-
-[node name="HoloOL" type="Panel" parent="."]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"PackHoloOL"
-
-[node name="AddPackContainer" type="HBoxContainer" parent="."]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 8
-size_flags_vertical = 4
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -35.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = 35.0
+grow_horizontal = 0
 mouse_filter = 2
-alignment = 2
+theme_type_variation = &"PackBadge"
 
-[node name="AddPackButton" type="Button" parent="AddPackContainer"]
+[node name="BadgeLabel" type="Label" parent="Badge" unique_id=761582985]
 unique_name_in_owner = true
 layout_mode = 2
-icon = ExtResource("6_baia8")
+theme_type_variation = &"LabelBadge"
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[connection signal="toggled" from="HBox/CheckBoxContainer/CheckBox" to="." method="_on_check_box_toggled"]
-[connection signal="pressed" from="AddPackContainer/AddPackButton" to="." method="_on_add_pack_button_pressed"]
+[connection signal="toggled" from="." to="." method="_on_toggled"]
+[connection signal="pressed" from="TopBar/Actions/DeleteButton" to="." method="_on_delete_button_pressed"]

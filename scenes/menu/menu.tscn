@@ -1,294 +1,355 @@
 [gd_scene format=3 uid="uid://c324hect6sylf"]
 
-[ext_resource type="Script" uid="uid://b805udtrxhmnd" path="res://scenes/menu/menu.gd" id="1_0rb32"]
-[ext_resource type="Script" uid="uid://b08vxne14bjfa" path="res://prefabs/responsive_margin_container.gd" id="1_nvwcl"]
-[ext_resource type="Script" uid="uid://6lhp0lyunlrh" path="res://prefabs/aspect_ratio_container.gd" id="3_64m6r"]
-[ext_resource type="PackedScene" uid="uid://dyxpp3gldlg8y" path="res://prefabs/option_switcher/option_switcher.tscn" id="3_fkryp"]
-[ext_resource type="FontFile" uid="uid://cus4jsf1mbr0y" path="res://assets/fonts/InterDisplay/InterDisplay-Medium.ttf" id="3_kaijy"]
-[ext_resource type="Script" uid="uid://dwvx3fh4f72vi" path="res://prefabs/tabbar/tab_bar.gd" id="4_kaijy"]
-[ext_resource type="Script" uid="uid://bjirgrn1kbejr" path="res://scenes/menu/standard.gd" id="5_i1lnr"]
-[ext_resource type="Script" uid="uid://sevmbxamt2qa" path="res://scenes/menu/packs.gd" id="5_rcuxh"]
-[ext_resource type="Texture2D" uid="uid://bgv333kfjdvj0" path="res://assets/icons/plus.svg" id="5_y4i35"]
-[ext_resource type="Script" uid="uid://by3nb5xv0w4an" path="res://scenes/menu/relaxed.gd" id="7_5n576"]
-[ext_resource type="Script" uid="uid://bsjd13i2xi6x8" path="res://scenes/menu/class.gd" id="7_y4i35"]
-[ext_resource type="Script" uid="uid://df503hvhx0lwr" path="res://scenes/menu/settings.gd" id="9_64m6r"]
-[ext_resource type="Texture2D" uid="uid://7iashyxj0ocr" path="res://assets/icons/clear.svg" id="9_h8ew4"]
-[ext_resource type="Script" uid="uid://dd1m4u7ijravb" path="res://scenes/menu/custom.gd" id="9_rcuxh"]
-[ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="11_4rn7p"]
+[ext_resource type="Script" uid="uid://b805udtrxhmnd" path="res://scenes/menu/menu.gd" id="1_menu"]
+[ext_resource type="Script" uid="uid://b08vxne14bjfa" path="res://prefabs/responsive_margin_container.gd" id="2_margin"]
+[ext_resource type="Texture2D" uid="uid://bgv333kfjdvj0" path="res://assets/icons/plus.svg" id="3_plus"]
+[ext_resource type="Texture2D" uid="uid://c26y8tjfxft4g" path="res://assets/icons/settings.svg" id="4_settings"]
+[ext_resource type="PackedScene" uid="uid://cxcy3ilnn60qq" path="res://prefabs/modal/modal.tscn" id="5_modal"]
+[ext_resource type="PackedScene" uid="uid://dyxpp3gldlg8y" path="res://prefabs/option_switcher/option_switcher.tscn" id="6_switcher"]
+[ext_resource type="Script" uid="uid://df503hvhx0lwr" path="res://scenes/menu/settings.gd" id="7_settings"]
+[ext_resource type="Script" uid="uid://bjirgrn1kbejr" path="res://scenes/menu/standard.gd" id="8_standard"]
+[ext_resource type="Script" uid="uid://by3nb5xv0w4an" path="res://scenes/menu/relaxed.gd" id="9_relaxed"]
+[ext_resource type="Script" uid="uid://bsjd13i2xi6x8" path="res://scenes/menu/class.gd" id="10_class"]
+[ext_resource type="Script" uid="uid://dd1m4u7ijravb" path="res://scenes/menu/custom.gd" id="11_custom"]
+[ext_resource type="Script" uid="uid://sevmbxamt2qa" path="res://scenes/menu/packs.gd" id="12_packs"]
+[ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="13_spiner"]
+[ext_resource type="Texture2D" uid="uid://b5i2f16iyub6s" path="res://assets/icons/refresh.svg" id="14_refresh"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y4i35"]
-content_margin_left = 5.0
-content_margin_top = 1.0
-content_margin_right = 5.0
-content_margin_bottom = 1.0
-bg_color = Color(0.91330606, 0.32086813, 0.3623615, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
-[sub_resource type="GDScript" id="GDScript_rcuxh"]
-script/source = "extends Label
-
-func _ready() -> void:
-	text = \"v\" + ProjectSettings.get_setting(\"application/config/version\")
-"
-
-[node name="Menu" type="Control" unique_id=1794789988]
+[node name="Menu" type="Control" unique_id=2122209270]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_0rb32")
+script = ExtResource("1_menu")
 
-[node name="MainSafeMargin" type="MarginContainer" parent="." unique_id=1953377803]
+[node name="MainSafeMargin" type="MarginContainer" parent="." unique_id=767326989]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_bottom = -59.564575
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(1.0017926, 1.1012254)
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
-script = ExtResource("1_nvwcl")
-metadata/_custom_type_script = "uid://b08vxne14bjfa"
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 90
+script = ExtResource("2_margin")
 
-[node name="MainVBox" type="VBoxContainer" parent="MainSafeMargin" unique_id=978483365]
+[node name="CenterColumn" type="VBoxContainer" parent="MainSafeMargin" unique_id=1032578941]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(635, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
-theme_override_constants/separation = 15
+theme_override_constants/separation = 25
 
-[node name="Label" type="Label" parent="MainSafeMargin/MainVBox" unique_id=855508048]
+[node name="TitleLabel" type="Label" parent="MainSafeMargin/CenterColumn" unique_id=1400454747]
 layout_mode = 2
-theme_override_font_sizes/font_size = 38
+theme_type_variation = &"LabelTitle"
 text = "Easel"
 horizontal_alignment = 1
 
-[node name="VersionLabel" type="Label" parent="MainSafeMargin/MainVBox/Label" unique_id=14103859]
+[node name="Body" type="VBoxContainer" parent="MainSafeMargin/CenterColumn" unique_id=383472682]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="MainSafeMargin/CenterColumn/Body" unique_id=541155481]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleGroup" type="HBoxContainer" parent="MainSafeMargin/CenterColumn/Body/HeaderRow" unique_id=158318921]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="Label" type="Label" parent="MainSafeMargin/CenterColumn/Body/HeaderRow/TitleGroup" unique_id=1415429964]
+layout_mode = 2
+size_flags_vertical = 8
+theme_type_variation = &"LabelSection"
+text = "New Session"
+
+[node name="CountLabel" type="Label" parent="MainSafeMargin/CenterColumn/Body/HeaderRow/TitleGroup" unique_id=1742640214]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+theme_type_variation = &"LabelMeta"
+text = "No pack selected"
+
+[node name="RefreshButton" type="Button" parent="MainSafeMargin/CenterColumn/Body/HeaderRow" unique_id=1177452301]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Refresh the selected packs"
+theme_type_variation = &"ButtonIcon"
+disabled = true
+icon = ExtResource("14_refresh")
+
+[node name="AddPackButton" type="Button" parent="MainSafeMargin/CenterColumn/Body/HeaderRow" unique_id=2027523373]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"ButtonIcon"
+text = "Add"
+icon = ExtResource("3_plus")
+
+[node name="PackScroll" type="ScrollContainer" parent="MainSafeMargin/CenterColumn/Body" unique_id=202850343]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Sections" type="VBoxContainer" parent="MainSafeMargin/CenterColumn/Body/PackScroll" unique_id=334513090]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 22
+
+[node name="SelectedSection" type="VBoxContainer" parent="MainSafeMargin/CenterColumn/Body/PackScroll/Sections" unique_id=1576203879]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MainSafeMargin/CenterColumn/Body/PackScroll/Sections/SelectedSection" unique_id=38949519]
+layout_mode = 2
+theme_type_variation = &"LabelGroup"
+text = "In this session"
+
+[node name="SelectedContainer" type="HFlowContainer" parent="MainSafeMargin/CenterColumn/Body/PackScroll/Sections/SelectedSection" unique_id=519770237]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+
+[node name="LibrarySection" type="VBoxContainer" parent="MainSafeMargin/CenterColumn/Body/PackScroll/Sections" unique_id=1343963928]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="MainSafeMargin/CenterColumn/Body/PackScroll/Sections/LibrarySection" unique_id=285136983]
+layout_mode = 2
+theme_type_variation = &"LabelGroup"
+text = "Your packs"
+
+[node name="LibraryContainer" type="HFlowContainer" parent="MainSafeMargin/CenterColumn/Body/PackScroll/Sections/LibrarySection" unique_id=1905722480]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+
+[node name="BottomBar" type="HBoxContainer" parent="." unique_id=2144627810]
+unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 7
 anchor_left = 0.5
-anchor_top = 0.628
+anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 0.628
-offset_left = 56.091156
-offset_top = -9.560511
-offset_right = 67.091156
-offset_bottom = 7.4394894
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.109804, 0.109804, 0.109804, 1)
-theme_override_fonts/font = ExtResource("3_kaijy")
-theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = SubResource("StyleBoxFlat_y4i35")
-script = SubResource("GDScript_rcuxh")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox" unique_id=492371174]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TabBar" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer" unique_id=1032645299 node_paths=PackedStringArray("tabs")]
-unique_name_in_owner = true
-layout_mode = 2
-script = ExtResource("4_kaijy")
-tabs = [NodePath("../PanelContainer/VBoxContainer/Packs"), NodePath("../PanelContainer/VBoxContainer/Settings")]
-
-[node name="PanelContainer" type="PanelContainer" parent="MainSafeMargin/MainVBox/VBoxContainer" unique_id=2043864891]
-layout_mode = 2
-size_flags_vertical = 3
-theme_type_variation = &"MenuPanelContainer"
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer" unique_id=2103774603]
-layout_mode = 2
+anchor_bottom = 1.0
+offset_top = -65.0
+offset_bottom = -25.0
+grow_horizontal = 2
+grow_vertical = 0
 theme_override_constants/separation = 10
 
-[node name="Packs" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer" unique_id=1915096234]
+[node name="StartSessionButton" type="Button" parent="BottomBar" unique_id=406641601]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 52)
+layout_mode = 2
+theme_type_variation = &"ButtonAccent"
+disabled = true
+text = "Start Session"
+
+[node name="SettingsButton" type="Button" parent="BottomBar" unique_id=1436428333]
+custom_minimum_size = Vector2(52, 52)
+layout_mode = 2
+theme_type_variation = &"ButtonIcon"
+icon = ExtResource("4_settings")
+icon_alignment = 1
+
+[node name="SettingsModal" parent="." unique_id=698709630 instance=ExtResource("5_modal")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+title = "Settings"
+
+[node name="Settings" type="VBoxContainer" parent="SettingsModal" unique_id=1626943952]
+unique_name_in_owner = true
+layout_mode = 0
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+script = ExtResource("7_settings")
+
+[node name="SessionTypeSwitcher" parent="SettingsModal/Settings" unique_id=1478257470 instance=ExtResource("6_switcher")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 15
-script = ExtResource("5_rcuxh")
+first_label = "Standard"
+second_label = "Relaxed"
 
-[node name="ContentHBox" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" unique_id=1724103467]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 15
-
-[node name="PacksPanel" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox" unique_id=163671416]
+[node name="VBox" type="VBoxContainer" parent="SettingsModal/Settings" unique_id=669156683]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
 theme_override_constants/separation = 10
 
-[node name="PacksHeader" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel" unique_id=353776835]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader" unique_id=2013239777]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 14
-text = "Pack List"
-
-[node name="AddPackButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader" unique_id=2054076961]
+[node name="Standard" type="VBoxContainer" parent="SettingsModal/Settings/VBox" unique_id=1935067456]
 unique_name_in_owner = true
 layout_mode = 2
-toggle_mode = true
-icon = ExtResource("5_y4i35")
+size_flags_horizontal = 3
+script = ExtResource("8_standard")
 
-[node name="ClearButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader" unique_id=623635655]
-visible = false
-layout_mode = 2
-icon = ExtResource("9_h8ew4")
-
-[node name="AddPackContainer" type="PanelContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel" unique_id=1348192520]
+[node name="Relaxed" type="VBoxContainer" parent="SettingsModal/Settings/VBox" unique_id=148409334]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_type_variation = &"PackPanelContainer"
-
-[node name="SourceButtonContainer" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer" unique_id=893431021]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="FolderButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer" unique_id=1013003008]
-layout_mode = 2
 size_flags_horizontal = 3
-text = "Folder"
+script = ExtResource("9_relaxed")
 
-[node name="ImagesButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer" unique_id=1241221228]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Images"
-
-[node name="PinterestButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer" unique_id=710070170]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Pinterest"
-
-[node name="PinterestUrlContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer" unique_id=708006842]
+[node name="Class" type="VBoxContainer" parent="SettingsModal/Settings/VBox" unique_id=88574]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("10_class")
 
-[node name="UrlInputContainer" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer" unique_id=1164329367]
+[node name="Custom" type="VBoxContainer" parent="SettingsModal/Settings/VBox" unique_id=93232611]
 unique_name_in_owner = true
-layout_mode = 2
-
-[node name="UrlInput" type="LineEdit" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer" unique_id=1749358837]
-unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Url"
+script = ExtResource("11_custom")
 
-[node name="UrlDoneButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer" unique_id=2135397392]
-unique_name_in_owner = true
-layout_mode = 2
+[node name="SettingsDoneButton" type="Button" parent="SettingsModal" unique_id=600624252 groups=["modal_footer"]]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 0
+theme_type_variation = &"ButtonAccent"
 text = "Done"
 
-[node name="UrlInputSpinerContainer" type="HBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer" unique_id=574257417]
+[node name="AddPackModal" parent="." unique_id=1514084343 instance=ExtResource("5_modal")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+title = "Add a new Pack"
+
+[node name="Packs" type="VBoxContainer" parent="AddPackModal" unique_id=1777491721]
+layout_mode = 0
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
+script = ExtResource("12_packs")
+
+[node name="SourceSwitcher" parent="AddPackModal/Packs" unique_id=1035041947 instance=ExtResource("6_switcher")]
+layout_mode = 2
+size_flags_horizontal = 1
+first_label = "Local"
+second_label = "Pinterest"
+
+[node name="LocalContainer" type="HBoxContainer" parent="AddPackModal/Packs" unique_id=1171221357]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
+
+[node name="FolderButton" type="Button" parent="AddPackModal/Packs/LocalContainer" unique_id=1769556605]
+layout_mode = 2
+theme_type_variation = &"ButtonSoft"
+text = "Folder"
+
+[node name="ImagesButton" type="Button" parent="AddPackModal/Packs/LocalContainer" unique_id=165195430]
+layout_mode = 2
+theme_type_variation = &"ButtonSoft"
+text = "Images"
+
+[node name="PinterestContainer" type="VBoxContainer" parent="AddPackModal/Packs" unique_id=1648329595]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
+
+[node name="UrlInput" type="LineEdit" parent="AddPackModal/Packs/PinterestContainer" unique_id=1376439583]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(316, 0)
+layout_mode = 2
+placeholder_text = "url"
+
+[node name="UrlInputSpinerContainer" type="HBoxContainer" parent="AddPackModal/Packs/PinterestContainer" unique_id=190426307]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 alignment = 1
 
-[node name="Spiner" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputSpinerContainer" unique_id=742145885 instance=ExtResource("11_4rn7p")]
+[node name="Spiner" parent="AddPackModal/Packs/PinterestContainer/UrlInputSpinerContainer" unique_id=1610397424 instance=ExtResource("13_spiner")]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 
-[node name="PinterestSectionCheckBox" type="CheckBox" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer" unique_id=440285839]
+[node name="SectionRow" type="HBoxContainer" parent="AddPackModal/Packs/PinterestContainer" unique_id=1375788529]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 10
+
+[node name="PinterestSectionCheckBox" type="Button" parent="AddPackModal/Packs/PinterestContainer/SectionRow" unique_id=2089860893]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"CheckSquare"
+toggle_mode = true
 button_pressed = true
+
+[node name="Label" type="Label" parent="AddPackModal/Packs/PinterestContainer/SectionRow" unique_id=758815238]
+layout_mode = 2
 text = "Include board sections"
 
-[node name="PinterestUrlMessageLabel" type="Label" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer" unique_id=627145675]
+[node name="PinterestUrlMessageLabel" type="Label" parent="AddPackModal/Packs/PinterestContainer" unique_id=1928356096]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+size_flags_horizontal = 4
+theme_type_variation = &"LabelMeta"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel" unique_id=1193103268]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="PackContainer" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/ScrollContainer" unique_id=1559439264]
+[node name="AddPackDoneButton" type="Button" parent="AddPackModal" unique_id=919255534 groups=["modal_footer"]]
 unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 0
+theme_type_variation = &"ButtonAccent"
+disabled = true
+text = "Done"
 
-[node name="NextButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel" unique_id=458000407]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Next"
-
-[node name="Settings" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer" unique_id=1417308716]
+[node name="ProgressModal" parent="." unique_id=935727511 instance=ExtResource("5_modal")]
 unique_name_in_owner = true
 visible = false
-layout_mode = 2
+layout_mode = 1
+title = "Refreshing"
+
+[node name="ProgressBox" type="VBoxContainer" parent="ProgressModal" unique_id=1921079174]
+layout_mode = 0
 size_flags_horizontal = 3
-size_flags_vertical = 3
 theme_override_constants/separation = 20
-script = ExtResource("9_64m6r")
+alignment = 1
 
-[node name="SessionTypeSwitcher" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings" unique_id=966042296 instance=ExtResource("3_fkryp")]
+[node name="Spiner" parent="ProgressModal/ProgressBox" unique_id=1630061550 instance=ExtResource("13_spiner")]
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="ProgressLabel" type="Label" parent="ProgressModal/ProgressBox" unique_id=344647027]
 unique_name_in_owner = true
 layout_mode = 2
-title = "Session Mode"
-first_label = "Standard"
-second_label = "Relaxed"
+size_flags_horizontal = 3
+theme_type_variation = &"LabelFieldTitle"
+text = "Starting..."
+horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="VBox" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings" unique_id=2144403220]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 15
-
-[node name="Standard" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/VBox" unique_id=859338217]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
-script = ExtResource("5_i1lnr")
-
-[node name="Relaxed" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/VBox" unique_id=1955577643]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_vertical = 3
-script = ExtResource("7_5n576")
-
-[node name="Class" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/VBox" unique_id=977788112]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_vertical = 3
-script = ExtResource("7_y4i35")
-
-[node name="Custom" type="VBoxContainer" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/VBox" unique_id=255938333]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_vertical = 3
-script = ExtResource("9_rcuxh")
-
-[node name="DoneButton" type="Button" parent="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings" unique_id=1567125040]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Start Session"
-
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MainSafeMargin" unique_id=247455258]
-visible = false
-layout_mode = 2
-script = ExtResource("3_64m6r")
-
-[node name="FolderDialog" type="FileDialog" parent="." unique_id=437465859]
+[node name="FolderDialog" type="FileDialog" parent="." unique_id=1886366228]
 unique_name_in_owner = true
 auto_translate_mode = 1
 mode = 2
@@ -298,7 +359,7 @@ file_mode = 2
 access = 2
 use_native_dialog = true
 
-[node name="ImageDialog" type="FileDialog" parent="." unique_id=1582647922]
+[node name="ImageDialog" type="FileDialog" parent="." unique_id=2017491652]
 unique_name_in_owner = true
 auto_translate_mode = 1
 mode = 2
@@ -310,13 +371,15 @@ filters = PackedStringArray("*.png,*.jpg,*.jpeg, *.tiff")
 use_native_dialog = true
 
 [connection signal="resized" from="." to="." method="_on_resized"]
-[connection signal="toggled" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/PacksHeader/AddPackButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_add_pack_button_toggled"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/FolderButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_folder_button_pressed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/ImagesButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_images_button_pressed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/SourceButtonContainer/PinterestButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_pinterest_button_pressed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/AddPackContainer/PinterestUrlContainer/UrlInputContainer/UrlDoneButton" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_url_done_button_pressed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs/ContentHBox/PacksPanel/NextButton" to="." method="_on_next_button_pressed"]
-[connection signal="value_changed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/SessionTypeSwitcher" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings" method="_on_session_type_switcher_value_changed"]
-[connection signal="pressed" from="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Settings/DoneButton" to="." method="_on_done_button_pressed"]
-[connection signal="dir_selected" from="FolderDialog" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_folder_dialog_dir_selected"]
-[connection signal="files_selected" from="ImageDialog" to="MainSafeMargin/MainVBox/VBoxContainer/PanelContainer/VBoxContainer/Packs" method="_on_image_dialog_files_selected"]
+[connection signal="pressed" from="MainSafeMargin/CenterColumn/Body/HeaderRow/RefreshButton" to="." method="_on_refresh_button_pressed"]
+[connection signal="pressed" from="MainSafeMargin/CenterColumn/Body/HeaderRow/AddPackButton" to="." method="_on_add_pack_button_pressed"]
+[connection signal="pressed" from="BottomBar/StartSessionButton" to="." method="_on_start_session_button_pressed"]
+[connection signal="pressed" from="BottomBar/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="value_changed" from="SettingsModal/Settings/SessionTypeSwitcher" to="SettingsModal/Settings" method="_on_session_type_switcher_value_changed"]
+[connection signal="pressed" from="SettingsModal/SettingsDoneButton" to="." method="_on_settings_done_button_pressed"]
+[connection signal="value_changed" from="AddPackModal/Packs/SourceSwitcher" to="AddPackModal/Packs" method="_on_source_switcher_value_changed"]
+[connection signal="pressed" from="AddPackModal/Packs/LocalContainer/FolderButton" to="AddPackModal/Packs" method="_on_folder_button_pressed"]
+[connection signal="pressed" from="AddPackModal/Packs/LocalContainer/ImagesButton" to="AddPackModal/Packs" method="_on_images_button_pressed"]
+[connection signal="pressed" from="AddPackModal/AddPackDoneButton" to="AddPackModal/Packs" method="_on_done_button_pressed"]
+[connection signal="dir_selected" from="FolderDialog" to="AddPackModal/Packs" method="_on_folder_dialog_dir_selected"]
+[connection signal="files_selected" from="ImageDialog" to="AddPackModal/Packs" method="_on_image_dialog_files_selected"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://dw8kaspnoi0sw"]
+[gd_scene format=3 uid="uid://dw8kaspnoi0sw"]
 
 [ext_resource type="Script" uid="uid://bfd5fhqweur3r" path="res://scenes/session/session.gd" id="1_qm4ye"]
 [ext_resource type="PackedScene" uid="uid://woqndv04cswq" path="res://prefabs/spiner/spiner.tscn" id="2_5d8hc"]
@@ -72,7 +72,7 @@ bg_color = Color(0.113725, 0.113725, 0.113725, 1)
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 
-[node name="Session" type="Control" node_paths=PackedStringArray("invisible_element")]
+[node name="Session" type="Control" unique_id=2137751178 node_paths=PackedStringArray("invisible_element")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -82,10 +82,10 @@ grow_vertical = 2
 script = ExtResource("1_qm4ye")
 invisible_element = [NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/RotateLeftButton"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/FileLocationButton"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/CountLabel"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"), NodePath("CanvasLayer/SafeMarginContainer/MarginContainer/ExitButton")]
 
-[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=125938580]
 layer = -1
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer2"]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer2" unique_id=364635769]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -94,20 +94,20 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.498039, 0.498039, 0.498039, 1)
 
-[node name="SpinerContainer" type="CenterContainer" parent="CanvasLayer2"]
+[node name="SpinerContainer" type="CenterContainer" parent="CanvasLayer2" unique_id=462610097]
 offset_right = 1152.0
 offset_bottom = 648.0
 mouse_filter = 2
 
-[node name="VBox" type="VBoxContainer" parent="CanvasLayer2/SpinerContainer"]
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer2/SpinerContainer" unique_id=1270783343]
 layout_mode = 2
 
-[node name="Spiner" parent="CanvasLayer2/SpinerContainer/VBox" instance=ExtResource("2_5d8hc")]
+[node name="Spiner" parent="CanvasLayer2/SpinerContainer/VBox" unique_id=1473531376 instance=ExtResource("2_5d8hc")]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 
-[node name="MessageLabel" type="Label" parent="CanvasLayer2/SpinerContainer/VBox"]
+[node name="MessageLabel" type="Label" parent="CanvasLayer2/SpinerContainer/VBox" unique_id=203700447]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -117,7 +117,7 @@ text = "Break"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SafeMarginContainer" type="MarginContainer" parent="."]
+[node name="SafeMarginContainer" type="MarginContainer" parent="." unique_id=757670960]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -127,46 +127,46 @@ grow_vertical = 2
 script = ExtResource("4_0dsos")
 metadata/_custom_type_script = "uid://b08vxne14bjfa"
 
-[node name="PanelContainer" type="PanelContainer" parent="SafeMarginContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="SafeMarginContainer" unique_id=962291161]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_0dsos")
 
-[node name="TextureContainer" type="TextureRect" parent="SafeMarginContainer/PanelContainer"]
+[node name="TextureContainer" type="TextureRect" parent="SafeMarginContainer/PanelContainer" unique_id=775390957]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Greyscale" type="ColorRect" parent="SafeMarginContainer/PanelContainer"]
+[node name="Greyscale" type="ColorRect" parent="SafeMarginContainer/PanelContainer" unique_id=651675996]
 unique_name_in_owner = true
 visible = false
 material = SubResource("ShaderMaterial_ux0ol")
 layout_mode = 2
 mouse_filter = 2
 
-[node name="GridContainer" type="AspectRatioContainer" parent="SafeMarginContainer/PanelContainer"]
+[node name="GridContainer" type="AspectRatioContainer" parent="SafeMarginContainer/PanelContainer" unique_id=977720555]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Grid" type="ColorRect" parent="SafeMarginContainer/PanelContainer/GridContainer"]
+[node name="Grid" type="ColorRect" parent="SafeMarginContainer/PanelContainer/GridContainer" unique_id=1241504731]
 unique_name_in_owner = true
 material = SubResource("ShaderMaterial_qnfa4")
 layout_mode = 2
 mouse_filter = 2
 color = Color(1, 1, 1, 0)
 
-[node name="PaintCanvas" type="Control" parent="SafeMarginContainer/PanelContainer"]
+[node name="PaintCanvas" type="Control" parent="SafeMarginContainer/PanelContainer" unique_id=1411012615]
 unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("11_qm4ye")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=712086770]
 
-[node name="SafeMarginContainer" type="MarginContainer" parent="CanvasLayer"]
+[node name="SafeMarginContainer" type="MarginContainer" parent="CanvasLayer" unique_id=1902125834]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -176,7 +176,7 @@ mouse_filter = 2
 script = ExtResource("4_0dsos")
 metadata/_custom_type_script = "uid://b08vxne14bjfa"
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SafeMarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SafeMarginContainer" unique_id=826848474]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 25
@@ -184,43 +184,43 @@ theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 25
 
-[node name="NavigationContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+[node name="NavigationContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer" unique_id=40380295]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer" unique_id=1238787410]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer" unique_id=401188624]
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="ButtonPrevious" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer/VBoxContainer"]
+[node name="ButtonPrevious" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer/VBoxContainer" unique_id=1194649044]
 unique_name_in_owner = true
 layout_mode = 2
 icon = ExtResource("4_8efxp")
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer" unique_id=2141957467]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 alignment = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer2"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer2" unique_id=1330362867]
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="ButtonNext" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer2/VBoxContainer"]
+[node name="ButtonNext" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer2/VBoxContainer" unique_id=727319138]
 unique_name_in_owner = true
 layout_mode = 2
 icon = ExtResource("4_r1u5e")
 
-[node name="FileLocationButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+[node name="FileLocationButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer" unique_id=1723081468]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
@@ -228,52 +228,52 @@ size_flags_vertical = 8
 text = "loading..."
 alignment = 0
 
-[node name="HBox" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+[node name="HBox" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer" unique_id=1461840580]
 layout_mode = 2
 size_flags_vertical = 8
 mouse_filter = 2
 alignment = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox" unique_id=1621339952]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="RotateLeftButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+[node name="RotateLeftButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2" unique_id=576781818]
 layout_mode = 2
 icon = ExtResource("8_qvbex")
 
-[node name="RotateRightButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+[node name="RotateRightButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2" unique_id=1532233346]
 layout_mode = 2
 icon = ExtResource("9_vboup")
 
-[node name="GreyscaleButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+[node name="GreyscaleButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2" unique_id=257751609]
 layout_mode = 2
 toggle_mode = true
 icon = ExtResource("10_mwp7v")
 
-[node name="PaintButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+[node name="PaintButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2" unique_id=427592534]
 unique_name_in_owner = true
 layout_mode = 2
 toggle_mode = true
 icon = ExtResource("11_d6r8s")
 
-[node name="GridButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2"]
+[node name="GridButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2" unique_id=392054908]
 unique_name_in_owner = true
 layout_mode = 2
 toggle_mode = true
 icon = ExtResource("7_mvl4h")
 
-[node name="PauseButton" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox" instance=ExtResource("14_7mwt7")]
+[node name="PauseButton" parent="CanvasLayer/SafeMarginContainer/MarginContainer/HBox" unique_id=1784531069 instance=ExtResource("14_7mwt7")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ExitButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+[node name="ExitButton" type="Button" parent="CanvasLayer/SafeMarginContainer/MarginContainer" unique_id=1744837496]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 icon = ExtResource("8_vboup")
 
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/MarginContainer" unique_id=2051992567]
 visible = false
 material = SubResource("ShaderMaterial_mwp7v")
 layout_mode = 2
@@ -281,12 +281,12 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_n84ho")
 
-[node name="Label" type="Label" parent="CanvasLayer/SafeMarginContainer/MarginContainer/PanelContainer"]
+[node name="Label" type="Label" parent="CanvasLayer/SafeMarginContainer/MarginContainer/PanelContainer" unique_id=2034472796]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "blablabla"
 
-[node name="CountLabel" type="Label" parent="CanvasLayer/SafeMarginContainer/MarginContainer"]
+[node name="CountLabel" type="Label" parent="CanvasLayer/SafeMarginContainer/MarginContainer" unique_id=1746786629]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -295,14 +295,14 @@ theme_type_variation = &"HeaderSmall"
 theme_override_constants/outline_size = 3
 text = "0/0"
 
-[node name="DrawingToolBar" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer"]
+[node name="DrawingToolBar" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer" unique_id=442536060]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kaxoj")
 script = ExtResource("12_d6r8s")
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar" unique_id=4598756]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 25
@@ -310,81 +310,81 @@ theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 25
 theme_override_constants/margin_bottom = 25
 
-[node name="VBox" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer"]
+[node name="VBox" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer" unique_id=792850107]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HBoxColors" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/VBox"]
+[node name="HBoxColors" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/VBox" unique_id=1472455437]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar" unique_id=1171626870]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer" unique_id=440601919]
 layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer" unique_id=450513084]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 0
 
-[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=5346369]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_d6r8s")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1382217529]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1928109389]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_5jwwt")
 
-[node name="BrushSizeSlider" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" instance=ExtResource("13_d6r8s")]
+[node name="BrushSizeSlider" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=619282294 instance=ExtResource("13_d6r8s")]
 layout_mode = 2
 size_flags_horizontal = 1
 min_value = 1.0
 max_value = 30.0
 
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=2094313022]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_qvbex")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer" unique_id=459790134]
 layout_mode = 2
 
-[node name="UndoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer"]
+[node name="UndoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=693392947]
 layout_mode = 2
 icon = ExtResource("14_qvbex")
 flat = true
 
-[node name="RedoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer"]
+[node name="RedoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=252239803]
 layout_mode = 2
 icon = ExtResource("15_vboup")
 flat = true
 
-[node name="PanelContainer3" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer"]
+[node name="PanelContainer3" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=798525309]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_vboup")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=916468787]
 unique_name_in_owner = true
 wait_time = 3.0
 
-[node name="MouseMovetimer" type="Timer" parent="."]
+[node name="MouseMovetimer" type="Timer" parent="." unique_id=558448454]
 unique_name_in_owner = true
 wait_time = 5.0
 one_shot = true
 
-[node name="GestureTimer" type="Timer" parent="."]
+[node name="GestureTimer" type="Timer" parent="." unique_id=199675946]
 unique_name_in_owner = true
 wait_time = 0.07
 one_shot = true
