@@ -118,7 +118,7 @@
       ${Else}
         File "..\build\${BINNAME}-windows-arm64\${BINNAME}.exe"
       ${EndIf}
-      File "../assets/graphics/icons/easel.ico"
+      File "assets/easel.ico"
 
       SetOutPath "$INSTDIR\easel_app_data"
       File /nonfatal /r "../build/easel_app_data/"
@@ -156,7 +156,7 @@
 
       WriteRegStr HKCR "${APPNAME} project" "" "${APPNAME} project"
       WriteRegStr HKCR "${APPNAME} project\shell" "" "open"
-      WriteRegStr HKCR "${APPNAME} project\DefaultIcon" "" "$INSTDIR\gc.ico"
+      WriteRegStr HKCR "${APPNAME} project\DefaultIcon" "" "$INSTDIR\easel.ico"
 
       WriteRegStr HKCR "${APPNAME} project\shell\open\command" "" '$INSTDIR\${APPNAME}.exe "%1"'
       WriteRegStr HKCR "${APPNAME} project\shell\edit" "" "Edit project in ${APPNAME}"
@@ -169,7 +169,7 @@
 
       WriteRegStr HKCR "${APPNAME} session" "" "${APPNAME} session file"
       WriteRegStr HKCR "${APPNAME} session\shell" "" "open"
-      WriteRegStr HKCR "${APPNAME} session\DefaultIcon" "" "$INSTDIR\gc.ico"
+      WriteRegStr HKCR "${APPNAME} session\DefaultIcon" "" "$INSTDIR\easel.ico"
 
       WriteRegStr HKCR "${APPNAME} session\shell\open\command" "" '$INSTDIR\${APPNAME}.exe "%1"'
       WriteRegStr HKCR "${APPNAME} session\shell\edit" "" "Open session in ${APPNAME}"
@@ -213,7 +213,7 @@
     ; Delete all files and folders created by the installer
     Delete "$INSTDIR\uninstall.exe"
     Delete "$INSTDIR\${APPNAME}.exe"
-    Delete "$INSTDIR\gc.ico"
+    Delete "$INSTDIR\easel.ico"
     RMDir /r "$INSTDIR\easel_app_data"
     RMDir "$INSTDIR"
 
