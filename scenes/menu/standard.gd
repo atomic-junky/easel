@@ -1,26 +1,15 @@
 extends SessionType
 
 func setup() -> void:
-	define_field(
-		"number_of_images", "choice", [10, 20, 30, 50, 100],
-		"Images", "", {
-			"custom_min": 1, "custom_max": 999, "custom_step": 1
-		}
-	)
-	define_field(
-		"duration", "choice", [30, 60, 300, 600, 1800],
-		"Time per image", "", {
-			"labels": ["30 s", "1 min", "5 min", "10 min", "30 min"],
-			"custom_min": 5, "custom_max": 3600, "custom_step": 5,
-			"custom_suffix": "s"
-		}
-	)
-	define_field(
-		"image_order", "image_order", [], "", "", {
-			"shuffle_property": "shuffle",
-			"reverse_property": "reverse"
-		}
-	)
+	define_choice("number_of_images", [10, 20, 30, 50, 100], "Images") \
+		.with_all() \
+		.with_range(1, 999)
+
+	define_choice("duration", [30, 60, 300, 600, 1800], "Time per image") \
+		.with_labels(PackedStringArray(["30 s", "1 min", "5 min", "10 min", "30 min"])) \
+		.with_unit("s") \
+		.with_range(5, 3600, 5)
+	define_image_order()
 
 func get_context_type() -> SessionResource.Type:
 	return SessionResource.Type.STANDARD

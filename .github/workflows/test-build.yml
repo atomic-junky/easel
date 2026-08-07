@@ -40,7 +40,7 @@ jobs:
 
       - name: Copy easel_app_data folder
         run: |
-          rm ./gesture_app_data/.gdignore
+          rm ./easel_app_data/.gdignore
           cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-64bit
           cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-arm64
           cp -R ./easel_app_data ./build
@@ -80,7 +80,6 @@ jobs:
 
       - name: Setup
         run: |
-          mkdir -v -p build/
           mkdir -v -p ~/.local/share/godot/export_templates/
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
@@ -90,6 +89,8 @@ jobs:
 
       - name: Linux Build
         run: |
+          mkdir -v -p build/${EXPORT_NAME}-Linux-64bit/
+          mkdir -v -p build/${EXPORT_NAME}-Linux-arm64/
           godot --headless -v --export-release "Linux 64bit" ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
           godot --headless -v --export-release "Linux arm64" ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
 

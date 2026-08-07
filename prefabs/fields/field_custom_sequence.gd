@@ -46,8 +46,8 @@ func _build() -> void:
 	add_child(main_vbox)
 	
 	# Initialize with default if provided
-	if default_value and typeof(default_value) == TYPE_ARRAY:
-		_sequence = default_value.duplicate(true)
+	if spec.default_value and typeof(spec.default_value) == TYPE_ARRAY:
+		_sequence = spec.default_value.duplicate(true)
 		_rebuild_list()
 
 func _on_add_pose() -> void:

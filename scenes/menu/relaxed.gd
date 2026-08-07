@@ -1,12 +1,7 @@
 extends SessionType
 
 func setup() -> void:
-	define_field(
-		"image_order", "image_order", [], "", "", {
-			"shuffle_property": "shuffle",
-			"reverse_property": "reverse"
-		}
-	)
+	define_image_order()
 
 func get_context_type() -> SessionResource.Type:
 	return SessionResource.Type.RELAXED

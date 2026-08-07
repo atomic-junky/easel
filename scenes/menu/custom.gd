@@ -8,16 +8,9 @@ func setup() -> void:
 		{"type": "pose", "duration": 60, "amount": 1}
 	]
 	
-	define_field(
-		"sequence", "custom_sequence", [],
-		"Session sequence", ""
-	)
-	define_field(
-		"image_order", "image_order", [], "", "", {
-			"shuffle_property": "shuffle",
-			"reverse_property": "reverse"
-		}
-	)
+	define_sequence("sequence", "Session sequence") \
+		.with_default(_custom_sequence)
+	define_image_order()
 
 func _update_sequence_from_values() -> void:
 	"""Extract sequence from field values"""
@@ -34,16 +27,17 @@ func load_from_context(context: SessionResource) -> void:
 	super.load_from_context(context)
 	_update_sequence_from_values()
 
-func save_to_context(context: SessionResource) -> void:
+## Named apply_context so it actually overrides the base and runs: the previous
+## name matched nothing, so none of this ever executed.
+func apply_context(context: SessionResource) -> void:
 	_update_sequence_from_values()
-	apply_fields_to_context(context)
-	
-	# Set custom-specific data
+	super.apply_context(context)
+
 	var number_of_images: int = 0
 	for item in _custom_sequence:
 		if item.get("type") == "pose":
-			number_of_images += item.get("amount", 1)
-	
+			number_of_images += int(item.get("amount", 1))
+
 	context.sequence = _custom_sequence.duplicate(true)
 	context.number_of_images = number_of_images
 

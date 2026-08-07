@@ -26,7 +26,8 @@ enum Type {
 
 @export var session_type: Type = Type.STANDARD
 @export var number_of_images: int = -1  # -1 means unset, will use field default
-@export var duration: int = -1  # -1 means unset, will use field default (for CLASS mode)
+@export var duration: int = -1  # Seconds per image. -1 means unset.
+@export var class_duration: int = -1  # Class mode only: total session length, in minutes.
 @export var sequence: Array = []
 @export var shuffle: bool = true  # Default value for image ordering
 @export var reverse: bool = false  # Default value for image ordering

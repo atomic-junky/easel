@@ -5,18 +5,12 @@ var _class_session: Array = []
 func setup() -> void:
 	ClassSessionTemplateRegistry.initialize()
 	var durations := ClassSessionTemplateRegistry.get_available_durations()
-	define_field(
-		"duration", "choice", durations,
-		"Session duration", " min", {
-			"custom_min": 5, "custom_max": 240, "custom_step": 5
-		}
-	)
-	define_field(
-		"image_order", "image_order", [], "", "", {
-			"shuffle_property": "shuffle",
-			"reverse_property": "reverse"
-		}
-	)
+	# Its own property, not `duration`: Standard stores seconds per image there,
+	# and sharing it made a Standard value arrive here as a nonsense minute count.
+	define_choice("class_duration", durations, "Session duration") \
+		.with_unit(" min") \
+		.with_range(5, 240, 5)
+	define_image_order()
 	# Set initial template based on default duration
 	if durations.size() > 0:
 		_apply_template_for_duration(durations[0])
@@ -28,8 +22,8 @@ func _apply_template_for_duration(duration: int) -> void:
 
 func load_from_context(context: SessionResource) -> void:
 	# Apply the template based on saved duration before loading UI
-	if context and context.duration > 0:
-		_apply_template_for_duration(context.duration)
+	if context and context.class_duration > 0:
+		_apply_template_for_duration(context.class_duration)
 	super.load_from_context(context)
 
 func is_valid() -> bool:
@@ -49,7 +43,7 @@ func generate_sequence(context: SessionResource) -> Array:
 		all_images.reverse()
 	# The template is picked from the chosen duration, not read back out of
 	# context.sequence — that field is where the result goes, not the source.
-	_apply_template_for_duration(int(context.duration))
+	_apply_template_for_duration(int(context.class_duration))
 
 	var result: Array = []
 	for item: Dictionary in _class_session:
