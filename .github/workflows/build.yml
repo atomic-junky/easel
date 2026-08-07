@@ -261,7 +261,7 @@ jobs:
         run: |
           test -n "$ITCHIO_TARGET"         
           for ARCH in setup x86_64 arm64; do
-            ./butler push "dist/${EXPORT_NAME}-windows-${ARCH}" "${ITCHIO_TARGET}:windows-${ARCH}" --userversion "${{ github.ref_name }}"
+            ./butler push "dist/${EXPORT_NAME}-windows-${ARCH}.exe" "${ITCHIO_TARGET}:windows-${ARCH}" --userversion "${{ github.ref_name }}"
           done
 
   itchio-linux:
