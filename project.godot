@@ -14,14 +14,14 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="GestureApp"
-config/version="0.0.2-alpha"
+config/name="Easel"
+config/version="0.1.0-beta"
 run/main_scene="res://scenes/app/app.tscn"
 config/features=PackedStringArray("4.7")
+boot_splash/bg_color=Color(0.28627452, 0.7411765, 0.72156864, 1)
 boot_splash/stretch_mode=0
-boot_splash/use_filter=false
-boot_splash/image="uid://b4pu8yxomwywq"
-config/icon="uid://dtxlo5ebacbd0"
+boot_splash/image="uid://dgfh8osee3hfb"
+config/icon="uid://ddgi86juwvavq"
 
 [autoload]
 

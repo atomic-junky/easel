@@ -1,10 +1,6 @@
 class_name Modal extends Control
 
 ## Centered dialog over a blurred backdrop.
-##
-## Content is authored as direct children of the Modal node in the parent scene;
-## on ready they are moved into the panel. Children in the "modal_footer" group
-## are pinned to the bottom, everything else is centered.
 
 signal closed
 

@@ -1,11 +1,8 @@
-extends SceneTree
-
-## Generates ui/default_theme.tres. Run it with:
-##   godot --headless --path . --script res://ui/build_theme.gd
+class_name EaselTheme extends Theme
 
 const OUT: String = "res://ui/default_theme.tres"
 
-const ACCENT: Color = Color("f44f4f")
+const ACCENT: Color = Color("49BDB8")
 const ACCENT_SOFT: Color = Color("41252a")
 const BLUE: Color = Color("4f9bf4")
 const GREEN: Color = Color("3fc98a")
@@ -48,7 +45,7 @@ var _semi: Font
 var _med: Font
 
 
-func _initialize() -> void:
+func _init() -> void:
 	_bold = load(FONT_BOLD)
 	_semi = load(FONT_SEMI)
 	_med = load(FONT_MED)
@@ -71,7 +68,6 @@ func _initialize() -> void:
 		printerr("build_theme: save failed (%d)" % err)
 	else:
 		print("build_theme: wrote ", OUT)
-	quit()
 
 
 ## Style helpers

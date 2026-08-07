@@ -320,58 +320,56 @@ layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar" unique_id=1171626870]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer" unique_id=1171626870]
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
 mouse_filter = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer" unique_id=440601919]
-layout_mode = 2
-mouse_filter = 2
-alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer" unique_id=450513084]
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_constants/separation = 0
-
-[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=5346369]
+[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer" unique_id=5346369]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_d6r8s")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1382217529]
+[node name="VBoxContainer2" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer" unique_id=1382217529]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1928109389]
+[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2" unique_id=1928109389]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_5jwwt")
 
-[node name="BrushSizeSlider" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=619282294 instance=ExtResource("13_d6r8s")]
+[node name="BrushSizeSlider" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2" unique_id=619282294 instance=ExtResource("13_d6r8s")]
 layout_mode = 2
 size_flags_horizontal = 1
 min_value = 1.0
 max_value = 30.0
 
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=2094313022]
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2" unique_id=2094313022]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_qvbex")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer" unique_id=459790134]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2/PanelContainer" unique_id=459790134]
 layout_mode = 2
 
-[node name="UndoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=693392947]
+[node name="UndoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer" unique_id=693392947]
+visible = false
 layout_mode = 2
 icon = ExtResource("14_qvbex")
 flat = true
 
-[node name="RedoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer" unique_id=252239803]
+[node name="RedoButton" type="Button" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer" unique_id=252239803]
+visible = false
 layout_mode = 2
 icon = ExtResource("15_vboup")
 flat = true
 
-[node name="PanelContainer3" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=798525309]
+[node name="PanelContainer3" type="PanelContainer" parent="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer" unique_id=798525309]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_vboup")
 
@@ -399,9 +397,9 @@ one_shot = true
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HBoxContainer2/GridButton" to="." method="_on_grid_button_pressed"]
 [connection signal="toggled" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/PauseButton" to="." method="_on_pause_button_toggled"]
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/ExitButton" to="." method="_on_exit_button_pressed"]
-[connection signal="value_changed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/BrushSizeSlider" to="." method="_on_brush_size_slider_value_changed"]
-[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer/UndoButton" to="SafeMarginContainer/PanelContainer/PaintCanvas" method="undo"]
-[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer/PanelContainer/VBoxContainer/RedoButton" to="SafeMarginContainer/PanelContainer/PaintCanvas" method="redo"]
+[connection signal="value_changed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2/BrushSizeSlider" to="." method="_on_brush_size_slider_value_changed"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer/UndoButton" to="SafeMarginContainer/PanelContainer/PaintCanvas" method="undo"]
+[connection signal="pressed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer/RedoButton" to="SafeMarginContainer/PanelContainer/PaintCanvas" method="redo"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="MouseMovetimer" to="." method="_on_mouse_movetimer_timeout"]
 [connection signal="timeout" from="GestureTimer" to="." method="_on_mouse_movetimer_timeout"]
