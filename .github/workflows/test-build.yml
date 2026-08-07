@@ -153,19 +153,17 @@ jobs:
         continue-on-error: true
         run: ./Godot.app/Contents/MacOS/Godot --headless -v --import
 
-      - name: Mac Build 🔧
+      - name: Mac Build
         run: |
-          chown runner ./Godot.app/Contents/MacOS/Godot
-          chmod +x ./Godot.app/Contents/MacOS/Godot
-          ./Godot.app/Contents/MacOS/Godot --headless -v --export-release "macOS" ./build/${EXPORT_NAME}.zip
+          godot --headless --verbose --export-release "macOS" "./build/${EXPORT_NAME}.zip"
 
-      - name: Make application executable 🔧
+      - name: Make application executable
         run: |
           unzip -a ./build/${EXPORT_NAME}.zip -d ./build
           chmod +x ./build/${EXPORT_NAME}.app/Contents/MacOS/${EXPORT_NAME}
           rm ./build/${EXPORT_NAME}.zip
 
-      - name: Fix application icon 🖼
+      - name: Fix application icon
         run: sips -s format icns ./build/${EXPORT_NAME}.app/Contents/Resources/icon.icns --out ./build/${EXPORT_NAME}.app/Contents/Resources/icon.icns
 
       - name: Copy easel_app_data folder
@@ -176,11 +174,11 @@ jobs:
       - name: Ad-hoc signing
         run: codesign -s - --force --deep ./build/${EXPORT_NAME}.app
 
-      - name: Create DMG archive 🔧
+      - name: Create DMG archive
         run: hdiutil create -srcfolder ./build -fs HFS+ -volname ${EXPORT_NAME} ./build/${EXPORT_NAME}-Mac.dmg
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mac_build
           path: |
@@ -208,7 +206,7 @@ jobs:
 
       - name: Android Build
         run: |
-          godot --headless -v --export-release "Android" ./build/${EXPORT_NAME}-Android/${EXPORT_NAME}.apk
+          godot --headless -v --export-release "Android" ./build/${EXPORT_NAME}.apk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
