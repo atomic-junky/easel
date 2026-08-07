@@ -21,7 +21,7 @@ config/features=PackedStringArray("4.7")
 boot_splash/bg_color=Color(0.28627452, 0.7411765, 0.72156864, 1)
 boot_splash/stretch_mode=0
 boot_splash/image="uid://dgfh8osee3hfb"
-config/icon="uid://ddgi86juwvavq"
+config/icon="uid://ci0n8kjafme2a"
 
 [autoload]
 

@@ -1,164 +1,228 @@
 class_name PaintCanvas
 extends Control
 
-enum BrushMode { PENCIL, ERASER, CIRCLE_SHAPE, RECTANGLE_SHAPE }
-enum BrushShape { RECTANGLE, CIRCLE }
+## Per-image freehand overlay.
+##
+## Strokes are stored in image-normalised coordinates and re-projected whenever
+## the picture is laid out again, so a window resize or a device rotation keeps
+## the drawing on the part of the image it was drawn on.
 
-var brush_mode := BrushMode.PENCIL
-var brush_size := 2
-var brush_color := Color.BLACK
-var brush_shape := BrushShape.CIRCLE
-var bg_color := Color.TRANSPARENT
+## Points closer than this (in pixels) are dropped: fewer, better-spaced points
+## give a smoother curve than every raw motion sample.
+const MIN_POINT_DISTANCE: float = 2.5
+const UNDO_STEPS: int = 64
 
-var _pressed := false
-var _current_line: Line2D = null
-
-# canvases: { canvas_id: { "lines": Node2D, "undo_redo": UndoRedo } }
-var canvases := {}
-var current_canvas_id := ""
-var touch_count := 0
+var brush_size: int = 8
+var brush_color: Color = Color.BLACK
 var can_draw: bool = false
 
-@onready var gesture_timer: Timer = %GestureTimer
+var _canvases: Dictionary = {}  # id -> { "root": Node2D, "undo": UndoRedo }
+var _current_id: String = ""
+var _image_rect: Rect2 = Rect2()
+
+var _line: Line2D = null
+var _points: PackedVector2Array = []
+var _pressures: PackedFloat32Array = []
 
 
 func create_canvas(id: String) -> void:
-	if id in canvases:
+	if _canvases.has(id):
 		return
-	var container := Node2D.new()
-	container.name = "Canvas_%s" % id
-	add_child(container)
-	container.visible = false
-	var ur := UndoRedo.new()
-	ur.max_steps = 50
-	canvases[id] = {
-		"lines": container,
-		"undo_redo": ur
-	}
+
+	var root := Node2D.new()
+	root.name = "Canvas_%s" % id
+	root.visible = false
+	add_child(root)
+
+	var undo := UndoRedo.new()
+	undo.max_steps = UNDO_STEPS
+
+	_canvases[id] = {"root": root, "undo": undo}
 
 
 func switch_canvas(id: String) -> void:
-	if not id in canvases:
-		push_error("Canvas '%s' n'existe pas" % id)
+	if not _canvases.has(id):
+		push_error("Canvas '%s' does not exist" % id)
 		return
-	for k in canvases.keys():
-		canvases[k]["lines"].visible = false
-	canvases[id]["lines"].visible = true
-	current_canvas_id = id
+
+	_end_stroke(false)
+	for key: String in _canvases:
+		_canvases[key]["root"].visible = false
+	_canvases[id]["root"].visible = true
+	_current_id = id
 
 
 func clear_canvas() -> void:
-	canvases = {}
-	current_canvas_id = ""
-	_pressed = false
-	_current_line = null
+	_end_stroke(false)
+	# The old version dropped the dictionary and left every Node2D in the tree,
+	# so each session leaked all of its previous drawings.
+	for key: String in _canvases:
+		_canvases[key]["root"].queue_free()
+
+	_canvases.clear()
+	_current_id = ""
 
 
-func _input(_event: InputEvent) -> void:
-	if not can_draw:
+## Called by the session with the rect the picture actually occupies.
+func set_image_rect(rect: Rect2) -> void:
+	if rect.size.x <= 0.0 or rect.size.y <= 0.0 or rect.is_equal_approx(_image_rect):
 		return
-	
-	if not current_canvas_id in canvases:
-		return
-	var ur: UndoRedo = canvases[current_canvas_id]["undo_redo"]
-	if Input.is_action_just_pressed("app_do"):
-		ur.redo()
-	elif Input.is_action_just_pressed("app_undo"):
-		ur.undo()
 
-
-func _handle_screen_touch() -> void:
-	if not gesture_timer.is_stopped():
-		await gesture_timer.timeout
-	
-	var ur: UndoRedo = canvases[current_canvas_id]["undo_redo"]
-	
-	if touch_count == 2:
-		ur.redo()
-	elif touch_count == 1:
-		ur.undo()
-	else:
-		return
-	
-	touch_count = 0
-
-
-
-func _gui_input(event: InputEvent) -> void:
-	if not visible or not can_draw:
-		return
-	
-	if not current_canvas_id in canvases:
-		return
-	var canvas_lines: Node = canvases[current_canvas_id]["lines"]
-	var ur: UndoRedo = canvases[current_canvas_id]["undo_redo"]
-
-	# souris / tactile
-	if event is InputEventMouseButton or event is InputEventScreenTouch:
-		if event is InputEventScreenTouch:
-			touch_count = max(touch_count, event.index)
-			gesture_timer.start()
-			_handle_screen_touch()
-		
-		# seulement clic gauche
-		if event is InputEventMouseButton and event.button_index != MOUSE_BUTTON_LEFT:
-			return
-
-		_pressed = event.pressed
-		if event.pressed:
-			var new_line := Line2D.new()
-			new_line.antialiased = true
-			new_line.default_color = brush_color
-			new_line.width = brush_size
-			new_line.width_curve = Curve.new()
-			new_line.begin_cap_mode = Line2D.LINE_CAP_ROUND
-			new_line.end_cap_mode = Line2D.LINE_CAP_ROUND
-
-			# Premier point
-			new_line.add_point(event.position - position)
-
-			# Pression initiale
-			var pressure := 1.0
-			if "pressure" in event:
-				pressure = clamp(event.pressure, 0.0, 1.0)
-			new_line.width_curve.add_point(Vector2(0, brush_size * pressure))
-
-			_current_line = new_line
-			canvases[current_canvas_id]["lines"].add_child(_current_line) # affichage temporaire
-		elif _current_line != null:
-			if _current_line.get_point_count() <= 1:
-				_current_line.queue_free()
-				return
-			
-			ur.create_action("Draw line %s" % _current_line)
-			ur.add_do_method(canvases[current_canvas_id]["lines"].add_child.bind(_current_line))
-			ur.add_do_reference(_current_line)
-			ur.add_undo_method(canvases[current_canvas_id]["lines"].remove_child.bind(_current_line))
-			ur.commit_action(false)
-
-			_current_line = null
-
-	# Mouvement / drag : mise à jour points et courbe de largeur
-	elif _pressed and (event is InputEventMouseMotion or event is InputEventScreenDrag):
-		if event is InputEventScreenDrag and event.index != 0:
-			return
-		
-		if _current_line:
-			_current_line.add_point(event.position - position)
-
-			# Ajout du point de courbe correspondant à cette position
-			var pressure := 1.0
-			if "pressure" in event:
-				pressure = clamp(event.pressure, 0.0, 1.0)
-
-			var offset: float = float(_current_line.get_point_count() - 1) / max(1, _current_line.get_point_count() - 1)
-			_current_line.width_curve.add_point(Vector2(offset, brush_size * pressure))
+	_image_rect = rect
+	for key: String in _canvases:
+		for line: Node in _canvases[key]["root"].get_children():
+			if line is Line2D:
+				_reproject(line)
 
 
 func undo() -> void:
-	var ur: UndoRedo = canvases[current_canvas_id]["undo_redo"]
-	ur.undo()
+	if _canvases.has(_current_id):
+		_canvases[_current_id]["undo"].undo()
+
 
 func redo() -> void:
-	var ur: UndoRedo = canvases[current_canvas_id]["undo_redo"]
-	ur.redo()
+	if _canvases.has(_current_id):
+		_canvases[_current_id]["undo"].redo()
+
+
+func _input(_event: InputEvent) -> void:
+	if not can_draw or not _canvases.has(_current_id):
+		return
+
+	if Input.is_action_just_pressed("app_do"):
+		redo()
+	elif Input.is_action_just_pressed("app_undo"):
+		undo()
+
+
+func _gui_input(event: InputEvent) -> void:
+	if not visible or not can_draw or not _canvases.has(_current_id):
+		return
+
+	if event is InputEventMouseButton:
+		if event.button_index != MOUSE_BUTTON_LEFT:
+			return
+		if event.pressed:
+			_begin_stroke(event.position, 1.0)
+		else:
+			_end_stroke(true)
+
+	elif event is InputEventScreenTouch:
+		# Only the first finger draws; further fingers are gestures, not ink.
+		if event.index != 0:
+			_end_stroke(false)
+			return
+		if event.pressed:
+			_begin_stroke(event.position, _pressure_of(event))
+		else:
+			_end_stroke(true)
+
+	elif event is InputEventMouseMotion:
+		_extend_stroke(event.position, _pressure_of(event))
+
+	elif event is InputEventScreenDrag and event.index == 0:
+		_extend_stroke(event.position, _pressure_of(event))
+
+
+func _pressure_of(event: InputEvent) -> float:
+	if "pressure" in event and event.pressure > 0.0:
+		return clampf(event.pressure, 0.05, 1.0)
+	return 1.0
+
+
+func _begin_stroke(position_in_canvas: Vector2, pressure: float) -> void:
+	_end_stroke(false)
+
+	_line = Line2D.new()
+	_line.antialiased = true
+	_line.default_color = brush_color
+	_line.width = brush_size
+	_line.joint_mode = Line2D.LINE_JOINT_ROUND
+	_line.begin_cap_mode = Line2D.LINE_CAP_ROUND
+	_line.end_cap_mode = Line2D.LINE_CAP_ROUND
+
+	_points = PackedVector2Array([position_in_canvas])
+	_pressures = PackedFloat32Array([pressure])
+
+	_canvases[_current_id]["root"].add_child(_line)
+	_apply_stroke()
+
+
+func _extend_stroke(position_in_canvas: Vector2, pressure: float) -> void:
+	if _line == null:
+		return
+	if _points.size() > 0 and _points[-1].distance_to(position_in_canvas) < MIN_POINT_DISTANCE:
+		return
+
+	_points.append(position_in_canvas)
+	_pressures.append(pressure)
+	_apply_stroke()
+
+
+func _end_stroke(commit: bool) -> void:
+	if _line == null:
+		return
+
+	var line: Line2D = _line
+	_line = null
+
+	# A tap is not a stroke.
+	if not commit or line.get_point_count() < 2:
+		line.queue_free()
+		return
+
+	line.set_meta("normalised", _to_normalised(_points))
+
+	var root: Node2D = _canvases[_current_id]["root"]
+	var undo: UndoRedo = _canvases[_current_id]["undo"]
+	undo.create_action("Stroke")
+	undo.add_do_method(root.add_child.bind(line))
+	undo.add_do_reference(line)
+	undo.add_undo_method(root.remove_child.bind(line))
+	# The line is already on screen, so the "do" half must not run now.
+	undo.commit_action(false)
+
+
+## Rebuilds the visible geometry from the pixel points of the stroke in progress.
+func _apply_stroke() -> void:
+	_line.points = _points
+	_line.width_curve = _build_width_curve(_pressures)
+
+
+## Pressure lives in the width curve as a 0..1 multiplier of `width`. The old
+## code stored `brush_size * pressure` there and always at offset 1.0, which
+## both squared the thickness and flattened every stroke to a single value.
+func _build_width_curve(pressures: PackedFloat32Array) -> Curve:
+	var curve := Curve.new()
+	curve.min_value = 0.0
+	curve.max_value = 1.0
+
+	var last: int = pressures.size() - 1
+	if last <= 0:
+		curve.add_point(Vector2(0.0, pressures[0] if last == 0 else 1.0))
+		return curve
+
+	for i in pressures.size():
+		curve.add_point(Vector2(float(i) / float(last), pressures[i]))
+	return curve
+
+
+func _to_normalised(points: PackedVector2Array) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	if _image_rect.size.x <= 0.0 or _image_rect.size.y <= 0.0:
+		return points
+
+	for point: Vector2 in points:
+		out.append((point - _image_rect.position) / _image_rect.size)
+	return out
+
+
+func _reproject(line: Line2D) -> void:
+	var normalised: PackedVector2Array = line.get_meta("normalised", PackedVector2Array())
+	if normalised.is_empty():
+		return
+
+	var out := PackedVector2Array()
+	for point: Vector2 in normalised:
+		out.append(_image_rect.position + point * _image_rect.size)
+	line.points = out

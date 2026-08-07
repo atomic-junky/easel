@@ -5,6 +5,11 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
 
+env:
+  GODOT_VERSION: 4.7.1
+  EXPORT_NAME: Easel
+  TAG: alpha
+
 jobs:
   export:
     permissions: write-all
@@ -12,7 +17,9 @@ jobs:
     name: Monologue export
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+        with:
+          lfs: true
       
       - name: Install wine
         id: wine_install
@@ -21,9 +28,47 @@ jobs:
           sudo apt install wine64
           echo "WINE_PATH=$(which wine64)" >> $GITHUB_OUTPUT
       
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mkdir -v -p ~/.config/
+          mv /root/.config/godot ~/.config/godot
+          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+      
+      - name: Import resources once
+        continue-on-error: true
+        run: godot --headless -v --import
+        
+      - name: Windows Build
+        run: |
+          godot --headless -v --export-release "Windows Desktop 64-bit" ./build/${EXPORT_NAME}-Windows-64bit/${EXPORT_NAME}.exe
+          godot --headless -v --export-release "Windows Desktop arm64" ./build/${EXPORT_NAME}-Windows-arm64/${EXPORT_NAME}.exe
+      
+      - name: Copy gesture_app_data folder
+        run: |
+          rm ./easel_app_data/.gdignore
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-64bit
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-arm64
+          cp -R ./easel_app_data ./build
+      
+      - name: Zip
+        working-directory: ./build
+        run: |
+          zip -r ${EXPORT_NAME}-Windows-64bit.zip ${EXPORT_NAME}-Windows-64bit
+          zip -r ${EXPORT_NAME}-Windows-arm64.zip ${EXPORT_NAME}-Windows-arm64
+    
+      - name: Build installer
+        run: |
+          apt-get update && apt-get install -y python3 && apt-get install -y nsis
+          python3 ./installer/utils/po2nsi.py -i ./installer/easel-app.nsi -o ./installer/easel-app_loc.nsi -p ./installer/po -l "English" -v
+          makensis ./installer/easel-app_loc.nsi
+          mkdir ./build/installer
+          mv ./installer/${EXPORT_NAME}_${TAG}_setup.exe ./build
+
+
       - name: Export game
         id: export
-        uses: firebelley/godot-export@v6.0.0
+        uses: firebelley/godot-export@v8.0.0
         with:
           godot_executable_download_url: https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_mono_linux_x86_64.zip
           godot_export_templates_download_url: https://github.com/godotengine/godot-builds/releases/download/4.5.1-stable/Godot_v4.5.1-stable_mono_export_templates.tpz

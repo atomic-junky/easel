@@ -1,13 +1,13 @@
-; Gesture App Installer NSIS Script
+; Easel App Installer NSIS Script
 ; Copyright Xenofon Konitsas (huskee) 2021
 ; Licensed under the MIT License
 
 
 ; Helper variables so that we don't change 20 instances of the version for every update
 
-  !define APPNAME "GestureApp"
-  !define APPVERSION "alpha"
-  !define COMPANYNAME "Atomic Junky"
+  !define APPNAME "Easel"
+  !define APPVERSION "beta"
+  !define COMPANYNAME "OneShrimpADay"
 
 
 ; Include the Modern UI library
@@ -113,10 +113,10 @@
         File "..\build\${APPNAME}-Windows-arm64\${APPNAME}.exe"
         File "..\build\${APPNAME}-Windows-arm64\${APPNAME}.pck"
       ${EndIf}
-      File "..\assets\graphics\icons\gc.ico"
+      File "..\assets\graphics\icons\easel.ico"
 
-      SetOutPath "$INSTDIR\gesture_app_data"
-      File /nonfatal /r "..\build\gesture_app_data\*"
+      SetOutPath "$INSTDIR\easel_app_data"
+      File /nonfatal /r "..\build\easel_app_data\*"
 
     ; Store installation folder in the registry
       WriteRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "InstallDir" $INSTDIR
@@ -130,7 +130,7 @@
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
       "UninstallString" "$INSTDIR\uninstall.exe"
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
-      "DisplayIcon" "$INSTDIR\gesture_app.exe,0"
+      "DisplayIcon" "$INSTDIR\easel_app.exe,0"
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
       "InstallLocation" "$INSTDIR"
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
@@ -144,9 +144,9 @@
       WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
       "NoRepair" 1
 
-    ; Associate .pxo files with Gesture App
+    ; Associate .pxo files with Easel App
       WriteRegStr HKCR ".pxo" "" "${APPNAME} project"
-      WriteRegStr HKCR ".pxo" "ContentType" "image/gesture-app"
+      WriteRegStr HKCR ".pxo" "ContentType" "image/easel-app"
       WriteRegStr HKCR ".pxo" "PerceivedType" "document"
 
       WriteRegStr HKCR "${APPNAME} project" "" "${APPNAME} project"
@@ -157,9 +157,9 @@
       WriteRegStr HKCR "${APPNAME} project\shell\edit" "" "Edit project in ${APPNAME}"
       WriteRegStr HKCR "${APPNAME} project\shell\edit\command" "" '$INSTDIR\${APPNAME}.exe "%1"'
 
-    ; Associate .gsession files with Gesture App
+    ; Associate .gsession files with Easel App
       WriteRegStr HKCR ".gsession" "" "${APPNAME} session"
-      WriteRegStr HKCR ".gsession" "ContentType" "application/gesture-app-session"
+      WriteRegStr HKCR ".gsession" "ContentType" "application/easel-app-session"
       WriteRegStr HKCR ".gsession" "PerceivedType" "document"
 
       WriteRegStr HKCR "${APPNAME} session" "" "${APPNAME} session file"
@@ -177,7 +177,7 @@
     ; Create folder in Start Menu\Programs and create shortcuts for app and uninstaller
     ; CreateDirectory "$SMPROGRAMS\${COMPANYNAME}"
 
-    CreateShortCut "$SMPROGRAMS\${APPNAME} ${APPVERSION}.lnk" "$INSTDIR\GestureApp.exe"
+    CreateShortCut "$SMPROGRAMS\${APPNAME} ${APPVERSION}.lnk" "$INSTDIR\${APPNAME}.exe"
     CreateShortCut "$SMPROGRAMS\Uninstall.lnk" "$INSTDIR\uninstall.exe"
 
   SectionEnd
@@ -209,8 +209,8 @@
     Delete "$INSTDIR\uninstall.exe"
     Delete "$INSTDIR\${APPNAME}.exe"
     Delete "$INSTDIR\${APPNAME}.pck"
-    Delete "$INSTDIR\gc.ico"
-    RMDir /r "$INSTDIR\gesture_app_data"
+    Delete "$INSTDIR\easel.ico"
+    RMDir /r "$INSTDIR\easel_app_data"
     RMDir "$INSTDIR"
 
     ; Delete shortcuts

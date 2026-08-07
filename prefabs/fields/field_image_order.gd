@@ -13,7 +13,6 @@ func _build() -> void:
 	add_child(_image_order)
 
 func _ready() -> void:
-	# Don't set defaults here - let them come from context or define_field default
 	pass
 
 func get_value_dict() -> Dictionary:

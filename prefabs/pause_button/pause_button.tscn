@@ -1,28 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://cith8i4qkfgiq"]
+[gd_scene format=3 uid="uid://cith8i4qkfgiq"]
 
 [ext_resource type="Texture2D" uid="uid://dbeuaxl54l35o" path="res://assets/icons/play.svg" id="1_pvq2i"]
 [ext_resource type="Script" uid="uid://djp6gwc5ceqtv" path="res://prefabs/pause_button/pause_button.gd" id="2_5o1ji"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pvq2i"]
-bg_color = Color(0.141176, 0.141176, 0.141176, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5o1ji"]
-bg_color = Color(0.91330606, 0.32086813, 0.3623615, 1)
 
-[node name="PauseButton" type="Button"]
-custom_minimum_size = Vector2(90, 0)
-theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+[node name="PauseButton" type="Button" unique_id=1764922696]
+custom_minimum_size = Vector2(120, 0)
+offset_right = 120.0
+offset_bottom = 48.0
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 toggle_mode = true
 text = "19:58"
 icon = ExtResource("1_pvq2i")
@@ -30,7 +24,7 @@ flat = true
 alignment = 2
 script = ExtResource("2_5o1ji")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=428672970]
 show_behind_parent = true
 clip_children = 2
 layout_mode = 1
@@ -40,13 +34,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_pvq2i")
 
-[node name="Control" type="Control" parent="PanelContainer"]
+[node name="Control" type="Control" parent="PanelContainer" unique_id=1402831061]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Panel" type="Panel" parent="PanelContainer/Control"]
+[node name="Panel" type="Panel" parent="PanelContainer/Control" unique_id=1953686791]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15

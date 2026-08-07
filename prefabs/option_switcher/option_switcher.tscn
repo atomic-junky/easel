@@ -1,33 +1,33 @@
-[gd_scene load_steps=2 format=3 uid="uid://dyxpp3gldlg8y"]
+[gd_scene format=3 uid="uid://dyxpp3gldlg8y"]
 
 [ext_resource type="Script" uid="uid://p1jvnk0k5u2f" path="res://prefabs/option_switcher/option_switcher.gd" id="1_oj872"]
 
-[node name="OptionSwitcher" type="VBoxContainer"]
+[node name="OptionSwitcher" type="VBoxContainer" unique_id=191577808]
 offset_right = 175.0
 offset_bottom = 50.0
 size_flags_horizontal = 4
 theme_override_constants/separation = 10
 script = ExtResource("1_oj872")
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="." unique_id=1044363896]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1375698097]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer" unique_id=1614766828]
 clip_children = 2
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"SwitcherPanel"
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer"]
+[node name="ButtonsContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer" unique_id=740531201]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="FirstButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
+[node name="FirstButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer" unique_id=651907737]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -36,7 +36,7 @@ toggle_mode = true
 button_pressed = true
 text = "1"
 
-[node name="SecondButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
+[node name="SecondButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer" unique_id=2086848659]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -44,7 +44,7 @@ theme_type_variation = &"ButtonSwitcher"
 toggle_mode = true
 text = "2"
 
-[node name="ThirdButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
+[node name="ThirdButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer" unique_id=451565179]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -52,7 +52,7 @@ theme_type_variation = &"ButtonSwitcher"
 toggle_mode = true
 text = "3"
 
-[node name="FourthButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
+[node name="FourthButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer" unique_id=1893042857]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -60,43 +60,43 @@ theme_type_variation = &"ButtonSwitcher"
 toggle_mode = true
 text = "4"
 
-[node name="FifthButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-theme_type_variation = &"ButtonSwitcher"
-toggle_mode = true
-text = "4"
-
-[node name="SixthButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer"]
+[node name="FifthButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer" unique_id=116170204]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"ButtonSwitcher"
 toggle_mode = true
-text = "4"
+text = "5"
 
-[node name="CustomValueContainerBG" type="Panel" parent="HBoxContainer/PanelContainer"]
+[node name="SixthButton" type="Button" parent="HBoxContainer/PanelContainer/ButtonsContainer" unique_id=1166943837]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ButtonSwitcher"
+toggle_mode = true
+text = "6"
+
+[node name="CustomValueContainerBG" type="Panel" parent="HBoxContainer/PanelContainer" unique_id=1494917205]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_type_variation = &"SwitcherBG"
 
-[node name="CustomValueContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer"]
+[node name="CustomValueContainer" type="HBoxContainer" parent="HBoxContainer/PanelContainer" unique_id=526995406]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="MinusButton" type="Button" parent="HBoxContainer/PanelContainer/CustomValueContainer"]
+[node name="MinusButton" type="Button" parent="HBoxContainer/PanelContainer/CustomValueContainer" unique_id=1095486800]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_type_variation = &"ButtonSwitcher"
 text = "-"
 
-[node name="CustomValue" type="SpinBox" parent="HBoxContainer/PanelContainer/CustomValueContainer"]
+[node name="CustomValue" type="SpinBox" parent="HBoxContainer/PanelContainer/CustomValueContainer" unique_id=277475173]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -104,14 +104,13 @@ value = 1.0
 allow_greater = true
 alignment = 1
 
-[node name="AddButton" type="Button" parent="HBoxContainer/PanelContainer/CustomValueContainer"]
+[node name="AddButton" type="Button" parent="HBoxContainer/PanelContainer/CustomValueContainer" unique_id=454587892]
 layout_mode = 2
 theme_type_variation = &"ButtonSwitcher"
 text = "+"
 
-[node name="CustomButton" type="Button" parent="HBoxContainer"]
+[node name="CustomButton" type="Button" parent="HBoxContainer" unique_id=958532508]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 theme_type_variation = &"ButtonSoft"
 toggle_mode = true

@@ -6,8 +6,10 @@ func setup() -> void:
 	ClassSessionTemplateRegistry.initialize()
 	var durations := ClassSessionTemplateRegistry.get_available_durations()
 	define_field(
-		"session_duration", "switcher", durations,
-		"Session duration", " min"
+		"duration", "choice", durations,
+		"Session duration", " min", {
+			"custom_min": 5, "custom_max": 240, "custom_step": 5
+		}
 	)
 	define_field(
 		"image_order", "image_order", [], "", "", {
@@ -45,27 +47,29 @@ func generate_sequence(context: SessionResource) -> Array:
 		all_images.shuffle()
 	elif context.reverse:
 		all_images.reverse()
+	# The template is picked from the chosen duration, not read back out of
+	# context.sequence — that field is where the result goes, not the source.
+	_apply_template_for_duration(int(context.duration))
+
 	var result: Array = []
-	var seq: Array = context.sequence
-	if seq.size() == 0 and all_images.size() > 0:
-		for next_image in all_images:
+	for item: Dictionary in _class_session:
+		var pose_type: String = str(item.get("type", "pose"))
+		var pose_duration: int = int(item.get("duration", 60))
+
+		# Templates group identical poses with "amount" instead of repeating them.
+		for _repeat in maxi(1, int(item.get("amount", 1))):
+			if pose_type != "pose":
+				result.append({"type": pose_type, "duration": pose_duration})
+				continue
+
+			if all_images.is_empty():
+				return result
+
+			var next_image: Dictionary = all_images.pop_front()
 			result.append({
 				"type": "pose",
-				"duration": 60,
+				"duration": pose_duration,
 				"path": next_image.get("path", ""),
 				"name": next_image.get("name", "Unknown"),
 			})
-		return result
-	for i in range(seq.size()):
-		var item: Dictionary = seq[i]
-		var pose_type: String = String(item.get("type", "pose"))
-		var pose_duration: int = int(item.get("duration", 60))
-		var pose_data: Dictionary = {"type": pose_type, "duration": pose_duration}
-		if pose_type == "pose":
-			if all_images.is_empty():
-				break
-			var next_image = all_images.pop_front()
-			pose_data["path"] = next_image.get("path", "")
-			pose_data["name"] = next_image.get("name", "Unknown")
-		result.append(pose_data)
 	return result

@@ -26,7 +26,6 @@ enum Type {
 
 @export var session_type: Type = Type.STANDARD
 @export var number_of_images: int = -1  # -1 means unset, will use field default
-## time_per_image supprimé, la durée est toujours lue depuis le champ 'duration' du dictionnaire de la séquence
 @export var duration: int = -1  # -1 means unset, will use field default (for CLASS mode)
 @export var sequence: Array = []
 @export var shuffle: bool = true  # Default value for image ordering
@@ -38,8 +37,6 @@ enum Type {
 func get_images_path() -> Array:
 	# Retourne la séquence telle qu'elle est
 	return sequence
-		
-		
 
 
 func get_images_path_raw() -> Array:

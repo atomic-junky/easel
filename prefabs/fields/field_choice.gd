@@ -1,16 +1,19 @@
 class_name SessionFieldChoice extends SessionField
 
-## A row of chips plus an optional custom value.
+## A row of option chips with a "Custom" toggle.
 ##
-## Chips wrap on their own, so the field works at any width without measuring.
-## "Custom" reveals a stepper: big -/+ targets for touch, a typable field for
-## keyboard. `extra.labels` overrides the chip text; otherwise value + suffix.
+## Custom swaps the chips out for a compact stepper in the same slot, the way a
+## classic segmented control does, rather than stacking a second widget below.
+## `extra.labels` overrides the chip text; otherwise it is value + suffix.
 
 const GAP: int = 10
-const STEP_SIZE: Vector2 = Vector2(52, 52)
+const STEP_SIZE: Vector2 = Vector2(40, 40)
+const VALUE_WIDTH: float = 74.0
 
 var _chips: Array[Button] = []
 var _custom_chip: Button
+var _scroll: ScrollContainer
+var _box: HBoxContainer
 var _stepper: HBoxContainer
 var _value_edit: LineEdit
 var _options: Array = []
@@ -39,10 +42,20 @@ func _build() -> void:
 		label.theme_type_variation = &"LabelFieldTitle"
 		add_child(label)
 
-	var flow: HFlowContainer = HFlowContainer.new()
-	flow.add_theme_constant_override("h_separation", GAP)
-	flow.add_theme_constant_override("v_separation", GAP)
-	add_child(flow)
+	var row: HBoxContainer = HBoxContainer.new()
+	row.add_theme_constant_override("separation", GAP)
+	add_child(row)
+	
+	_scroll = ScrollContainer.new()
+	row.add_child(_scroll)
+	_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+
+	_box = HBoxContainer.new()
+	_box.add_theme_constant_override("h_separation", GAP)
+	_box.add_theme_constant_override("v_separation", GAP)
+	_scroll.add_child(_box)
 
 	var group: ButtonGroup = ButtonGroup.new()
 	var labels: Array = extra.get("labels", [])
@@ -51,14 +64,14 @@ func _build() -> void:
 		var text: String = str(labels[i]) if i < labels.size() else str(_options[i]) + suffix
 		var chip: Button = _make_chip(text, group)
 		chip.pressed.connect(_on_option_pressed.bind(i))
-		flow.add_child(chip)
+		_box.add_child(chip)
 		_chips.append(chip)
 
-	_custom_chip = _make_chip("Custom", group)
-	_custom_chip.pressed.connect(_on_custom_pressed)
-	flow.add_child(_custom_chip)
+	_build_stepper(row)
 
-	_build_stepper()
+	_custom_chip = _make_chip("Custom", null)
+	_custom_chip.toggled.connect(_on_custom_toggled)
+	row.add_child(_custom_chip)
 
 	var initial: Variant = default_value
 	if initial == null:
@@ -71,39 +84,41 @@ func _make_chip(text: String, group: ButtonGroup) -> Button:
 	chip.text = text
 	chip.theme_type_variation = &"ButtonChip"
 	chip.toggle_mode = true
-	chip.button_group = group
+	if group:
+		chip.button_group = group
 	chip.pressed.connect(_pop.bind(chip))
 	return chip
 
 
-func _build_stepper() -> void:
+func _build_stepper(row: HBoxContainer) -> void:
 	_stepper = HBoxContainer.new()
+	_stepper.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_stepper.alignment = BoxContainer.ALIGNMENT_CENTER
-	_stepper.add_theme_constant_override("separation", GAP)
+	#_stepper.add_theme_constant_override("separation", GAP)
 	_stepper.visible = false
-	add_child(_stepper)
+	row.add_child(_stepper)
 
 	_stepper.add_child(_make_step_button("-", -1))
-
-	var field: PanelContainer = PanelContainer.new()
-	field.theme_type_variation = &"FieldPanel"
-	field.custom_minimum_size.x = 120
-	_stepper.add_child(field)
 
 	_value_edit = LineEdit.new()
 	_value_edit.theme_type_variation = &"LineEditValue"
 	_value_edit.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_value_edit.text_submitted.connect(_on_value_submitted)
 	_value_edit.focus_exited.connect(func() -> void: _on_value_submitted(_value_edit.text))
-	field.add_child(_value_edit)
+	_stepper.add_child(_value_edit)
+
+	if not suffix.strip_edges().is_empty():
+		var unit: Label = Label.new()
+		unit.text = suffix.strip_edges()
+		unit.theme_type_variation = &"LabelMeta"
+		unit.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		_stepper.add_child(unit)
 
 	_stepper.add_child(_make_step_button("+", 1))
-
 
 func _make_step_button(text: String, direction: int) -> Button:
 	var button: Button = Button.new()
 	button.text = text
-	button.theme_type_variation = &"ButtonStepper"
 	button.custom_minimum_size = STEP_SIZE
 	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	button.pressed.connect(func() -> void:
@@ -128,11 +143,15 @@ func _select_value(value: int) -> void:
 	for i in _chips.size():
 		_chips[i].set_pressed_no_signal(i == index)
 
-	# A value that is not one of the presets is shown as a custom entry.
-	var is_custom: bool = index < 0
-	_custom_chip.set_pressed_no_signal(is_custom)
-	_stepper.visible = is_custom
+	# A value that is not one of the presets shows as a custom entry.
+	_custom_chip.set_pressed_no_signal(index < 0)
+	_set_custom_mode(index < 0)
 	_value_edit.text = str(value)
+
+
+func _set_custom_mode(on: bool) -> void:
+	_scroll.visible = not on
+	_stepper.visible = on
 
 
 func _set_custom_value(value: int) -> void:
@@ -142,14 +161,22 @@ func _set_custom_value(value: int) -> void:
 
 func _on_option_pressed(index: int) -> void:
 	_value = int(_options[index])
-	_stepper.visible = false
 
 
-func _on_custom_pressed() -> void:
-	_stepper.visible = true
-	_set_custom_value(_value)
-	_value_edit.grab_focus()
-	_value_edit.select_all()
+func _on_custom_toggled(on: bool) -> void:
+	_set_custom_mode(on)
+	if on:
+		_set_custom_value(_value)
+		_value_edit.grab_focus()
+		_value_edit.select_all()
+		return
+
+	var index: int = _options.find(_value)
+	if index < 0:
+		index = 0
+	if index < _chips.size():
+		_chips[index].set_pressed_no_signal(true)
+		_value = int(_options[index])
 
 
 func _on_value_submitted(text: String) -> void:

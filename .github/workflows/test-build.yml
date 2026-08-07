@@ -6,61 +6,63 @@ on:
   pull_request:
 
 env:
-  GODOT_VERSION: 4.5.1
-  EXPORT_NAME: GestureApp
-  TAG: alpha
+  GODOT_VERSION: 4.7.1
+  EXPORT_NAME: Easel
+  TAG: beta
 
 jobs:
   export-windows:
     name: Windows Export 🪟
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container:
-      image: docker://barichello/godot-ci:4.5.1
+      image: docker://barichello/godot-ci:${GODOT_VERSION}
     steps:
-      - name: Setup WINE and rcedit 🍷
-        run: |
-          chown root:root -R ~
-          godot --headless --quit
-          echo 'export/windows/wine = "/usr/bin/wine64-stable"' >> ~/.config/godot/editor_settings-4.5.tres
-          echo 'export/windows/rcedit = "/opt/rcedit.exe"' >> ~/.config/godot/editor_settings-4.5.tres
-
-      - name: Checkout 🛎️
-        uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v7
         with:
-          submodules: true
-
-      - name: Setup 💻
+          lfs: true
+      
+      - name: Install wine
+        id: wine_install
         run: |
-          mkdir -v -p build/${EXPORT_NAME}-Windows-64bit build/${EXPORT_NAME}-Windows-arm64 ~/.local/share/godot/export_templates
+          sudo apt-get update
+          sudo apt install wine64
+          echo "WINE_PATH=$(which wine64)" >> $GITHUB_OUTPUT
+        
+      - name: Setup
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mkdir -v -p ~/.config/
+          mv /root/.config/godot ~/.config/godot
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
-      - name: Import resources once 📦
+      - name: Import resources once
         continue-on-error: true
         run: godot --headless -v --import
 
-      - name: Windows Build 🔧
+      - name: Windows Build
         run: |
           godot --headless -v --export-release "Windows Desktop 64-bit" ./build/${EXPORT_NAME}-Windows-64bit/${EXPORT_NAME}.exe
           godot --headless -v --export-release "Windows Desktop arm64" ./build/${EXPORT_NAME}-Windows-arm64/${EXPORT_NAME}.exe
 
-      - name: Copy gesture_app_data folder 📁
+      - name: Copy easel_app_data folder
         run: |
           rm ./gesture_app_data/.gdignore
-          cp -R ./gesture_app_data ./build/${EXPORT_NAME}-Windows-64bit
-          cp -R ./gesture_app_data ./build/${EXPORT_NAME}-Windows-arm64
-          cp -R ./gesture_app_data ./build
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-64bit
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-arm64
+          cp -R ./easel_app_data ./build
 
-      - name: Zip 🗜️
+      - name: Zip
         working-directory: ./build
         run: |
           zip -r ${EXPORT_NAME}-Windows-64bit.zip ${EXPORT_NAME}-Windows-64bit
           zip -r ${EXPORT_NAME}-Windows-arm64.zip ${EXPORT_NAME}-Windows-arm64
 
-      - name: Build installer 🔧
+      - name: Build installer
         run: |
           apt-get update && apt-get install -y python3 && apt-get install -y nsis
-          python3 ./installer/utils/po2nsi.py -i ./installer/gesture-app.nsi -o ./installer/gesture-app_loc.nsi -p ./installer/po -l "English" -v
-          makensis ./installer/gesture-app_loc.nsi
+          python3 ./installer/utils/po2nsi.py -i ./installer/easel-app.nsi -o ./installer/easel-app_loc.nsi -p ./installer/po -l "English" -v
+          makensis ./installer/easel-app_loc.nsi
           mkdir ./build/installer
           mv ./installer/${EXPORT_NAME}_${TAG}_setup.exe ./build
 

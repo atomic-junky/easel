@@ -21,10 +21,8 @@ func _build() -> void:
 	add_child(_switcher)
 
 func _ready() -> void:
-	# Wait for switcher to be ready
 	await _switcher.ready
 	await get_tree().process_frame
-	# Apply default if no context has been loaded yet
 	_apply_default_if_needed()
 
 func _apply_default_if_needed() -> void:

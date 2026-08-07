@@ -1,42 +1,48 @@
-[gd_scene load_steps=2 format=3 uid="uid://b0o6y7yo7x5ge"]
+[gd_scene format=3 uid="uid://b0o6y7yo7x5ge"]
 
 [ext_resource type="Script" uid="uid://castckqpj1aun" path="res://scenes/menu/image_order_container.gd" id="1_u00mr"]
 
-[node name="ImageOrderContainer" type="VBoxContainer"]
+[node name="ImageOrderContainer" type="VBoxContainer" unique_id=897360639]
 size_flags_horizontal = 4
 theme_override_constants/separation = 10
 script = ExtResource("1_u00mr")
 
-[node name="OrderContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=406376286]
+layout_mode = 2
+theme_override_constants/separation = 50
+
+[node name="ShuffleContainer" type="HBoxContainer" parent="HBoxContainer" unique_id=1024371926]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ShuffleButton" type="Button" parent="HBoxContainer/ShuffleContainer" unique_id=1770073995]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"CheckSquare"
+toggle_mode = true
+
+[node name="Label" type="Label" parent="HBoxContainer/ShuffleContainer" unique_id=1575652632]
+layout_mode = 2
+text = "Shuffle"
+
+[node name="ReverseContainer" type="HBoxContainer" parent="HBoxContainer" unique_id=1525950515]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="OrderButton" type="Button" parent="OrderContainer"]
+[node name="ReverseButton" type="Button" parent="HBoxContainer/ReverseContainer" unique_id=1514165450]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 size_flags_vertical = 4
 theme_type_variation = &"CheckSquare"
 toggle_mode = true
 
-[node name="Label" type="Label" parent="OrderContainer"]
+[node name="Label" type="Label" parent="HBoxContainer/ReverseContainer" unique_id=1396138744]
 layout_mode = 2
 text = "Reverse"
 
-[node name="ShuffleContainer" type="HBoxContainer" parent="."]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="ShuffleButton" type="Button" parent="ShuffleContainer"]
-custom_minimum_size = Vector2(24, 24)
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"CheckSquare"
-toggle_mode = true
-
-[node name="Label" type="Label" parent="ShuffleContainer"]
-layout_mode = 2
-text = "Shuffle"
-
-[connection signal="toggled" from="OrderContainer/OrderButton" to="." method="_on_order_button_toggled"]
-[connection signal="toggled" from="ShuffleContainer/ShuffleButton" to="." method="_on_shuffle_button_toggled"]
+[connection signal="toggled" from="HBoxContainer/ShuffleContainer/ShuffleButton" to="." method="_on_shuffle_button_toggled"]
+[connection signal="toggled" from="HBoxContainer/ReverseContainer/ReverseButton" to="." method="_on_order_button_toggled"]

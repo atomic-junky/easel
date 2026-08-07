@@ -4,7 +4,7 @@ class_name Modal extends Control
 
 signal closed
 
-const MAX_SIZE: Vector2 = Vector2(550, 400)
+const MAX_SIZE: Vector2 = Vector2(650, 400)
 const SCREEN_MARGIN: float = 50.0
 
 @export var title: String = "":
@@ -51,7 +51,9 @@ func _animate(from_scale: float, to_scale: float, from_alpha: float, to_alpha: f
 
 
 func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed:
+	if event is InputEventMouseButton \
+	and event.pressed \
+	and event.button_index == MOUSE_BUTTON_LEFT:
 		close()
 		accept_event()
 

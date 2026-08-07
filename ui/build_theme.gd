@@ -1,7 +1,5 @@
 class_name EaselTheme extends Theme
 
-const OUT: String = "res://ui/default_theme.tres"
-
 const ACCENT: Color = Color("49BDB8")
 const ACCENT_SOFT: Color = Color("41252a")
 const BLUE: Color = Color("4f9bf4")
@@ -62,12 +60,15 @@ func _init() -> void:
 	_build_switcher(t)
 	_build_popup(t)
 	_build_misc(t)
+	
+	self.clear()
+	self.merge_with(t)
 
-	var err: int = ResourceSaver.save(t, OUT)
+	var err: int = ResourceSaver.save(t, self.resource_path)
 	if err != OK:
 		printerr("build_theme: save failed (%d)" % err)
 	else:
-		print("build_theme: wrote ", OUT)
+		print("build_theme: wrote ", self.resource_path)
 
 
 ## Style helpers
@@ -139,7 +140,6 @@ func _build_button(t: Theme) -> void:
 	_button_font(t, "ButtonAccent", ON_ACCENT, 16)
 	t.set_constant("icon_max_width", "ButtonAccent", 22)
 
-	# Square icon buttons: text padding would push a 22px icon past its box.
 	t.set_type_variation("ButtonIcon", "Button")
 	_button_styles(t, "ButtonIcon", ACCENT, R_PILL, PAD_ICON.x, PAD_ICON.y)
 	_button_font(t, "ButtonIcon", ON_ACCENT)
@@ -150,7 +150,6 @@ func _build_button(t: Theme) -> void:
 	_button_font(t, "ButtonSoft", TEXT)
 	t.set_constant("icon_max_width", "ButtonSoft", 22)
 
-	# Option chips. Unselected reads as a soft outline so the selected one pops.
 	t.set_type_variation("ButtonChip", "Button")
 	t.set_stylebox("normal", "ButtonChip",
 		_flat(SURFACE, R_PILL, PAD_CHIP.x, PAD_CHIP.y, 2, NEUTRAL_DARK))
@@ -169,11 +168,6 @@ func _build_button(t: Theme) -> void:
 	t.set_color("font_pressed_color", "ButtonChip", ON_ACCENT)
 	t.set_color("font_hover_pressed_color", "ButtonChip", ON_ACCENT)
 	t.set_color("font_focus_color", "ButtonChip", TEXT)
-
-	# Round +/- of the custom value stepper.
-	t.set_type_variation("ButtonStepper", "Button")
-	_button_styles(t, "ButtonStepper", ACCENT_SOFT, R_PILL, 0, 0)
-	_button_font(t, "ButtonStepper", ACCENT, 22)
 
 	t.set_type_variation("CheckSquare", "Button")
 	t.set_stylebox("normal", "CheckSquare", _flat(SURFACE, R_SM, 0, 0, 2, NEUTRAL_DARK))
@@ -231,10 +225,10 @@ func _build_inputs(t: Theme) -> void:
 
 	# Centred, borderless field used inside the stepper.
 	t.set_type_variation("LineEditValue", "LineEdit")
-	t.set_stylebox("normal", "LineEditValue", _empty(6, 6))
-	t.set_stylebox("focus", "LineEditValue", _empty(6, 6))
+	t.set_stylebox("normal", "LineEditValue", _empty(6, 0))
+	t.set_stylebox("focus", "LineEditValue", _empty(6, 0))
 	t.set_font("font", "LineEditValue", _bold)
-	t.set_font_size("font_size", "LineEditValue", 24)
+	t.set_font_size("font_size", "LineEditValue", 16)
 
 	t.set_font("font", "CheckBox", _semi)
 	t.set_font_size("font_size", "CheckBox", 15)

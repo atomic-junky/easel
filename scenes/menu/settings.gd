@@ -4,8 +4,7 @@ extends VBoxContainer
 @onready var session_types_containers: Array[SessionType] = [
 	%Standard,
 	%Relaxed,
-	#%Class,
-	#%Custom
+	%Class,
 ]
 
 var _current_session_container: SessionType

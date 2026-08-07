@@ -33,7 +33,7 @@ mouse_filter = 2
 
 [node name="ModalPanel" type="PanelContainer" parent="Center" unique_id=991174779]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(550, 400)
+custom_minimum_size = Vector2(650, 400)
 layout_mode = 2
 theme_type_variation = &"ModalPanel"
 
