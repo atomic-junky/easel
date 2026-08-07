@@ -13,8 +13,8 @@ env:
   TAG: beta
 
 jobs:
-  export-windows:
-    name: Windows Export
+  windows:
+    name: windows
     runs-on: ubuntu-24.04
     container:
       image: docker://barichello/godot-ci:4.7.1
@@ -41,6 +41,14 @@ jobs:
           mkdir -v -p build/${EXPORT_NAME}-windows-arm64
           godot --headless -v --export-release "Windows Desktop 64bit" ./build/${EXPORT_NAME}-windows-x86_64/${EXPORT_NAME}.exe
           godot --headless -v --export-release "Windows Desktop arm64" ./build/${EXPORT_NAME}-windows-arm64/${EXPORT_NAME}.exe
+      
+      - name: Organize release files
+        run: |
+          mv ./build/${EXPORT_NAME}-windows-x86_64/${EXPORT_NAME}.exe ./build/${EXPORT_NAME}-windows-x86_64.exe
+          mv ./build/${EXPORT_NAME}-windows-arm64/${EXPORT_NAME}.exe ./build/${EXPORT_NAME}-windows-arm64.exe
+          
+          rm -rf ./build/${EXPORT_NAME}-windows-x86_64
+          rm -rf ./build/${EXPORT_NAME}-windows-arm64
 
       - name: Copy easel_app_data folder
         run: |
@@ -59,7 +67,7 @@ jobs:
           python3 ./utils/po2nsi.py -i ./easel-app.nsi -o ./easel-app_loc.nsi -p ./po -l "English" -v
           makensis -DBINNAME=${EXPORT_NAME} easel-app_loc.nsi
           
-          mv *-setup.exe ../build/          
+          mv *-setup.exe ../build/
           rm -rf ../build/easel_app_data
 
       - name: Upload Artifact

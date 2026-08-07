@@ -14,9 +14,10 @@ env:
   GODOT_VERSION: 4.7.1
   EXPORT_NAME: Easel
 
+
 jobs:
-  export-windows:
-    name: Windows Export
+  windows:
+    name: windows
     runs-on: ubuntu-24.04
     container:
       image: docker://barichello/godot-ci:4.7.1
@@ -60,8 +61,17 @@ jobs:
           pip3 install --break-system-packages polib
           python3 ./utils/po2nsi.py -i ./easel-app.nsi -o ./easel-app_loc.nsi -p ./po -l "English" -v
           makensis -DBINNAME=${EXPORT_NAME} easel-app_loc.nsi
-          mv *_setup.exe ../build/
+          
+          mv *-setup.exe ../build/
           rm -rf ../build/easel_app_data
+      
+      - name: Organize release files
+        run: |
+          mv ./build/${EXPORT_NAME}-windows-x86_64/${EXPORT_NAME}.exe ./build/${EXPORT_NAME}-windows-x86_64.exe
+          mv ./build/${EXPORT_NAME}-windows-arm64/${EXPORT_NAME}.exe ./build/${EXPORT_NAME}-windows-arm64.exe
+          
+          rm -rf ./build/${EXPORT_NAME}-windows-x86_64
+          rm -rf ./build/${EXPORT_NAME}-windows-arm64
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
@@ -250,8 +260,8 @@ jobs:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
           ITCHIO_TARGET: ${{ vars.ITCHIO_TARGET }}
         run: |
-          test -n "$ITCHIO_TARGET"
-          for ARCH in x86_64 arm64; do
+          test -n "$ITCHIO_TARGET"         
+          for ARCH in setup x86_64 arm64; do
             ./butler push "dist/${EXPORT_NAME}-windows-${ARCH}" "${ITCHIO_TARGET}:windows-${ARCH}" --userversion "${{ github.ref_name }}"
           done
 
