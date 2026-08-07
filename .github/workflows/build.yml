@@ -39,16 +39,16 @@ jobs:
 
       - name: Export
         run: |
-          mkdir -v -p build/${EXPORT_NAME}-Windows-64bit
-          mkdir -v -p build/${EXPORT_NAME}-Windows-arm64
-          godot --headless -v --export-release "Windows Desktop 64bit" ./build/${EXPORT_NAME}-Windows-64bit/${EXPORT_NAME}.exe
-          godot --headless -v --export-release "Windows Desktop arm64" ./build/${EXPORT_NAME}-Windows-arm64/${EXPORT_NAME}.exe
+          mkdir -v -p build/${EXPORT_NAME}-windows-x86_64
+          mkdir -v -p build/${EXPORT_NAME}-windows-arm64
+          godot --headless -v --export-release "Windows Desktop 64bit" ./build/${EXPORT_NAME}-windows-x86_64/${EXPORT_NAME}.exe
+          godot --headless -v --export-release "Windows Desktop arm64" ./build/${EXPORT_NAME}-windows-arm64/${EXPORT_NAME}.exe
 
       - name: Copy easel_app_data folder
         run: |
           rm -f ./easel_app_data/.gdignore
-          cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-64bit
-          cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-arm64
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-windows-x86_64
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-windows-arm64
           cp -R ./easel_app_data ./build/easel_app_data
 
       - name: Build installer
@@ -57,7 +57,7 @@ jobs:
           apt-get install -y python3 python3-pip nsis
           pip3 install --break-system-packages polib
           python3 ./installer/utils/po2nsi.py -i ./installer/easel-app.nsi -o ./installer/easel-app_loc.nsi -p ./installer/po -l "English" -v
-          makensis ./installer/easel-app_loc.nsi
+          makensis -DBINNAME=${EXPORT_NAME} ./installer/easel-app_loc.nsi
           mkdir -v -p artifacts
           mv ./installer/*_setup.exe ./artifacts/
 
@@ -66,7 +66,8 @@ jobs:
         with:
           name: windows
           path: |
-            ./build/${{ env.EXPORT_NAME }}-Windows-64bit
+            ./build/${{ env.EXPORT_NAME }}-windows-x86_64
+            ./build/${{ env.EXPORT_NAME }}-windows-arm64
             ./artifacts
 
   linux:
@@ -93,24 +94,24 @@ jobs:
 
       - name: Export
         run: |
-          mkdir -v -p build/${EXPORT_NAME}-Linux-64bit
-          mkdir -v -p build/${EXPORT_NAME}-Linux-arm64
-          godot --headless -v --export-release "Linux 64bit" ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
-          godot --headless -v --export-release "Linux arm64" ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
+          mkdir -v -p build/${EXPORT_NAME}-linux-x86_64
+          mkdir -v -p build/${EXPORT_NAME}-linux-arm64
+          godot --headless -v --export-release "Linux 64bit" ./build/${EXPORT_NAME}-linux-x86_64/${EXPORT_NAME}.x86_64
+          godot --headless -v --export-release "Linux arm64" ./build/${EXPORT_NAME}-linux-arm64/${EXPORT_NAME}.arm64
 
       - name: Copy easel_app_data folder
         run: |
           rm -f ./easel_app_data/.gdignore
-          cp -R ./easel_app_data ./build/${EXPORT_NAME}-Linux-64bit
-          cp -R ./easel_app_data ./build/${EXPORT_NAME}-Linux-arm64
-          chmod +x ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
-          chmod +x ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-linux-x86_64
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-linux-arm64
+          chmod +x ./build/${EXPORT_NAME}-linux-x86_64/${EXPORT_NAME}.x86_64
+          chmod +x ./build/${EXPORT_NAME}-linux-arm64/${EXPORT_NAME}.arm64
 
       - name: Create tar.gz archive
         working-directory: ./build
         run: |
-          tar zcf ${EXPORT_NAME}-Linux-64bit.tar.gz ${EXPORT_NAME}-Linux-64bit
-          tar zcf ${EXPORT_NAME}-Linux-arm64.tar.gz ${EXPORT_NAME}-Linux-arm64
+          tar zcf ${EXPORT_NAME}-linux-x86_64.tar.gz ${EXPORT_NAME}-linux-x86_64
+          tar zcf ${EXPORT_NAME}-linux-arm64.tar.gz ${EXPORT_NAME}-linux-arm64
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
@@ -143,7 +144,7 @@ jobs:
       - name: Export
         run: |
           mkdir -v -p build
-          godot --headless -v --export-release "macOS" ./build/${EXPORT_NAME}-Mac.zip
+          godot --headless -v --export-release "macOS" ./build/${EXPORT_NAME}-macos-universal.zip
 
       - name: Bundle easel_app_data
         run: |
@@ -151,11 +152,13 @@ jobs:
           apt-get install -y zip unzip
           rm -f ./easel_app_data/.gdignore
           mkdir -v -p staging
-          unzip -q ./build/${EXPORT_NAME}-Mac.zip -d staging
-          cp -R ./easel_app_data staging/${EXPORT_NAME}.app/Contents/Resources
-          chmod +x staging/${EXPORT_NAME}.app/Contents/MacOS/${EXPORT_NAME}
-          rm ./build/${EXPORT_NAME}-Mac.zip
-          tar -C staging -zcf ./build/${EXPORT_NAME}-Mac.tar.gz .
+          unzip -q ./build/${EXPORT_NAME}-macos-universal.zip -d staging
+          APP=$(find staging -maxdepth 1 -name '*.app' | head -n 1)
+          test -n "$APP"
+          cp -R ./easel_app_data "$APP/Contents/Resources"
+          chmod +x "$APP/Contents/MacOS/"*
+          rm ./build/${EXPORT_NAME}-macos-universal.zip
+          tar -C staging -zcf ./build/${EXPORT_NAME}-macos-universal.tar.gz .
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
@@ -217,7 +220,7 @@ jobs:
       - name: Export
         run: |
           mkdir -v -p build
-          godot --headless -v --install-android-build-template --export-debug "Android" ./build/${EXPORT_NAME}.apk
+          godot --headless -v --install-android-build-template --export-debug "Android" ./build/${EXPORT_NAME}-android.apk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
@@ -249,7 +252,9 @@ jobs:
           ITCHIO_TARGET: ${{ vars.ITCHIO_TARGET }}
         run: |
           test -n "$ITCHIO_TARGET"
-          ./butler push "dist/${EXPORT_NAME}-Windows-64bit" "$ITCHIO_TARGET:windows" --userversion "${{ github.ref_name }}"
+          for ARCH in x86_64 arm64; do
+            ./butler push "dist/${EXPORT_NAME}-windows-${ARCH}"               "${ITCHIO_TARGET}:windows-${ARCH}" --userversion "${{ github.ref_name }}"
+          done
 
   itchio-linux:
     name: 'itchio:linux'
@@ -265,7 +270,9 @@ jobs:
       - name: Unpack
         run: |
           mkdir -v -p payload
-          tar -C payload -zxf "dist/${EXPORT_NAME}-Linux-64bit.tar.gz"
+          for ARCH in x86_64 arm64; do
+            tar -C payload -zxf "dist/${EXPORT_NAME}-linux-${ARCH}.tar.gz"
+          done
 
       - name: Install butler
         run: |
@@ -280,10 +287,12 @@ jobs:
           ITCHIO_TARGET: ${{ vars.ITCHIO_TARGET }}
         run: |
           test -n "$ITCHIO_TARGET"
-          ./butler push "payload/${EXPORT_NAME}-Linux-64bit" "$ITCHIO_TARGET:linux" --userversion "${{ github.ref_name }}"
+          for ARCH in x86_64 arm64; do
+            ./butler push "payload/${EXPORT_NAME}-linux-${ARCH}"               "${ITCHIO_TARGET}:linux-${ARCH}" --userversion "${{ github.ref_name }}"
+          done
 
-  itchio-macosx:
-    name: 'itchio:macosx'
+  itchio-macos:
+    name: 'itchio:macos'
     needs: mac
     runs-on: ubuntu-24.04
     steps:
@@ -296,7 +305,7 @@ jobs:
       - name: Unpack
         run: |
           mkdir -v -p payload
-          tar -C payload -zxf "dist/${EXPORT_NAME}-Mac.tar.gz"
+          tar -C payload -zxf "dist/${EXPORT_NAME}-macos-universal.tar.gz"
 
       - name: Install butler
         run: |
@@ -311,7 +320,7 @@ jobs:
           ITCHIO_TARGET: ${{ vars.ITCHIO_TARGET }}
         run: |
           test -n "$ITCHIO_TARGET"
-          ./butler push payload "$ITCHIO_TARGET:osx" --userversion "${{ github.ref_name }}"
+          ./butler push payload "${ITCHIO_TARGET}:macos-universal" --userversion "${{ github.ref_name }}"
 
   itchio-android:
     name: 'itchio:android'
@@ -337,4 +346,4 @@ jobs:
           ITCHIO_TARGET: ${{ vars.ITCHIO_TARGET }}
         run: |
           test -n "$ITCHIO_TARGET"
-          ./butler push "dist/${EXPORT_NAME}.apk" "$ITCHIO_TARGET:android" --userversion "${{ github.ref_name }}"
+          ./butler push "dist/${EXPORT_NAME}-android.apk" "$ITCHIO_TARGET:android" --userversion "${{ github.ref_name }}"

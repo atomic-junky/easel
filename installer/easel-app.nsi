@@ -9,6 +9,13 @@
   !define APPVERSION "0.1.0-beta"
   !define COMPANYNAME "OneShrimpADay"
 
+; Name of the exported binary and its build folder. Overridable with
+; makensis -DBINNAME=... so CI stays the single source of truth.
+
+  !ifndef BINNAME
+    !define BINNAME "${APPNAME}"
+  !endif
+
 
 ; Include the Modern UI library
 
@@ -107,9 +114,9 @@
 
     ; Copy all files to install directory
       ${If} ${RunningX64}
-        File "..\build\${APPNAME}-Windows-64bit\${APPNAME}.exe"
+        File "..\build\${BINNAME}-windows-x86_64\${BINNAME}.exe"
       ${Else}
-        File "..\build\${APPNAME}-Windows-arm64\${APPNAME}.exe"
+        File "..\build\${BINNAME}-windows-arm64\${BINNAME}.exe"
       ${EndIf}
       File "..\assets\graphics\icons\gc.ico"
 
