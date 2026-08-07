@@ -121,7 +121,7 @@
       File "..\assets\graphics\icons\gc.ico"
 
       SetOutPath "$INSTDIR\easel_app_data"
-      File /nonfatal /r "..\build\easel_app_data\*"
+      File /nonfatal /r "../build/easel_app_data/"
 
     ; Store installation folder in the registry
       WriteRegStr HKCU "Software\${COMPANYNAME}\${APPNAME}" "InstallDir" $INSTDIR
