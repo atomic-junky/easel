@@ -58,7 +58,8 @@ jobs:
           pip3 install --break-system-packages polib
           python3 ./utils/po2nsi.py -i ./easel-app.nsi -o ./easel-app_loc.nsi -p ./po -l "English" -v
           makensis -DBINNAME=${EXPORT_NAME} easel-app_loc.nsi
-          mv *_setup.exe ../build/
+          
+          mv *-setup.exe ../build/          
           rm -rf ../build/easel_app_data
 
       - name: Upload Artifact
