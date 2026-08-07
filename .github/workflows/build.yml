@@ -14,10 +14,9 @@ env:
   GODOT_VERSION: 4.7.1
   EXPORT_NAME: Easel
 
-
 jobs:
   windows:
-    name: windows
+    name: Windows Export
     runs-on: ubuntu-24.04
     container:
       image: docker://barichello/godot-ci:4.7.1
