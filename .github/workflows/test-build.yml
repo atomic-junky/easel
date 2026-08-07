@@ -15,7 +15,7 @@ jobs:
     name: Windows Export
     runs-on: ubuntu-24.04
     container:
-      image: docker://barichello/godot-ci:${GODOT_VERSION}
+      image: docker://barichello/godot-ci:$GODOT_VERSION
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -71,7 +71,7 @@ jobs:
     name: Linux Export
     runs-on: ubuntu-24.04
     container:
-      image: docker://barichello/godot-ci:${GODOT_VERSION}
+      image: docker://barichello/godot-ci:$GODOT_VERSION
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -118,7 +118,9 @@ jobs:
 
   export-mac:
     name: Mac Export
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04
+    container:
+      image: docker://barichello/godot-ci:$GODOT_VERSION
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -164,7 +166,7 @@ jobs:
           rm ./build/${EXPORT_NAME}.zip
 
       - name: Fix application icon 🖼
-        run: sips -s format icns ./build/mac/${EXPORT_NAME}.app/Contents/Resources/icon.icns --out ./build/mac/${EXPORT_NAME}.app/Contents/Resources/icon.icns
+        run: sips -s format icns ./build/${EXPORT_NAME}.app/Contents/Resources/icon.icns --out ./build/${EXPORT_NAME}.app/Contents/Resources/icon.icns
 
       - name: Copy easel_app_data folder
         run: |
@@ -175,7 +177,7 @@ jobs:
         run: codesign -s - --force --deep ./build/${EXPORT_NAME}.app
 
       - name: Create DMG archive 🔧
-        run: hdiutil create -srcfolder ./build/mac -fs HFS+ -volname ${EXPORT_NAME} ./build/mac/${EXPORT_NAME}-Mac.dmg
+        run: hdiutil create -srcfolder ./build -fs HFS+ -volname ${EXPORT_NAME} ./build/${EXPORT_NAME}-Mac.dmg
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -188,7 +190,7 @@ jobs:
     name: Android Export
     runs-on: ubuntu-24.04
     container:
-      image: docker://barichello/godot-ci:${GODOT_VERSION}
+      image: docker://barichello/godot-ci:$GODOT_VERSION
     steps:
       - name: Checkout
         uses: actions/checkout@v7
