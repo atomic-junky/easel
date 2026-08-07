@@ -113,7 +113,7 @@
         File "..\build\${APPNAME}-Windows-arm64\${APPNAME}.exe"
         File "..\build\${APPNAME}-Windows-arm64\${APPNAME}.pck"
       ${EndIf}
-      File "..\assets\graphics\icons\easel.ico"
+      File "..\assets\graphics\icons\gc.ico"
 
       SetOutPath "$INSTDIR\easel_app_data"
       File /nonfatal /r "..\build\easel_app_data\*"
@@ -209,7 +209,7 @@
     Delete "$INSTDIR\uninstall.exe"
     Delete "$INSTDIR\${APPNAME}.exe"
     Delete "$INSTDIR\${APPNAME}.pck"
-    Delete "$INSTDIR\easel.ico"
+    Delete "$INSTDIR\gc.ico"
     RMDir /r "$INSTDIR\easel_app_data"
     RMDir "$INSTDIR"
 
