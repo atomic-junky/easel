@@ -24,6 +24,7 @@ jobs:
         
       - name: Setup
         run: |
+          mkdir ./build/
           mkdir -v -p ~/.local/share/godot/export_templates/
           mkdir -v -p ~/.config/
           mv /root/.config/godot ~/.config/godot
@@ -35,7 +36,7 @@ jobs:
 
       - name: Windows Build
         run: |
-          godot --headless -v --export-release "Windows Desktop 64-bit" ./build/${EXPORT_NAME}-Windows-64bit/${EXPORT_NAME}.exe
+          godot --headless -v --export-release "Windows Desktop 64bit" ./build/${EXPORT_NAME}-Windows-64bit/${EXPORT_NAME}.exe
           godot --headless -v --export-release "Windows Desktop arm64" ./build/${EXPORT_NAME}-Windows-arm64/${EXPORT_NAME}.exe
 
       - name: Copy easel_app_data folder
@@ -80,6 +81,7 @@ jobs:
 
       - name: Setup
         run: |
+          mkdir ./build/
           mkdir -v -p ~/.local/share/godot/export_templates/
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
@@ -89,7 +91,7 @@ jobs:
 
       - name: Linux Build
         run: |
-          godot --headless -v --export-release "Linux 64-bit" ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
+          godot --headless -v --export-release "Linux 64x²bit" ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
           godot --headless -v --export-release "Linux arm64" ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
 
       - name: Give execute permission
@@ -146,6 +148,7 @@ jobs:
 
       - name: Setup
         run: |
+          mkdir ./build/
           mkdir -v -p ~/.local/share/godot/export_templates/
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
 
@@ -194,11 +197,41 @@ jobs:
         uses: actions/checkout@v7
         with:
           lfs: true
+          
+      - name: Set up Java & Android SDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
 
       - name: Setup
         run: |
+          mkdir ./build/
           mkdir -v -p ~/.local/share/godot/export_templates/
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+
+      - name: Compile Godot Android Template (ARM64)
+        run: |
+          scons platform=android target=template_release arch=arm64 \
+          disable_3d=yes module_lightmapper_rd_enabled=no module_raycast_enabled=no \
+          module_mobile_vr_enabled=no module_openxr_enabled=no module_webxr_enabled=no \
+          module_multiplayer_enabled=no module_enet_enabled=no module_webrtc_enabled=no \
+          module_upnp_enabled=no module_camera_enabled=no \
+          module_navigation_enabled=no module_meshoptimizer_enabled=no
+        
+      - name: Free Disk Space (Intermediate Cleanup)
+        run: |
+          rm -rf bin/obj
+          df -h
+      
+      - name: Compile Godot Android Template (ARM32 - v7)
+        run: |
+          scons platform=android target=template_release arch=arm32 \
+          disable_3d=yes module_lightmapper_rd_enabled=no module_raycast_enabled=no \
+          module_mobile_vr_enabled=no module_openxr_enabled=no module_webxr_enabled=no \
+          module_multiplayer_enabled=no module_enet_enabled=no module_webrtc_enabled=no \
+          module_upnp_enabled=no module_camera_enabled=no \
+          module_navigation_enabled=no module_meshoptimizer_enabled=no
 
       - name: Import resources once
         continue-on-error: true
