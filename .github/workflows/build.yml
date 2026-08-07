@@ -49,6 +49,7 @@ jobs:
           rm -f ./easel_app_data/.gdignore
           cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-64bit
           cp -R ./easel_app_data ./build/${EXPORT_NAME}-Windows-arm64
+          cp -R ./easel_app_data ./build/easel_app_data
 
       - name: Build installer
         run: |

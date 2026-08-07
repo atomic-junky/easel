@@ -6,7 +6,7 @@
 ; Helper variables so that we don't change 20 instances of the version for every update
 
   !define APPNAME "Easel"
-  !define APPVERSION "beta"
+  !define APPVERSION "0.1.0-beta"
   !define COMPANYNAME "OneShrimpADay"
 
 
@@ -108,10 +108,8 @@
     ; Copy all files to install directory
       ${If} ${RunningX64}
         File "..\build\${APPNAME}-Windows-64bit\${APPNAME}.exe"
-        File "..\build\${APPNAME}-Windows-64bit\${APPNAME}.pck"
       ${Else}
         File "..\build\${APPNAME}-Windows-arm64\${APPNAME}.exe"
-        File "..\build\${APPNAME}-Windows-arm64\${APPNAME}.pck"
       ${EndIf}
       File "..\assets\graphics\icons\gc.ico"
 
@@ -130,7 +128,7 @@
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
       "UninstallString" "$INSTDIR\uninstall.exe"
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
-      "DisplayIcon" "$INSTDIR\easel_app.exe,0"
+      "DisplayIcon" "$INSTDIR\${APPNAME}.exe,0"
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
       "InstallLocation" "$INSTDIR"
       WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" \
@@ -208,7 +206,6 @@
     ; Delete all files and folders created by the installer
     Delete "$INSTDIR\uninstall.exe"
     Delete "$INSTDIR\${APPNAME}.exe"
-    Delete "$INSTDIR\${APPNAME}.pck"
     Delete "$INSTDIR\gc.ico"
     RMDir /r "$INSTDIR\easel_app_data"
     RMDir "$INSTDIR"
