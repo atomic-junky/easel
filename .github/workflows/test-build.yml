@@ -91,7 +91,7 @@ jobs:
 
       - name: Linux Build
         run: |
-          godot --headless -v --export-release "Linux 64x²bit" ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
+          godot --headless -v --export-release "Linux 64bit" ./build/${EXPORT_NAME}-Linux-64bit/${EXPORT_NAME}.x86_64
           godot --headless -v --export-release "Linux arm64" ./build/${EXPORT_NAME}-Linux-arm64/${EXPORT_NAME}.arm64
 
       - name: Give execute permission
@@ -120,7 +120,7 @@ jobs:
 
   export-mac:
     name: Mac Export
-    runs-on: ubuntu-24.04
+    runs-on: macos-26
     container:
       image: docker://barichello/godot-ci:4.7.1
     steps:
@@ -209,6 +209,14 @@ jobs:
           mkdir ./build/
           mkdir -v -p ~/.local/share/godot/export_templates/
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/${GODOT_VERSION}.stable
+          
+      - name: Set up Python & SCons
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install SCons
+        run: python -m pip install scons
 
       - name: Compile Godot Android Template (ARM64)
         run: |
