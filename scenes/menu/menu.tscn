@@ -259,7 +259,6 @@ script = ExtResource("12_packs")
 
 [node name="SourceSwitcher" parent="AddPackModal/Packs" unique_id=1035041947 instance=ExtResource("6_switcher")]
 layout_mode = 2
-size_flags_horizontal = 1
 first_label = "Local"
 second_label = "Pinterest"
 
