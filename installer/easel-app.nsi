@@ -118,7 +118,7 @@
       ${Else}
         File "..\build\${BINNAME}-windows-arm64\${BINNAME}.exe"
       ${EndIf}
-      File "..\assets\graphics\icons\gc.ico"
+      File "../assets/graphics/icons/easel.ico"
 
       SetOutPath "$INSTDIR\easel_app_data"
       File /nonfatal /r "../build/easel_app_data/"

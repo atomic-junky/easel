@@ -44,21 +44,22 @@ jobs:
 
       - name: Copy easel_app_data folder
         run: |
+          mkdir -p ./easel_app_data
           rm -f ./easel_app_data/.gdignore
-          cp -R ./easel_app_data ./build/${EXPORT_NAME}-windows-x86_64
-          cp -R ./easel_app_data ./build/${EXPORT_NAME}-windows-arm64
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-windows-x86_64/
+          cp -R ./easel_app_data ./build/${EXPORT_NAME}-windows-arm64/
           cp -R ./easel_app_data ./build/easel_app_data
 
       - name: Build installer
+        working-directory: ./installer
         run: |
           apt-get update
           apt-get install -y python3 python3-pip nsis
           pip3 install --break-system-packages polib
-          python3 ./installer/utils/po2nsi.py -i ./installer/easel-app.nsi -o ./installer/easel-app_loc.nsi -p ./installer/po -l "English" -v
-          mkdir -p ./build/easel_app_data
-          makensis -DBINNAME=${EXPORT_NAME} ./installer/easel-app_loc.nsi
-          mv ./installer/*_setup.exe ./build/
-          rm -rf ./build/easel_app_data
+          python3 ./utils/po2nsi.py -i ./easel-app.nsi -o ./easel-app_loc.nsi -p ./po -l "English" -v
+          makensis -DBINNAME=${EXPORT_NAME} easel-app_loc.nsi
+          mv *_setup.exe ../build/
+          rm -rf ../build/easel_app_data
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
