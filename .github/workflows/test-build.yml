@@ -57,11 +57,12 @@ jobs:
           python3 ./installer/utils/po2nsi.py -i ./installer/easel-app.nsi -o ./installer/easel-app_loc.nsi -p ./installer/po -l "English" -v
           makensis -DBINNAME=${EXPORT_NAME} ./installer/easel-app_loc.nsi
           mv ./installer/*_setup.exe ./build/
+          rm -rf ./build/easel_app_data
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
-          name: windows_build
+          name: windows
           path: ./build/
 
   export-linux:

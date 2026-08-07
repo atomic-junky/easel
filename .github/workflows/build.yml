@@ -58,17 +58,14 @@ jobs:
           pip3 install --break-system-packages polib
           python3 ./installer/utils/po2nsi.py -i ./installer/easel-app.nsi -o ./installer/easel-app_loc.nsi -p ./installer/po -l "English" -v
           makensis -DBINNAME=${EXPORT_NAME} ./installer/easel-app_loc.nsi
-          mkdir -v -p artifacts
-          mv ./installer/*_setup.exe ./artifacts/
+          mv ./installer/*_setup.exe ./build/
+          rm -rf ./build/easel_app_data
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
           name: windows
-          path: |
-            ./build/${{ env.EXPORT_NAME }}-windows-x86_64
-            ./build/${{ env.EXPORT_NAME }}-windows-arm64
-            ./artifacts
+          path: ./build/
 
   linux:
     name: linux
@@ -230,7 +227,7 @@ jobs:
 
   itchio-windows:
     name: 'itchio:windows'
-    needs: windows
+    needs: [windows, linux, mac, android]
     runs-on: ubuntu-24.04
     steps:
       - name: Download Artifact
@@ -253,12 +250,12 @@ jobs:
         run: |
           test -n "$ITCHIO_TARGET"
           for ARCH in x86_64 arm64; do
-            ./butler push "dist/${EXPORT_NAME}-windows-${ARCH}"               "${ITCHIO_TARGET}:windows-${ARCH}" --userversion "${{ github.ref_name }}"
+            ./butler push "dist/${EXPORT_NAME}-windows-${ARCH}" "${ITCHIO_TARGET}:windows-${ARCH}" --userversion "${{ github.ref_name }}"
           done
 
   itchio-linux:
     name: 'itchio:linux'
-    needs: linux
+    needs: [windows, linux, mac, android]
     runs-on: ubuntu-24.04
     steps:
       - name: Download Artifact
@@ -288,12 +285,12 @@ jobs:
         run: |
           test -n "$ITCHIO_TARGET"
           for ARCH in x86_64 arm64; do
-            ./butler push "payload/${EXPORT_NAME}-linux-${ARCH}"               "${ITCHIO_TARGET}:linux-${ARCH}" --userversion "${{ github.ref_name }}"
+            ./butler push "payload/${EXPORT_NAME}-linux-${ARCH}" "${ITCHIO_TARGET}:linux-${ARCH}" --userversion "${{ github.ref_name }}"
           done
 
   itchio-macos:
     name: 'itchio:macos'
-    needs: mac
+    needs: [windows, linux, mac, android]
     runs-on: ubuntu-24.04
     steps:
       - name: Download Artifact
@@ -324,7 +321,7 @@ jobs:
 
   itchio-android:
     name: 'itchio:android'
-    needs: android
+    needs: [windows, linux, mac, android]
     runs-on: ubuntu-24.04
     steps:
       - name: Download Artifact

@@ -26,7 +26,7 @@
 ; Basic Installer Info
 
   Name "${APPNAME} ${APPVERSION}"
-  OutFile "${APPNAME}_${APPVERSION}_setup.exe"
+  OutFile "${APPNAME}-${APPVERSION}-setup.exe"
   Unicode True
 
 
