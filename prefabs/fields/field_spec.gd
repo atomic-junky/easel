@@ -51,8 +51,7 @@ func with_default(value: Variant) -> FieldSpec:
 	return self
 
 
-## Adds an "All" chip. SessionResource already reads a negative count as "every
-## image" (standard.gd), so that is the value it carries.
+## Adds an "All" chip. SessionResource reads a negative count as "every image".
 func with_all(value: int = -1) -> FieldSpec:
 	has_all = true
 	all_value = value

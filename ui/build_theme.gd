@@ -1,3 +1,4 @@
+@tool
 class_name EaselTheme extends Theme
 
 const ACCENT: Color = Color("49BDB8")
@@ -17,7 +18,6 @@ const DISABLED: Color = Color(0.949, 0.937, 0.918, 0.14)
 const ON_ACCENT: Color = Color(1, 1, 1)
 const OVERLAY: Color = Color(0.043, 0.043, 0.05, 0.62)
 
-## Muted hues used to tint pack cards so a grid never reads as one flat block.
 const CARD_TINTS: Array[Color] = [
 	Color("3a2529"), Color("1f2c3d"), Color("1e332b"), Color("3a3122"), Color("2c2440")
 ]
@@ -28,8 +28,6 @@ const R_PILL: int = 100
 const R_MODAL: int = 28
 const BORDER: int = 3
 
-# Button padding, by role. Sized so every control clears a ~44px touch target
-# once the DPI scale factor is applied.
 const PAD_TEXT: Vector2 = Vector2(26, 14)
 const PAD_ICON: Vector2 = Vector2(13, 13)
 const PAD_CHIP: Vector2 = Vector2(22, 13)
@@ -38,38 +36,24 @@ const FONT_BOLD: String = "res://assets/fonts/InterDisplay/InterDisplay-Bold.ttf
 const FONT_SEMI: String = "res://assets/fonts/InterDisplay/InterDisplay-SemiBold.ttf"
 const FONT_MED: String = "res://assets/fonts/InterDisplay/InterDisplay-Medium.ttf"
 
-var _bold: Font
-var _semi: Font
-var _med: Font
+var _bold := preload(FONT_BOLD)
+var _semi := preload(FONT_SEMI)
+var _med := preload(FONT_MED)
 
 
 func _init() -> void:
-	_bold = load(FONT_BOLD)
-	_semi = load(FONT_SEMI)
-	_med = load(FONT_MED)
+	clear()
+	default_font = _semi
+	default_font_size = 15
 
-	var t := Theme.new()
-	t.default_font = _semi
-	t.default_font_size = 15
-
-	_build_button(t)
-	_build_labels(t)
-	_build_inputs(t)
-	_build_panels(t)
-	_build_pack(t)
-	_build_switcher(t)
-	_build_popup(t)
-	_build_misc(t)
-	
-	self.clear()
-	self.merge_with(t)
-
-	var err: int = ResourceSaver.save(t, self.resource_path)
-	if err != OK:
-		printerr("build_theme: save failed (%d)" % err)
-	else:
-		print("build_theme: wrote ", self.resource_path)
-
+	_build_button(self)
+	_build_labels(self)
+	_build_inputs(self)
+	_build_panels(self)
+	_build_pack(self)
+	_build_switcher(self)
+	_build_popup(self)
+	_build_misc(self)
 
 ## Style helpers
 
@@ -256,16 +240,13 @@ func _build_panels(t: Theme) -> void:
 
 
 func _build_pack(t: Theme) -> void:
-	# The card is a toggle Button: "pressed" is the selected state, so the accent
-	# border comes for free. Only the border is drawn here — the Mosaic child,
-	# inset by BORDER, paints the background and clips the previews.
-	var clear: Color = Color(0, 0, 0, 0)
+	var transparent: Color = Color.TRANSPARENT
 	t.set_type_variation("PackCard", "Button")
-	t.set_stylebox("normal", "PackCard", _flat(clear, R, 0, 0, BORDER, NEUTRAL_DARK))
-	t.set_stylebox("hover", "PackCard", _flat(clear, R, 0, 0, BORDER, ACCENT.lightened(0.5)))
-	t.set_stylebox("pressed", "PackCard", _flat(clear, R, 0, 0, BORDER, ACCENT))
-	t.set_stylebox("hover_pressed", "PackCard", _flat(clear, R, 0, 0, BORDER, ACCENT))
-	t.set_stylebox("disabled", "PackCard", _flat(clear, R, 0, 0, BORDER, NEUTRAL_DARK))
+	t.set_stylebox("normal", "PackCard", _flat(transparent, R, 0, 0, BORDER, NEUTRAL_DARK))
+	t.set_stylebox("hover", "PackCard", _flat(transparent, R, 0, 0, BORDER, ACCENT.lightened(0.5)))
+	t.set_stylebox("pressed", "PackCard", _flat(transparent, R, 0, 0, BORDER, ACCENT))
+	t.set_stylebox("hover_pressed", "PackCard", _flat(transparent, R, 0, 0, BORDER, ACCENT))
+	t.set_stylebox("disabled", "PackCard", _flat(transparent, R, 0, 0, BORDER, NEUTRAL_DARK))
 	t.set_stylebox("focus", "PackCard", _empty())
 
 	# One clip variation per tint; pack.gd picks by index.
@@ -361,3 +342,25 @@ func _build_misc(t: Theme) -> void:
 	t.set_icon("grabber_highlight", "HSlider", load("res://assets/icons/grabber.svg"))
 	t.set_stylebox("slider", "HSlider", _flat(NEUTRAL, R_PILL, 0, 0))
 	t.set_constant("center_grabber", "HSlider", 1)
+	
+	var scroll_hint_gradient: Gradient = Gradient.new()
+	scroll_hint_gradient.set_color(0, Color.WHITE)
+	scroll_hint_gradient.set_color(1, Color.TRANSPARENT)
+	
+	var scroll_hint_vertical_gradient: GradientTexture2D = GradientTexture2D.new()
+	scroll_hint_vertical_gradient.fill_to = Vector2.DOWN
+	scroll_hint_vertical_gradient.height = 32
+	scroll_hint_vertical_gradient.gradient = scroll_hint_gradient
+	
+	var scroll_hint_horizontal_gradient: GradientTexture2D = GradientTexture2D.new()
+	scroll_hint_horizontal_gradient.width = 32
+	scroll_hint_horizontal_gradient.gradient = scroll_hint_gradient
+	
+	t.set_color("scroll_hint_vertical_color", "ScrollContainer", BACKGROUND)
+	t.set_color("scroll_hint_horizontal_color", "ScrollContainer", BACKGROUND)
+	t.set_icon("scroll_hint_vertical", "ScrollContainer", scroll_hint_vertical_gradient)
+	t.set_icon("scroll_hint_horizontal", "ScrollContainer", scroll_hint_horizontal_gradient)
+	
+	t.set_type_variation("SurfaceScrollContainer", "ScrollContainer")
+	t.set_color("scroll_hint_vertical_color", "SurfaceScrollContainer", SURFACE)
+	t.set_color("scroll_hint_horizontal_color", "SurfaceScrollContainer", SURFACE)

@@ -361,6 +361,42 @@ visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_vboup")
 
+[node name="EndModal" parent="CanvasLayer" unique_id=76118575 instance=ExtResource("90_endmodal")]
+unique_name_in_owner = true
+visible = false
+title = "Session complete"
+
+[node name="EndSummary" type="Label" parent="CanvasLayer/EndModal" unique_id=1302569886]
+unique_name_in_owner = true
+layout_mode = 0
+size_flags_horizontal = 3
+theme_type_variation = &"LabelFieldTitle"
+text = "You drew every image."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="EndButtons" type="HFlowContainer" parent="CanvasLayer/EndModal" unique_id=1436418484 groups=["modal_footer"]]
+layout_mode = 0
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+alignment = 1
+
+[node name="MenuButton" type="Button" parent="CanvasLayer/EndModal/EndButtons" unique_id=2117268444]
+layout_mode = 2
+theme_type_variation = &"ButtonSoft"
+text = "Back to menu"
+
+[node name="ReplayButton" type="Button" parent="CanvasLayer/EndModal/EndButtons" unique_id=607519319]
+layout_mode = 2
+theme_type_variation = &"ButtonSoft"
+text = "Replay"
+
+[node name="MoreImagesButton" type="Button" parent="CanvasLayer/EndModal/EndButtons" unique_id=1086516254]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ButtonAccent"
+text = "More images"
+
 [node name="Timer" type="Timer" parent="." unique_id=916468787]
 unique_name_in_owner = true
 wait_time = 3.0
@@ -377,43 +413,6 @@ unique_name_in_owner = true
 wait_time = 0.07
 one_shot = true
 
-[node name="EndModal" parent="CanvasLayer" instance=ExtResource("90_endmodal")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-title = "Session complete"
-
-[node name="EndSummary" type="Label" parent="CanvasLayer/EndModal"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-theme_type_variation = &"LabelFieldTitle"
-text = "You drew every image."
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="EndButtons" type="HFlowContainer" parent="CanvasLayer/EndModal" groups=["modal_footer"]]
-alignment = 1
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
-
-[node name="MenuButton" type="Button" parent="CanvasLayer/EndModal/EndButtons"]
-theme_type_variation = &"ButtonSoft"
-text = "Back to menu"
-
-[node name="ReplayButton" type="Button" parent="CanvasLayer/EndModal/EndButtons"]
-theme_type_variation = &"ButtonSoft"
-text = "Replay"
-
-[node name="MoreImagesButton" type="Button" parent="CanvasLayer/EndModal/EndButtons"]
-unique_name_in_owner = true
-theme_type_variation = &"ButtonAccent"
-text = "More images"
-
-[connection signal="pressed" from="CanvasLayer/EndModal/EndButtons/MenuButton" to="." method="_on_end_menu_pressed"]
-[connection signal="pressed" from="CanvasLayer/EndModal/EndButtons/ReplayButton" to="." method="_on_end_replay_pressed"]
-[connection signal="pressed" from="CanvasLayer/EndModal/EndButtons/MoreImagesButton" to="." method="_on_end_more_images_pressed"]
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer/VBoxContainer/ButtonPrevious" to="." method="_on_button_previous_pressed"]
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/NavigationContainer/HBoxContainer2/VBoxContainer/ButtonNext" to="." method="_on_button_next_pressed"]
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/MarginContainer/HBox/HFlowContainer/FLBContainer/FileLocationButton" to="." method="_on_file_location_button_pressed"]
@@ -426,6 +425,9 @@ text = "More images"
 [connection signal="value_changed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2/BrushSizeSlider" to="." method="_on_brush_size_slider_value_changed"]
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer/UndoButton" to="SafeMarginContainer/PanelContainer/PaintCanvas" method="undo"]
 [connection signal="pressed" from="CanvasLayer/SafeMarginContainer/DrawingToolBar/MarginContainer/HBoxContainer/VBoxContainer2/PanelContainer/VBoxContainer/RedoButton" to="SafeMarginContainer/PanelContainer/PaintCanvas" method="redo"]
+[connection signal="pressed" from="CanvasLayer/EndModal/EndButtons/MenuButton" to="." method="_on_end_menu_pressed"]
+[connection signal="pressed" from="CanvasLayer/EndModal/EndButtons/ReplayButton" to="." method="_on_end_replay_pressed"]
+[connection signal="pressed" from="CanvasLayer/EndModal/EndButtons/MoreImagesButton" to="." method="_on_end_more_images_pressed"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="MouseMovetimer" to="." method="_on_mouse_movetimer_timeout"]
 [connection signal="timeout" from="GestureTimer" to="." method="_on_mouse_movetimer_timeout"]

@@ -1,9 +1,5 @@
-class_name SessionFieldChoice extends SessionField
-
 ## A row of option chips with a "Custom" toggle.
-##
-## Custom swaps the chips out for a compact stepper in the same slot, the way a
-## classic segmented control does, rather than stacking a second widget below.
+class_name SessionFieldChoice extends SessionField
 
 const GAP: int = 10
 const STEP_SIZE: Vector2 = Vector2(40, 40)
@@ -33,9 +29,12 @@ func _build() -> void:
 	add_child(row)
 
 	_scroll = ScrollContainer.new()
+	_scroll.theme_type_variation = &"SurfaceScrollContainer"
 	_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_scroll.scroll_hint_mode = ScrollContainer.SCROLL_HINT_MODE_ALL
+	_scroll.follow_focus = true
 	row.add_child(_scroll)
 
 	_box = HBoxContainer.new()
@@ -43,18 +42,16 @@ func _build() -> void:
 	_scroll.add_child(_box)
 
 	var group: ButtonGroup = ButtonGroup.new()
+	if spec.has_all:
+		_add_chip("All", spec.all_value, group)
+	
 	for i in spec.options.size():
 		var text: String = str(spec.labels[i]) if i < spec.labels.size() \
 			else str(spec.options[i]) + spec.unit
 		_add_chip(text, int(spec.options[i]), group)
 
-	if spec.has_all:
-		_add_chip("All", spec.all_value, group)
-
 	_build_stepper(row)
 
-	# Outside the group: a group refuses to un-press its selected button, and
-	# pressing Custom again has to bring the options back.
 	_custom_chip = _make_chip("Custom", null)
 	_custom_chip.toggled.connect(_on_custom_toggled)
 	row.add_child(_custom_chip)
@@ -64,6 +61,7 @@ func _build() -> void:
 
 func _add_chip(text: String, value: int, group: ButtonGroup) -> void:
 	var chip: Button = _make_chip(text, group)
+	chip.mouse_filter = Control.MOUSE_FILTER_PASS
 	chip.pressed.connect(_on_option_pressed.bind(_values.size()))
 	_box.add_child(chip)
 	_chips.append(chip)
@@ -141,8 +139,6 @@ func _is_representable(value: int) -> bool:
 
 
 func _select_value(value: int) -> void:
-	# SessionResource uses -1 for "unset", which is not a setting the user picked.
-	# Without this it fell through to custom mode showing a bare -1.
 	if not _is_representable(value):
 		value = _default_value()
 
@@ -151,7 +147,6 @@ func _select_value(value: int) -> void:
 	for i in _chips.size():
 		_chips[i].set_pressed_no_signal(i == index)
 
-	# A value that is not one of the presets shows as a custom entry.
 	_custom_chip.set_pressed_no_signal(index < 0)
 	_set_custom_mode(index < 0)
 	_value_edit.text = str(value)
@@ -199,9 +194,7 @@ func get_value_dict() -> Dictionary:
 func set_from_context(context: Object) -> void:
 	if not context:
 		return
-
-	# Negative values are meaningful here: they are the "All" sentinel, so this
-	# must not filter them out the way the old guard did.
+	
 	var value: Variant = context.get(field_name)
 	if typeof(value) == TYPE_INT:
 		_select_value(int(value))

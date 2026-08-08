@@ -68,6 +68,7 @@ layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 3
+scroll_hint_mode = 1
 
 [node name="Sections" type="VBoxContainer" parent="MainSafeMargin/CenterColumn/Body/PackScroll" unique_id=334513090]
 layout_mode = 2

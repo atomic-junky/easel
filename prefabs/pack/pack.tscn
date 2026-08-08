@@ -8,6 +8,7 @@
 custom_minimum_size = Vector2(198, 140)
 offset_right = 198.0
 offset_bottom = 140.0
+mouse_filter = 1
 theme_type_variation = &"PackCard"
 toggle_mode = true
 script = ExtResource("1_nhums")
@@ -138,6 +139,7 @@ alignment = 2
 [node name="DeleteButton" type="Button" parent="MarginContainer/TopBar/Actions" unique_id=651256359]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
+mouse_filter = 1
 theme_type_variation = &"PackActionDanger"
 icon = ExtResource("7_trash")
 icon_alignment = 1
