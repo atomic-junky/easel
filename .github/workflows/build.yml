@@ -360,11 +360,6 @@ jobs:
           name: mac
           path: dist
 
-      - name: Unpack
-        run: |
-          mkdir -v -p payload
-          tar -C payload -zxf "dist/${EXPORT_NAME}-mac.dmg"
-
       - name: Install butler
         run: |
           curl -sL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
@@ -378,7 +373,7 @@ jobs:
           ITCHIO_TARGET: ${{ vars.ITCHIO_TARGET }}
         run: |
           test -n "$ITCHIO_TARGET"
-          ./butler push payload "${ITCHIO_TARGET}:macos-universal" --userversion "${{ github.ref_name }}"
+          ./butler push "dist/${EXPORT_NAME}-mac.dmg" "${ITCHIO_TARGET}:macos-universal" --userversion "${{ github.ref_name }}"
 
   itchio-android:
     name: 'itchio:android'
