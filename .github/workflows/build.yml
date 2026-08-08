@@ -222,12 +222,11 @@ jobs:
           DEBUG_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
           RELEASE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
         run: |
-          echo "$DEBUG_BASE64" | base64 --decode > ${{ github.workspace }}/debug.keystore
+          echo "$DEBUG_BASE64" | base64 --decode > "$(pwd)/debug.keystore"
           
           if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            echo "$RELEASE_BASE64" | base64 --decode > ${{ github.workspace }}/easel-release.keystore
-            # Vérification pour s'assurer que le fichier est bien créé
-            ls -la ${{ github.workspace }}/easel-release.keystore
+            echo "$RELEASE_BASE64" | base64 --decode > "$(pwd)/easel-release.keystore"
+            ls -la "$(pwd)/easel-release.keystore"
           fi
 
       - name: Point Godot at the Android toolchain
@@ -236,7 +235,7 @@ jobs:
           cat >> "$SETTINGS" <<EOF
           export/android/android_sdk_path = "${ANDROID_SDK_ROOT}"
           export/android/java_sdk_path = "${JAVA_HOME}"
-          export/android/debug_keystore = "${{ github.workspace }}/debug.keystore"
+          export/android/debug_keystore = "$(pwd)/debug.keystore"
           export/android/debug_keystore_user = "androiddebugkey"
           export/android/debug_keystore_pass = "android"
           EOF
@@ -246,18 +245,18 @@ jobs:
           RELEASE_PASS: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
           RELEASE_ALIAS: ${{ secrets.RELEASE_KEYSTORE_ALIAS }}
         run: |
-          WORKSPACE="${{ github.workspace }}"
+          CWD="$(pwd)"
           
-          sed -i 's|keystore/debug=".*"|keystore/debug="'"$WORKSPACE"'/debug.keystore"|' export_presets.cfg
+          sed -i 's|keystore/debug=".*"|keystore/debug="'"$CWD"'/debug.keystore"|' export_presets.cfg
           sed -i 's|keystore/debug_user=".*"|keystore/debug_user="androiddebugkey"|' export_presets.cfg
           sed -i 's|keystore/debug_password=".*"|keystore/debug_password="android"|' export_presets.cfg
           
           if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/v* ]]; then
-            sed -i 's|keystore/release=".*"|keystore/release="'"$WORKSPACE"'/easel-release.keystore"|' export_presets.cfg
+            sed -i 's|keystore/release=".*"|keystore/release="'"$CWD"'/easel-release.keystore"|' export_presets.cfg
             sed -i 's|keystore/release_user=".*"|keystore/release_user="'"$RELEASE_ALIAS"'"|' export_presets.cfg
             sed -i 's|keystore/release_password=".*"|keystore/release_password="'"$RELEASE_PASS"'"|' export_presets.cfg
             
-            grep "easel-release.keystore" export_presets.cfg || echo "ERREUR : sed n'a pas trouvé 'keystore/release' dans export_presets.cfg ! Vérifiez que vous avez mis des valeurs bidons dans Godot."
+            grep "easel-release.keystore" export_presets.cfg || echo "ERROR : can't find 'keystore/release'!"
           fi
 
       - name: Import resources once
