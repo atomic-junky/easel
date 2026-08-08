@@ -187,7 +187,7 @@ jobs:
         with:
           name: mac
           path: ./build/mac/*.dmg
-
+  
   android:
     name: android
     runs-on: ubuntu-24.04
@@ -217,15 +217,19 @@ jobs:
           mv /root/.config/godot ~/.config/godot
           mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/
 
-      - name: Create debug keystore
+      - name: Decode Android Keystores
+        env:
+          DEBUG_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+          RELEASE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
         run: |
-          keytool -keyalg RSA -genkeypair -alias androiddebugkey -keypass android \
-            -keystore ~/debug.keystore -storepass android -dname "CN=Android Debug,O=Android,C=US" \
-            -validity 9999 -deststoretype pkcs12
+          echo "$DEBUG_BASE64" | base64 --decode > $HOME/debug.keystore
+          
+          if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            echo "$RELEASE_BASE64" | base64 --decode > $HOME/easel-release.keystore
+          fi
 
       - name: Point Godot at the Android toolchain
         run: |
-          test -d "${ANDROID_SDK_ROOT}/build-tools"
           SETTINGS=$(find ~/.config/godot -name 'editor_settings-*.tres' | head -n 1)
           cat >> "$SETTINGS" <<EOF
           export/android/android_sdk_path = "${ANDROID_SDK_ROOT}"
@@ -235,14 +239,36 @@ jobs:
           export/android/debug_keystore_pass = "android"
           EOF
 
+      - name: Configure Godot Export Presets (Inject Keystores)
+        env:
+          RELEASE_PASS: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_ALIAS: ${{ secrets.RELEASE_KEYSTORE_ALIAS }}
+        run: |
+          sed -i 's|keystore/debug=".*"|keystore/debug="'"$HOME"'/debug.keystore"|' export_presets.cfg
+          sed -i 's|keystore/debug_user=".*"|keystore/debug_user="androiddebugkey"|' export_presets.cfg
+          sed -i 's|keystore/debug_password=".*"|keystore/debug_password="android"|' export_presets.cfg
+          
+          if [ "${{ github.event_name }}" = "push" ] && [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            sed -i 's|keystore/release=".*"|keystore/release="'"$HOME"'/easel-release.keystore"|' export_presets.cfg
+            sed -i 's|keystore/release_user=".*"|keystore/release_user="'"$RELEASE_ALIAS"'"|' export_presets.cfg
+            sed -i 's|keystore/release_password=".*"|keystore/release_password="'"$RELEASE_PASS"'"|' export_presets.cfg
+          fi
+
       - name: Import resources once
         continue-on-error: true
         run: godot --headless -v --import
-
-      - name: Export
+      
+      - name: Export (Debug)
+        if: "! (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))"
         run: |
           mkdir -v -p build
-          godot --headless -v --install-android-build-template --export-debug "Android" ./build/${EXPORT_NAME}-android.apk
+          godot --headless --export-debug "Android" build/${EXPORT_NAME}-android.apk
+
+      - name: Export (Release)
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        run: |
+          mkdir -v -p build
+          godot --headless --export-release "Android" build/${EXPORT_NAME}-android.apk
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
