@@ -6,7 +6,7 @@
 ; Helper variables so that we don't change 20 instances of the version for every update
 
   !define APPNAME "Easel"
-  !define APPVERSION "0.1.0-beta"
+  !define APPVERSION "0.1.1-beta"
   !define COMPANYNAME "OneShrimpADay"
 
 ; Name of the exported binary and its build folder. Overridable with
