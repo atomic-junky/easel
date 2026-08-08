@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
+  pull_request:
   workflow_dispatch:
 
 concurrency:
@@ -129,50 +130,63 @@ jobs:
 
   mac:
     name: mac
-    runs-on: ubuntu-24.04
-    container:
-      image: docker://barichello/godot-ci:4.7.1
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           lfs: true
 
-      - name: Setup
+      - name: Setup export templates
         run: |
-          mkdir -v -p ~/.config
-          mkdir -v -p ~/.local/share/godot/export_templates
-          mv /root/.config/godot ~/.config/godot
-          mv /root/.local/share/godot/export_templates/${GODOT_VERSION}.stable ~/.local/share/godot/export_templates/
+          mkdir -v -p "/Users/runner/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable"
+          wget https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          unzip -a Godot_v${GODOT_VERSION}-stable_export_templates.tpz
+          mv ./templates/* "/Users/runner/Library/Application Support/Godot/export_templates/${GODOT_VERSION}.stable"
+      
+      - name: Download Godot headless binary
+        run: |
+          wget https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_macos.universal.zip
+          unzip -a Godot_v${GODOT_VERSION}-stable_macos.universal.zip
+      
+      - name: Setup
+        run: mkdir -v -p ./build/mac
 
       - name: Import resources once
         continue-on-error: true
-        run: godot --headless -v --import
+        run: ./Godot.app/Contents/MacOS/Godot --headless -v --import
 
       - name: Export
         run: |
-          mkdir -v -p build
-          godot --headless -v --export-release "macOS" ./build/${EXPORT_NAME}-macos-universal.zip
-
-      - name: Bundle easel_app_data
+          chown runner ./Godot.app/Contents/MacOS/Godot
+          chmod +x ./Godot.app/Contents/MacOS/Godot
+          ./Godot.app/Contents/MacOS/Godot --headless -v --export-release "macOS" ./build/mac/${EXPORT_NAME}.zip
+      
+      - name: Make application executable
         run: |
-          apt-get update
-          apt-get install -y zip unzip
-          rm -f ./easel_app_data/.gdignore
-          mkdir -v -p staging
-          unzip -q ./build/${EXPORT_NAME}-macos-universal.zip -d staging
-          APP=$(find staging -maxdepth 1 -name '*.app' | head -n 1)
-          test -n "$APP"
-          cp -R ./easel_app_data "$APP/Contents/Resources"
-          chmod +x "$APP/Contents/MacOS/"*
-          rm ./build/${EXPORT_NAME}-macos-universal.zip
-          tar -C staging -zcf ./build/${EXPORT_NAME}-macos-universal.tar.gz .
+          unzip -a ./build/mac/${EXPORT_NAME}.zip -d ./build/mac
+          chmod +x ./build/mac/${EXPORT_NAME}.app/Contents/MacOS/${EXPORT_NAME}
+          rm ./build/mac/${EXPORT_NAME}.zip
+
+      - name: Fix application icon
+        run: sips -s format icns ./build/mac/${EXPORT_NAME}.app/Contents/Resources/icon.icns --out ./build/mac/${EXPORT_NAME}.app/Contents/Resources/icon.icns
+      
+      - name: Copy easel_app_data folder
+        run: |
+          cp -R ./easel_app_data ./build/mac/${EXPORT_NAME}.app/Contents/Resources
+          rm ./build/mac/${EXPORT_NAME}.app/Contents/Resources/easel_app_data/.gdignore
+      
+      - name: Ad-hoc signing
+        run: codesign -s - --force --deep ./build/mac/${EXPORT_NAME}.app
+
+      - name: Create DMG archive 🔧
+        run: hdiutil create -srcfolder ./build/mac -fs HFS+ -volname ${EXPORT_NAME} ./build/mac/${EXPORT_NAME}-mac.dmg
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v7
         with:
           name: mac
-          path: ./build/*.tar.gz
+          path: ./build/mac/*.dmg
 
   android:
     name: android
@@ -239,6 +253,7 @@ jobs:
   itchio-windows:
     name: 'itchio:windows'
     needs: [windows, linux, mac, android]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-24.04
     steps:
       - name: Download Artifact
@@ -267,6 +282,7 @@ jobs:
   itchio-linux:
     name: 'itchio:linux'
     needs: [windows, linux, mac, android]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-24.04
     steps:
       - name: Download Artifact
@@ -302,6 +318,7 @@ jobs:
   itchio-macos:
     name: 'itchio:macos'
     needs: [windows, linux, mac, android]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-24.04
     steps:
       - name: Download Artifact
@@ -313,7 +330,7 @@ jobs:
       - name: Unpack
         run: |
           mkdir -v -p payload
-          tar -C payload -zxf "dist/${EXPORT_NAME}-macos-universal.tar.gz"
+          tar -C payload -zxf "dist/${EXPORT_NAME}-mac.dmg"
 
       - name: Install butler
         run: |
@@ -333,6 +350,7 @@ jobs:
   itchio-android:
     name: 'itchio:android'
     needs: [windows, linux, mac, android]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-24.04
     steps:
       - name: Download Artifact
