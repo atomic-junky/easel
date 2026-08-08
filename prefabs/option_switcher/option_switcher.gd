@@ -43,11 +43,9 @@ signal value_changed(value: int)
 @export_subgroup("Fifth option", "fifth_")
 @export var fifth_label: String = ""
 @export var fifth_value: int = 5
-@export var fifth_enabled: bool = false
 @export_subgroup("Sixth option", "sixth_")
 @export var sixth_label: String = ""
 @export var sixth_value: int = 6
-@export var sixth_enabled: bool = false
 
 @onready var buttons_container: Control = %ButtonsContainer
 @onready var custom_value_container: Control = %CustomValueContainer
@@ -79,11 +77,15 @@ var _buttons_enabled: Array :
 	get():
 		if use_dynamic_options and not options.is_empty():
 			var enabled_array: Array = options.map(func(opt: OptionData): return opt.enabled)
-			# Pad with false if we have fewer than 6 options
 			while enabled_array.size() < 6:
 				enabled_array.append(false)
 			return enabled_array
-		return [true, true, true, true, fifth_enabled, sixth_enabled]
+			
+		var enabled: Array = []
+		for blabel: String in _button_labels:
+			enabled.append(not blabel.is_empty())
+		return enabled
+		
 
 var _last_toggled_button: Button
 var value: int : get = _get_value
@@ -94,11 +96,10 @@ func _ready() -> void:
 	_last_toggled_button = _buttons[0]
 	custom_value.value = _get_value()
 	custom_value.get_line_edit().text_changed.connect(_on_custom_value_value_changed)
-	custom_value.get_line_edit().theme_type_variation = "LineEditSwitcher"
+	custom_value.get_line_edit().theme_type_variation = "LineEditValue"
 	custom_button.pressed.connect(_update_buttons.bind(custom_button))
 	_update()
 	value_changed.emit(value)
-
 
 
 func _update() -> void:
@@ -134,10 +135,10 @@ func _update() -> void:
 	
 	custom_button.visible = use_custom_button
 	custom_value.suffix = custom_suffix
+	label.visible = not title.is_empty()
 	label.text = title
 	
-	for button: Button in _buttons:
-		button.custom_minimum_size.x = 0.0
+	_update_button_size()
 
 
 func _get_value() -> int:
@@ -155,13 +156,32 @@ func _get_value() -> int:
 	
 	return -1
 
-func _update_button_size() -> void:
-	var max_button_size: float = 0.0
-	for button: Button in _buttons:
-		max_button_size = max(max_button_size, button.size.x)
+
+func set_value(idx: int) -> void:
+	if idx < 0:
+		_update_buttons(custom_button, false)
+	else:
+		_update_buttons(_buttons[idx], false)
 	
+
+
+## Gives every visible option the width of the widest one, as in the design.
+func _update_button_size() -> void:
+	if not is_inside_tree():
+		return
+
 	for button: Button in _buttons:
-		button.custom_minimum_size.x = max_button_size
+		button.custom_minimum_size.x = 0.0
+
+	await get_tree().process_frame
+
+	var widest: float = 0.0
+	for button: Button in _buttons:
+		if button.visible:
+			widest = maxf(widest, button.size.x)
+
+	for button: Button in _buttons:
+		button.custom_minimum_size.x = widest
 
 
 func _update_editor() -> void:

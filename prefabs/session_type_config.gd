@@ -3,7 +3,7 @@
 class_name SessionTypeConfig extends Resource
 
 ## The type of session this config represents
-@export var session_type: SessionContext.Type = SessionContext.Type.STANDARD
+@export var session_type: SessionResource.Type = SessionResource.Type.STANDARD
 
 ## Human-readable name
 @export var display_name: String = ""
@@ -25,7 +25,7 @@ class_name SessionTypeConfig extends Resource
 @export var custom_data: Dictionary = {}
 
 
-func apply_to_context(context: SessionContext) -> void:
+func apply_to_context(context: SessionResource) -> void:
 	"""Apply this configuration to a session context"""
 	context.session_type = session_type
 	context.shuffle = default_shuffle

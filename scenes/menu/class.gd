@@ -5,17 +5,13 @@ var _class_session: Array = []
 func setup() -> void:
 	ClassSessionTemplateRegistry.initialize()
 	var durations := ClassSessionTemplateRegistry.get_available_durations()
-	define_field(
-		"duration", "switcher", durations,
-		"Session duration", " min"
-	)
-	define_field(
-		"image_order", "image_order", [], "", "", {
-			"shuffle_property": "shuffle",
-			"reverse_property": "reverse"
-		}
-	)
-	# Set initial template based on default duration
+	
+	define_choice("class_duration", durations, "Duration") \
+		.with_unit(" min") \
+		.with_range(5, 240, 5)
+	
+	define_image_order()
+
 	if durations.size() > 0:
 		_apply_template_for_duration(durations[0])
 
@@ -24,35 +20,49 @@ func _apply_template_for_duration(duration: int) -> void:
 	if template:
 		_class_session = template.session_sequence.duplicate(true)
 
-func load_from_context(context: SessionContext) -> void:
+func load_from_context(context: SessionResource) -> void:
 	# Apply the template based on saved duration before loading UI
-	if context and context.duration > 0:
-		_apply_template_for_duration(context.duration)
+	if context and context.class_duration > 0:
+		_apply_template_for_duration(context.class_duration)
 	super.load_from_context(context)
-
-func save_to_context(context: SessionContext) -> void:
-	# Read current duration from field and apply template
-	var values := collect_field_values()
-	if values.has("duration"):
-		var dur := int(values["duration"])
-		context.duration = dur
-		_apply_template_for_duration(dur)
-	
-	# Now apply all fields generically
-	apply_fields_to_context(context)
-	
-	# Set class-specific data
-	var number_of_images: int = 0
-	for pose in _class_session:
-		number_of_images += pose.get("amount", 1)
-	context.class_data = _class_session
-	context.number_of_images = number_of_images
 
 func is_valid() -> bool:
 	return not _class_session.is_empty()
 
-func get_context_type() -> SessionContext.Type:
-	return SessionContext.Type.CLASS
+func get_context_type() -> SessionResource.Type:
+	return SessionResource.Type.CLASS
 
 func get_mode_name() -> String:
 	return "Class Mode"
+
+func generate_sequence(context: SessionResource) -> Array:
+	var all_images: Array = context.get_images_path_raw()
+	if context.shuffle:
+		all_images.shuffle()
+	elif context.reverse:
+		all_images.reverse()
+		
+	_apply_template_for_duration(int(context.class_duration))
+
+	var result: Array = []
+	for item: Dictionary in _class_session:
+		var pose_type: String = str(item.get("type", "pose"))
+		var pose_duration: int = int(item.get("duration", 60))
+
+		# Templates group identical poses with "amount" instead of repeating them.
+		for _repeat in maxi(1, int(item.get("amount", 1))):
+			if pose_type != "pose":
+				result.append({"type": pose_type, "duration": pose_duration})
+				continue
+
+			if all_images.is_empty():
+				return result
+
+			var next_image: Dictionary = all_images.pop_front()
+			result.append({
+				"type": "pose",
+				"duration": pose_duration,
+				"path": next_image.get("path", ""),
+				"name": next_image.get("name", "Unknown"),
+			})
+	return result

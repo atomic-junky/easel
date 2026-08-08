@@ -23,17 +23,17 @@ static func register_type(config: SessionTypeConfig) -> void:
 
 
 ## Get configuration for a session type
-static func get_config(session_type: SessionContext.Type) -> SessionTypeConfig:
+static func get_config(session_type: SessionResource.Type) -> SessionTypeConfig:
 	if not _initialized:
 		initialize()
 	return _session_type_configs.get(session_type)
 
 
 ## Get all enabled session types
-static func get_enabled_types() -> Array[SessionContext.Type]:
+static func get_enabled_types() -> Array[SessionResource.Type]:
 	if not _initialized:
 		initialize()
-	var types: Array[SessionContext.Type] = []
+	var types: Array[SessionResource.Type] = []
 	for type_key in _session_type_configs.keys():
 		types.append(type_key)
 	return types
@@ -43,7 +43,7 @@ static func get_enabled_types() -> Array[SessionContext.Type]:
 static func _register_default_types() -> void:
 	# Standard session
 	var standard_config := SessionTypeConfig.new()
-	standard_config.session_type = SessionContext.Type.STANDARD
+	standard_config.session_type = SessionResource.Type.STANDARD
 	standard_config.display_name = "Standard"
 	standard_config.enabled = true
 	standard_config.requires_validation = false
@@ -54,7 +54,7 @@ static func _register_default_types() -> void:
 	
 	# Class session
 	var class_config := SessionTypeConfig.new()
-	class_config.session_type = SessionContext.Type.CLASS
+	class_config.session_type = SessionResource.Type.CLASS
 	class_config.display_name = "Class"
 	class_config.enabled = true
 	class_config.requires_validation = true
@@ -62,7 +62,7 @@ static func _register_default_types() -> void:
 	
 	# Relaxed session
 	var relaxed_config := SessionTypeConfig.new()
-	relaxed_config.session_type = SessionContext.Type.RELAXED
+	relaxed_config.session_type = SessionResource.Type.RELAXED
 	relaxed_config.display_name = "Relaxed"
 	relaxed_config.enabled = true
 	relaxed_config.requires_validation = false
@@ -73,7 +73,7 @@ static func _register_default_types() -> void:
 	
 	# Custom session
 	var custom_config := SessionTypeConfig.new()
-	custom_config.session_type = SessionContext.Type.CUSTOM
+	custom_config.session_type = SessionResource.Type.CUSTOM
 	custom_config.display_name = "Custom"
 	custom_config.enabled = true
 	custom_config.requires_validation = true

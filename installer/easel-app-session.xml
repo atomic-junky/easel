@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+	<mime-type type="application/gesture-app-session">
+		<comment>GestureApp Session File</comment>
+		<comment xml:lang="en">GestureApp Session File</comment>
+		<glob pattern="*.gsession"/>
+		<icon name="gesture-app"/>
+		<generic-icon name="x-office-document"/>
+	</mime-type>
+</mime-info>

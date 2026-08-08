@@ -1,8 +1,8 @@
 extends Node
 
-## Manages pack history - stores the last 10 packs used by the user
+## Manages pack history, stores the last 32 packs used by the user
 
-const MAX_HISTORY_SIZE := 10
+const MAX_HISTORY_SIZE: int = 32
 const HISTORY_DIR := "user://pack_history/"
 
 var _history: Array[PackResource] = []
@@ -37,7 +37,7 @@ func add_pack(pack: PackResource, save_immediately: bool = true) -> void:
 	
 	# Remove duplicate if already exists (compare by path and source)
 	_history = _history.filter(func(item: PackResource) -> bool:
-		return not (item.path == pack_copy.path and item.source == pack_copy.source)
+		return not (item.path == pack_copy.path)
 	)
 	
 	print("[PackHistory] History size after filter: ", _history.size())
@@ -45,12 +45,28 @@ func add_pack(pack: PackResource, save_immediately: bool = true) -> void:
 	# Add to front
 	_history.push_front(pack_copy)
 	print("[PackHistory] History size after push_front: ", _history.size())
+	_clean_history()
 	
 	if _history.size() > MAX_HISTORY_SIZE:
 		_history.resize(MAX_HISTORY_SIZE)
 	
 	if save_immediately:
 		_save_history()
+	
+
+## Removes a pack from history. Matched by path rather than by identity, because
+## _clean_history replaces the stored resources with deep copies on every save.
+func erase_pack(pack: PackResource) -> void:
+	var kept: Array[PackResource] = []
+	for item: PackResource in _history:
+		if item.path != pack.path:
+			kept.append(item)
+
+	if kept.size() == _history.size():
+		return
+
+	_history = kept
+	_save_history()
 
 
 ## Add multiple packs to history
@@ -98,7 +114,7 @@ func _load_history() -> void:
 	_history.clear()
 	
 	# Load the index file
-	var index_path := HISTORY_DIR + "index.tres"
+	var index_path := HISTORY_DIR.path_join("index.tres")
 	if not FileAccess.file_exists(index_path):
 		print("[PackHistory] No index file found at: ", index_path)
 		return
@@ -135,10 +151,26 @@ func _load_history() -> void:
 			print("[PackHistory] Pack file not found: ", pack_path)
 	
 	print("[PackHistory] Total packs loaded: ", _history.size())
+	
+	_clean_history()
+	_save_history()
+
+
+func _clean_history() -> void:
+	var old_history: Array[PackResource] = _history.duplicate(true)
+	clear_history()
+	
+	var pack_paths: Array = []
+	for pack in old_history:
+		if pack.path in pack_paths:
+			continue
+		pack_paths.append(pack.path)
+		_history.append(pack)
 
 
 ## Save history as resource files
 func _save_history() -> void:
+	_clean_history()
 	print("[PackHistory] Saving ", _history.size(), " packs to history")
 	
 	# Clear old files
@@ -165,7 +197,7 @@ func _save_history() -> void:
 	# Save index file with list of pack files
 	var index := HistoryIndex.new()
 	index.pack_files = pack_files
-	var index_result := ResourceSaver.save(index, HISTORY_DIR + "index.tres")
+	var index_result := ResourceSaver.save(index, HISTORY_DIR.path_join("index.tres"))
 	if index_result == OK:
 		print("[PackHistory] Index saved successfully with ", pack_files.size(), " entries")
 	else:

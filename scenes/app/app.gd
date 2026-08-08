@@ -6,7 +6,7 @@ var menu_scene: String = "res://scenes/menu/menu.tscn"
 var session_scene: String = "res://scenes/session/session.tscn"
 var current_view: Control : get = _get_view
 
-var context: SessionContext
+var context: SessionResource
 
 func _ready():
 	_on_resized()
@@ -21,7 +21,7 @@ func _get_view() -> Control:
 	return aspect_ration.get_child(0)
 
 
-func _on_view_done(new_context: SessionContext = SessionContext.new()) -> void:
+func _on_view_done(new_context: SessionResource = SessionResource.new()) -> void:
 	context = new_context
 	var scene_path: String
 	if current_view is Menu:
@@ -32,12 +32,15 @@ func _on_view_done(new_context: SessionContext = SessionContext.new()) -> void:
 	await SceneLoader.switch_scene(aspect_ration, current_view, scene_path)
 
 
+func _set_aspect() -> void:
+	var vp_size: Vector2 = get_viewport_rect().size
+	aspect_ration.ratio = vp_size.x/vp_size.y
+
 func _on_resized() -> void:
 	if not is_node_ready():
 		return
-	
-	var vp_size: Vector2 = get_viewport_rect().size
-	aspect_ration.ratio = vp_size.x/vp_size.y
+		
+	_set_aspect()
 
 
 func _on_aspect_ratio_container_child_entered_tree(node: Node) -> void:
