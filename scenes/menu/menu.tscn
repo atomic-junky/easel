@@ -261,7 +261,7 @@ script = ExtResource("12_packs")
 [node name="SourceSwitcher" parent="AddPackModal/Packs" unique_id=1035041947 instance=ExtResource("6_switcher")]
 layout_mode = 2
 first_label = "Local"
-second_label = "Pinterest"
+second_label = "Url"
 
 [node name="LocalContainer" type="HBoxContainer" parent="AddPackModal/Packs" unique_id=1171221357]
 unique_name_in_owner = true
@@ -279,49 +279,36 @@ layout_mode = 2
 theme_type_variation = &"ButtonSoft"
 text = "Images"
 
-[node name="PinterestContainer" type="VBoxContainer" parent="AddPackModal/Packs" unique_id=1648329595]
+[node name="UrlContainer" type="VBoxContainer" parent="AddPackModal/Packs" unique_id=1648329595]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 10
 
-[node name="UrlInput" type="LineEdit" parent="AddPackModal/Packs/PinterestContainer" unique_id=1376439583]
+[node name="UrlInput" type="LineEdit" parent="AddPackModal/Packs/UrlContainer" unique_id=1376439583]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(316, 0)
 layout_mode = 2
 placeholder_text = "url"
 
-[node name="UrlInputSpinerContainer" type="HBoxContainer" parent="AddPackModal/Packs/PinterestContainer" unique_id=190426307]
+[node name="UrlInputSpinerContainer" type="HBoxContainer" parent="AddPackModal/Packs/UrlContainer" unique_id=190426307]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 alignment = 1
 
-[node name="Spiner" parent="AddPackModal/Packs/PinterestContainer/UrlInputSpinerContainer" unique_id=1610397424 instance=ExtResource("13_spiner")]
+[node name="Spiner" parent="AddPackModal/Packs/UrlContainer/UrlInputSpinerContainer" unique_id=1610397424 instance=ExtResource("13_spiner")]
 custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 
-[node name="SectionRow" type="HBoxContainer" parent="AddPackModal/Packs/PinterestContainer" unique_id=1375788529]
+[node name="OptionsContainer" type="VBoxContainer" parent="AddPackModal/Packs/UrlContainer" unique_id=1375788529]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 10
 
-[node name="PinterestSectionCheckBox" type="Button" parent="AddPackModal/Packs/PinterestContainer/SectionRow" unique_id=2089860893]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(24, 24)
-layout_mode = 2
-size_flags_vertical = 4
-theme_type_variation = &"CheckSquare"
-toggle_mode = true
-button_pressed = true
-
-[node name="Label" type="Label" parent="AddPackModal/Packs/PinterestContainer/SectionRow" unique_id=758815238]
-layout_mode = 2
-text = "Include board sections"
-
-[node name="PinterestUrlMessageLabel" type="Label" parent="AddPackModal/Packs/PinterestContainer" unique_id=1928356096]
+[node name="UrlMessageLabel" type="Label" parent="AddPackModal/Packs/UrlContainer" unique_id=1928356096]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2

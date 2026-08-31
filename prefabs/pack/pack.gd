@@ -27,7 +27,6 @@ static var _preview_cache: Dictionary = {}
 
 @onready var folder_icon: Texture2D = preload("res://assets/icons/folder.svg")
 @onready var image_icon: Texture2D = preload("res://assets/icons/image.svg")
-@onready var pinterest_icon: Texture2D = preload("res://assets/icons/pinterest.svg")
 @onready var add_icon: Texture2D = preload("res://assets/icons/bookmark-add.svg")
 @onready var check_icon: Texture2D = preload("res://assets/icons/bookmark-check.svg")
 
@@ -38,7 +37,6 @@ static var _preview_cache: Dictionary = {}
 ]
 
 var _resource: PackResource
-var _pinterest_fetcher: PinterestFetcher
 var _is_holo: bool = false
 var _url_regex: RegEx = RegEx.new()
 
@@ -58,19 +56,19 @@ func _from_context(
 	button_pressed = pack.enabled
 	title_label.text = pack.pack_name
 
-	var desc_label: String = "%s images"
 	match pack.source:
 		Constants.Source.FOLDER:
 			icon_rect.texture = folder_icon
 		Constants.Source.IMAGES:
 			icon_rect.texture = image_icon
-		Constants.Source.PINTEREST:
-			icon_rect.texture = pinterest_icon
-			desc_label = "%s pins"
 		Constants.Source.LIBRARY:
 			pass
+		_:
+			# Plugin packs: the plugin supplies its own icon, so a new one needs
+			# no change here.
+			icon_rect.texture = _plugin_icon(pack)
 
-	decsc_label.text = desc_label % pack.image_count
+	decsc_label.text = "%s images" % pack.image_count
 
 	# Stable per-pack pastel so a grid of cards is not one flat block.
 	mosaic.theme_type_variation = "PackCardClip%d" % (absi(pack.path.hash()) % TINT_COUNT)
@@ -81,6 +79,43 @@ func _from_context(
 		pack.enabled = true
 
 	_queue_preview_images()
+
+
+## Re-runs the plugin that produced this pack, with the options it was fetched
+## with. Works for any plugin, so adding one needs no change here.
+func _refresh_from_plugin() -> void:
+	var plugin_id: StringName = _resource.fetch_plugin_id()
+	if plugin_id.is_empty() or _resource.path.is_empty():
+		return
+
+	var fetcher: EaselFetcherPlugin = Plugins.create(plugin_id)
+	if fetcher == null:
+		push_error("Unknown fetcher plugin: %s" % plugin_id)
+		return
+
+	add_child(fetcher)
+	var results: Array[PackFetchResult] = await fetcher.fetch(
+		_resource.path,
+		_resource.fetch_params(),
+		_on_plugin_refresh_progress
+	)
+	fetcher.queue_free()
+
+	if results.is_empty() or not results[0].ok():
+		var message: String = results[0].error if not results.is_empty() else "No result"
+		push_warning("Refresh failed for %s: %s" % [_resource.pack_name, message])
+		return
+
+	_resource.images = results[0].images.duplicate()
+
+
+func _plugin_icon(pack: PackResource) -> Texture2D:
+	var plugin: GDScript = Plugins.script_for_id(pack.fetch_plugin_id())
+	if plugin == null:
+		return image_icon
+
+	var path: String = plugin.icon_path()
+	return load(path) if not path.is_empty() and ResourceLoader.exists(path) else image_icon
 
 
 ## Shows the selection rank, or hides the badge when rank <= 0.
@@ -208,52 +243,14 @@ func _refresh_pack() -> void:
 					valid_images.append(img)
 			_resource.images = valid_images
 			
-		Constants.Source.PINTEREST:
-			# Refresh Pinterest pack by fetching from URL
-			if _resource.path.is_empty():
-				push_error("PackResource path is empty!")
-				refresh_done.emit()
-			
-			# Create a new instance for this fetch
-			_pinterest_fetcher = PinterestFetcher.new()
-			add_child(_pinterest_fetcher)
-			
-			var results: Array = await _pinterest_fetcher.fetch(
-				_resource.path,
-				_resource.use_pinterest_sections,
-				_on_pinterest_refresh_progress
-			)
-			
-			# Clean up the fetcher
-			_pinterest_fetcher.queue_free()
-			_pinterest_fetcher = null
-			
-			if results.is_empty():
-				push_error("PinterestFetcher return is empty!")
-				refresh_done.emit()
-				return
-			
-			var pack_data = results[0]
-			if pack_data.is_empty() or pack_data.get("status") != "success":
-				refresh_done.emit()
-				return
-			
-			var data: Dictionary = pack_data.get("data", {})
-			var pack_images: Array = data.get("images", [])
-			
-			# Convert Array to Array[Dictionary]
-			var typed_images: Array[Dictionary] = []
-			for img in pack_images:
-				if img is Dictionary:
-					typed_images.append(img)
-			
-			_resource.images = typed_images
+		_:
+			await _refresh_from_plugin()
 	refresh_done.emit()
 	
 	_from_context(_resource)
 
 
-func _on_pinterest_refresh_progress(message: String) -> void:
+func _on_plugin_refresh_progress(message: String) -> void:
 	refresh_progress.emit(message)
 
 

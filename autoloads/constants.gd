@@ -4,7 +4,8 @@ enum Source {
 	FOLDER,
 	IMAGES,
 	LIBRARY,
-	PINTEREST
+	PINTEREST,
+	PLUGIN
 }
 
 const PREFERENCES_PATH = "user://preferences.cfg"

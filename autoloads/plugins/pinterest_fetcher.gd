@@ -1,7 +1,26 @@
-class_name PinterestFetcher
-extends AwaitableHTTPRequest
+class_name PinterestFetcher extends EaselFetcherPlugin
 
-var _progress_callback: Callable
+
+static func plugin_id() -> StringName:
+	return &"pinterest"
+
+
+static func display_name() -> String:
+	return "Pinterest"
+
+
+static func can_handle(url: String) -> bool:
+	var host: String = host_of(url)
+	return host.ends_with("pinterest.com") or host == "pin.it"
+
+
+static func icon_path() -> String:
+	return "res://assets/icons/pinterest.svg"
+
+
+static func options() -> Array[PluginOption]:
+	return [PluginOption.toggle(&"include_sections", "Include board sections", true)]
+
 
 # Constants for better maintainability
 const MAX_REQUESTS = 64
@@ -131,7 +150,7 @@ func fetch_board_sections(url: String, board_id: String, domain: String) -> Arra
 	var section_ids: Array = []
 	var bookmarks: Array = []
 	
-	_progress_callback.call("Searching for board sections...")
+	progress_callback.call("Searching for board sections...")
 	
 	for i in range(MAX_REQUESTS):
 		if bookmarks.find("-end-") != -1:
@@ -152,7 +171,7 @@ func fetch_board_sections(url: String, board_id: String, domain: String) -> Arra
 					"title": section.get("title", "Empty section title")
 				})
 				
-		_progress_callback.call("Collecting board sections (%s found)..." % [section_ids.size()])
+		progress_callback.call("Collecting board sections (%s found)..." % [section_ids.size()])
 	
 	return section_ids
 
@@ -197,14 +216,14 @@ func _extract_href(content: String, regex: RegEx) -> String:
 	return match.get_string(1) if match else ""
 
 
-func fetch_board(board_url: String, include_sections: bool) -> Array:
-	_progress_callback.call("Searching...")
+func fetch_board(board_url: String, include_sections: bool) -> Array[PackFetchResult]:
+	progress_callback.call("Searching...")
 	var board_info = await get_board_info(board_url)
 	
 	if not _validate_board_info(board_info):
-		return [_build_result("fail", "Board information not found")]
+		return [PackFetchResult.failure("Board information not found")]
 	
-	var results: Array = []
+	var results: Array[PackFetchResult] = []
 	var url = board_info["url"]
 	var board_id = board_info["board_id"]
 	var board_name = board_info["board_name"]
@@ -223,12 +242,12 @@ func fetch_board(board_url: String, include_sections: bool) -> Array:
 	return results
 
 
-func fetch_section(board_url: String, section_slug: String) -> Array:
-	_progress_callback.call("Searching...")
+func fetch_section(board_url: String, section_slug: String) -> Array[PackFetchResult]:
+	progress_callback.call("Searching...")
 	var board_info = await get_board_info(board_url)
 	
 	if not _validate_board_info(board_info):
-		return [_build_result("fail", "Board information not found")]
+		return [PackFetchResult.failure("Board information not found")]
 	
 	var sections = await fetch_board_sections(board_info["url"], board_info["board_id"], board_info["domain"])
 	
@@ -237,26 +256,26 @@ func fetch_section(board_url: String, section_slug: String) -> Array:
 			var section_url = board_info["url"] + section.get("slug") + "/"
 			return [await collect_pins(section_url, section.get("id"), section.get("title"), board_info["domain"], ResourceType.SECTION)]
 	
-	return [_build_result("fail", "Section not found")]
+	return [PackFetchResult.failure("Section not found")]
 
 
 func _validate_board_info(board_info: Dictionary) -> bool:
 	if board_info.get("board_id", "").is_empty():
-		_progress_callback.call("Board not found...")
+		progress_callback.call("Board not found...")
 		printerr("Empty board_id!")
 		return false
 	if board_info.get("url", "").is_empty():
-		_progress_callback.call("Board not found...")
+		progress_callback.call("Board not found...")
 		printerr("Empty url!")
 		return false
 	return true
 
 
-func collect_pins(url: String, board_id: String, board_name: String, domain: String, resource_type: ResourceType) -> Dictionary:
+func collect_pins(url: String, board_id: String, board_name: String, domain: String, resource_type: ResourceType) -> PackFetchResult:
 	var bookmarks: Array = []
 	var images: Array = []
 	
-	_progress_callback.call("Collecting pins...")
+	progress_callback.call("Collecting pins...")
 	
 	for i in range(MAX_REQUESTS):
 		if bookmarks.find("-end-") != -1:
@@ -274,18 +293,14 @@ func collect_pins(url: String, board_id: String, board_name: String, domain: Str
 			if not pin_result.is_empty():
 				images.append(pin_result)
 				
-		_progress_callback.call("Collecting pins (%s found)..." % [images.size()])
+		progress_callback.call("Collecting pins (%s found)..." % [images.size()])
 	
 	# Construct full URL if url is relative
 	var full_url = url
 	if not url.begins_with("http"):
 		full_url = "https://" + domain + url
 	
-	return _build_result("success", {
-		"images": images,
-		"board_name": board_name,
-		"url": full_url
-	})
+	return PackFetchResult.success(board_name, full_url, images)
 
 
 func _make_pins_request(url: String, board_id: String, domain: String, resource_type: ResourceType, bookmarks: Array) -> Dictionary:
@@ -343,11 +358,9 @@ func _extract_pins(pin: Dictionary) -> Dictionary:
 	}
 
 
-func fetch(url: String, include_sections: bool, progress_callback: Callable = _empty_progress_callback) -> Array:
-	_progress_callback = progress_callback
-	
+func on_fetch(url: String, params: Dictionary) -> Array[PackFetchResult]:
 	if url.is_empty() or url.get_slice_count("/") <= 0:
-		return []
+		return [PackFetchResult.failure("Invalid url.")]
 	
 	# Handle short URLs
 	if url.contains("pin.it"):
@@ -355,7 +368,9 @@ func fetch(url: String, include_sections: bool, progress_callback: Callable = _e
 	
 	var parsed_url = _parse_pinterest_url(url)
 	if parsed_url.is_empty():
-		return []
+		return [PackFetchResult.failure("Unrecognised Pinterest url.")]
+	
+	var include_sections: bool = params.get(&"include_sections", true)
 	
 	# Determine if it's a section or board URL
 	if parsed_url.has("section_slug"):
@@ -397,11 +412,3 @@ func _build_query_string(params: Array) -> String:
 					query_parts.append("%s=%s" % [encoded_key, str(value).uri_encode()])
 	
 	return "&".join(query_parts)
-
-
-func _empty_progress_callback(_message: String) -> void:
-	return
-
-
-func _build_result(status: String, data: Variant) -> Dictionary:
-	return {"status": status, "data": data}

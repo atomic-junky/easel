@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://bmjfsl5jl0q3w"]
+
+[ext_resource type="Script" uid="uid://d31udk7c4w5gq" path="res://scenes/debug/debug.gd" id="1_kfclf"]
+
+[node name="Debug" type="Control" unique_id=460691057]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kfclf")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1808433173]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -26.0
+offset_top = -20.0
+offset_right = 26.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FetchPinterestButton" type="Button" parent="VBoxContainer" unique_id=1600320734]
+layout_mode = 2
+text = "Fetch Pinterest"
+
+[node name="FetchCosmosButton" type="Button" parent="VBoxContainer" unique_id=1147367976]
+layout_mode = 2
+text = "Fetch Cosmos"
+
+[node name="ProgressPopup" type="PanelContainer" parent="." unique_id=1699056062]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ProgressPopup" unique_id=1373088014]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ProgressPopup/MarginContainer" unique_id=1058374813]
+layout_mode = 2
+
+[node name="ProgressRTL" type="RichTextLabel" parent="ProgressPopup/MarginContainer/VBoxContainer" unique_id=976856413]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 300)
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="ProgressPopup/MarginContainer/VBoxContainer" unique_id=1533623196]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Close"
+
+[connection signal="pressed" from="VBoxContainer/FetchPinterestButton" to="." method="_on_fetch_pinterest_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/FetchCosmosButton" to="." method="_on_fetch_cosmos_button_pressed"]
+[connection signal="pressed" from="ProgressPopup/MarginContainer/VBoxContainer/CloseButton" to="." method="_on_close_button_pressed"]

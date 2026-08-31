@@ -8,6 +8,11 @@ const SUPPORTED_EXTENSIONS := ["png", "jpeg", "jpg", "tiff", "PNG", "JPG", "JPEG
 @export var path: String = ""
 @export var images: Array[Dictionary] = []
 @export var use_pinterest_sections: bool = false
+
+## Which fetcher plugin produced this pack, and the options it was fetched with,
+## so a refresh can replay the exact same call.
+@export var plugin_id: StringName = &""
+@export var plugin_params: Dictionary = {}
 var image_count: int :
 	get():
 		return images.size()
@@ -41,25 +46,37 @@ static func create_from_paths(paths: Array) -> Array[PackResource]:
 	return [pack]
 
 
-static func create_from_urls(data: Dictionary, use_sections: bool = false) -> PackResource:
-	var pack_images: Array = data.get("images", [])
-	var board_name: String = data.get("board_name", "Unknown")
-	var url: String = data.get("url", "")
-	
+## Builds a pack from whatever a fetcher plugin returned. Nothing here is
+## specific to one plugin any more.
+static func create_from_fetch(
+	result: PackFetchResult,
+	from_plugin: StringName,
+	params: Dictionary = {}
+) -> PackResource:
 	var pack: PackResource = PackResource.new()
-	pack.source = Constants.Source.PINTEREST
-	pack.pack_name = board_name
-	pack.path = url
-	pack.use_pinterest_sections = use_sections
-	
-	# Convert Array to Array[Dictionary]
-	var typed_images: Array[Dictionary] = []
-	for img in pack_images:
-		if img is Dictionary:
-			typed_images.append(img)
-	pack.images = typed_images
-	
+	pack.source = Constants.Source.PLUGIN
+	pack.plugin_id = from_plugin
+	pack.plugin_params = params.duplicate()
+	pack.pack_name = result.pack_name
+	pack.path = result.url
+	pack.images = result.images.duplicate()
+	pack.use_pinterest_sections = bool(params.get(&"include_sections", false))
 	return pack
+
+
+## Packs saved before plugins had ids still carry the old PINTEREST source.
+func fetch_plugin_id() -> StringName:
+	if not plugin_id.is_empty():
+		return plugin_id
+	return &"pinterest" if source == Constants.Source.PINTEREST else &""
+
+
+func fetch_params() -> Dictionary:
+	if not plugin_params.is_empty():
+		return plugin_params
+	if fetch_plugin_id() == &"pinterest":
+		return {&"include_sections": use_pinterest_sections}
+	return {}
 
 
 static func _recursive_load_dir(base_dir_path: String, max_depth: int = 32) -> Array[Dictionary]:

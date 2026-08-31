@@ -32,6 +32,8 @@ func add_pack(pack: PackResource, save_immediately: bool = true) -> void:
 	pack_copy.path = pack.path
 	pack_copy.images = pack.images.duplicate(true)
 	pack_copy.use_pinterest_sections = pack.use_pinterest_sections
+	pack_copy.plugin_id = pack.plugin_id
+	pack_copy.plugin_params = pack.plugin_params.duplicate()
 	
 	print("[PackHistory] Current history size before filter: ", _history.size())
 	
@@ -103,10 +105,8 @@ func _validate_pack_exists(pack: PackResource) -> bool:
 		return DirAccess.dir_exists_absolute(pack.path)
 	if pack.source == Constants.Source.IMAGES:
 		return FileAccess.file_exists(pack.path)
-	if pack.source == Constants.Source.PINTEREST:
-		# Pinterest packs can't be validated, assume they exist
-		return true
-	return false
+	# Plugin packs can't be validated offline, assume they exist.
+	return not pack.fetch_plugin_id().is_empty()
 
 
 ## Load history from saved resource files
