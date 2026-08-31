@@ -1,2 +1,1 @@
-# gesture-app
-
+# Easel
