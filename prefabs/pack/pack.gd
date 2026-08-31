@@ -64,8 +64,6 @@ func _from_context(
 		Constants.Source.LIBRARY:
 			pass
 		_:
-			# Plugin packs: the plugin supplies its own icon, so a new one needs
-			# no change here.
 			icon_rect.texture = _plugin_icon(pack)
 
 	decsc_label.text = "%s images" % pack.image_count
@@ -81,8 +79,6 @@ func _from_context(
 	_queue_preview_images()
 
 
-## Re-runs the plugin that produced this pack, with the options it was fetched
-## with. Works for any plugin, so adding one needs no change here.
 func _refresh_from_plugin() -> void:
 	var plugin_id: StringName = _resource.fetch_plugin_id()
 	if plugin_id.is_empty() or _resource.path.is_empty():
@@ -182,7 +178,7 @@ static func _preview_worker_loop() -> void:
 			pack.call_thread_safe("_fetch_url_texture", path, rect)
 			continue
 		for _i in range(4):
-			var im: Image = Image.load_from_file(path)
+			var im: Image = ImageDecoder.load_file(path)
 			if im and not im.is_empty():
 				if is_instance_valid(pack):
 					pack.call_thread_safe("_post_thread_load_image", im, rect, path)

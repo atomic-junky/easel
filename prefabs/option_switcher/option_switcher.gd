@@ -3,6 +3,9 @@ class_name OptionSwitcher extends VBoxContainer
 
 signal value_changed(value: int)
 
+## How many options the switcher can show.
+const MAX_OPTIONS: int = 6
+
 ## If true, uses data-driven options array.
 ## If false, falls back to legacy hardcoded properties.
 @export var use_dynamic_options: bool = false :

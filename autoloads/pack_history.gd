@@ -9,7 +9,6 @@ var _history: Array[PackResource] = []
 
 
 func _ready() -> void:
-	# Create history directory if it doesn't exist
 	if not DirAccess.dir_exists_absolute(HISTORY_DIR):
 		DirAccess.make_dir_recursive_absolute(HISTORY_DIR)
 	_load_history()
@@ -24,16 +23,8 @@ func add_pack(pack: PackResource, save_immediately: bool = true) -> void:
 		print("[PackHistory] Pack rejected: no images")
 		return
 	
-	# Create a new resource copy to avoid reference issues
-	var pack_copy := PackResource.new()
-	pack_copy.enabled = pack.enabled
-	pack_copy.source = pack.source
-	pack_copy.pack_name = pack.pack_name
-	pack_copy.path = pack.path
-	pack_copy.images = pack.images.duplicate(true)
-	pack_copy.use_pinterest_sections = pack.use_pinterest_sections
-	pack_copy.plugin_id = pack.plugin_id
-	pack_copy.plugin_params = pack.plugin_params.duplicate()
+
+	var pack_copy: PackResource = pack.duplicate_deep(Resource.DEEP_DUPLICATE_INTERNAL)
 	
 	print("[PackHistory] Current history size before filter: ", _history.size())
 	
@@ -44,7 +35,6 @@ func add_pack(pack: PackResource, save_immediately: bool = true) -> void:
 	
 	print("[PackHistory] History size after filter: ", _history.size())
 	
-	# Add to front
 	_history.push_front(pack_copy)
 	print("[PackHistory] History size after push_front: ", _history.size())
 	_clean_history()
@@ -71,16 +61,13 @@ func erase_pack(pack: PackResource) -> void:
 	_save_history()
 
 
-## Add multiple packs to history
 func add_packs(packs: Array[PackResource]) -> void:
 	for pack in packs:
-		add_pack(pack, false)  # Don't save after each pack
-	_save_history()  # Save once at the end
+		add_pack(pack, false)
+	_save_history()
 
 
-## Get history as array of PackResource
 func get_history() -> Array[PackResource]:
-	# Filter out packs that no longer exist
 	var result: Array[PackResource] = []
 	for pack in _history:
 		if _validate_pack_exists(pack):
@@ -88,32 +75,26 @@ func get_history() -> Array[PackResource]:
 	return result
 
 
-## Get number of items in history
 func get_history_count() -> int:
 	return _history.size()
 
 
-## Clear all history
 func clear_history() -> void:
 	_history.clear()
 	_clear_history_files()
 
 
-## Check if a pack's source still exists
 func _validate_pack_exists(pack: PackResource) -> bool:
 	if pack.source == Constants.Source.FOLDER:
 		return DirAccess.dir_exists_absolute(pack.path)
 	if pack.source == Constants.Source.IMAGES:
 		return FileAccess.file_exists(pack.path)
-	# Plugin packs can't be validated offline, assume they exist.
 	return not pack.fetch_plugin_id().is_empty()
 
 
-## Load history from saved resource files
 func _load_history() -> void:
 	_history.clear()
 	
-	# Load the index file
 	var index_path := HISTORY_DIR.path_join("index.tres")
 	if not FileAccess.file_exists(index_path):
 		print("[PackHistory] No index file found at: ", index_path)
@@ -138,7 +119,6 @@ func _load_history() -> void:
 		if FileAccess.file_exists(pack_path):
 			var pack := ResourceLoader.load(pack_path, "", ResourceLoader.CACHE_MODE_IGNORE) as PackResource
 			if pack:
-				# Refresh folder-based packs to get current file list
 				if pack.source == Constants.Source.FOLDER:
 					if DirAccess.dir_exists_absolute(pack.path):
 						pack.images = PackResource._recursive_load_dir(pack.path)
@@ -168,12 +148,10 @@ func _clean_history() -> void:
 		_history.append(pack)
 
 
-## Save history as resource files
 func _save_history() -> void:
 	_clean_history()
 	print("[PackHistory] Saving ", _history.size(), " packs to history")
 	
-	# Clear old files
 	_clear_history_files()
 	
 	# Save each pack as a separate resource file
@@ -204,7 +182,6 @@ func _save_history() -> void:
 		print("[PackHistory] Failed to save index, error: ", index_result)
 
 
-## Clear all history files
 func _clear_history_files() -> void:
 	var dir := DirAccess.open(HISTORY_DIR)
 	if dir:

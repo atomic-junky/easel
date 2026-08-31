@@ -150,7 +150,7 @@ func _start_load(idx: int) -> void:
 func _decode_file(idx: int, path: String) -> void:
 	var image: Image = null
 	for _attempt in MAX_ATTEMPTS:
-		var loaded: Image = Image.load_from_file(path)
+		var loaded: Image = ImageDecoder.load_file(path)
 		if loaded and not loaded.is_empty():
 			image = loaded
 			break

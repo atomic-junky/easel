@@ -2,12 +2,13 @@ extends VBoxContainer
 
 ## Contents of the "Add a new Pack" modal.
 
-const SOURCE_LOCAL: int = 1
-const SOURCE_URL: int = 2
+const LOCAL_TAB: int = 1
+const FIRST_PLUGIN_TAB: int = 2
 
 @onready var menu: Menu = owner
 @onready var modal: Modal = %AddPackModal
 
+@onready var source_switcher: OptionSwitcher = %SourceSwitcher
 @onready var local_container: Control = %LocalContainer
 @onready var url_container: Control = %UrlContainer
 @onready var url_input: LineEdit = %UrlInput
@@ -19,14 +20,28 @@ const SOURCE_URL: int = 2
 @onready var folder_dialog: FileDialog = %FolderDialog
 @onready var images_dialog: FileDialog = %ImageDialog
 
-var _source: int = SOURCE_LOCAL
 var _plugin: GDScript = null
 var _option_controls: Dictionary = {}
 
 
 func _ready() -> void:
 	url_input.text_changed.connect(_on_url_text_changed)
-	_apply_source(_source)
+	_build_tabs()
+	_apply_source(source_switcher.value)
+
+
+func _build_tabs() -> void:
+	var labels: Array = ["Local"]
+	var values: Array = [LOCAL_TAB]
+
+	for plugin: GDScript in Plugins.scripts():
+		labels.append(plugin.display_name())
+		values.append(values.size() + 1)
+
+	if labels.size() > source_switcher.MAX_OPTIONS:
+		push_warning("Only %d tabs fit in the switcher." % source_switcher.MAX_OPTIONS)
+
+	source_switcher.set_options_from_arrays(labels, values)
 
 
 ## The switcher emits on its own _ready, which runs before ours.
@@ -37,29 +52,26 @@ func _on_source_switcher_value_changed(value: int) -> void:
 
 
 func _apply_source(value: int) -> void:
-	_source = value
-	local_container.visible = value == SOURCE_LOCAL
-	url_container.visible = value == SOURCE_URL
+	var scripts: Array[GDScript] = Plugins.scripts()
+	var index: int = value - FIRST_PLUGIN_TAB
+	_plugin = scripts[index] if index >= 0 and index < scripts.size() else null
+
+	local_container.visible = _plugin == null
+	url_container.visible = _plugin != null
+	message_label.visible = false
+
+	if _plugin != null:
+		url_input.placeholder_text = "%s url" % _plugin.display_name()
+		_build_options()
+
 	_update_done_button()
 
 
-func _on_url_text_changed(text: String) -> void:
-	_set_plugin(Plugins.script_for_url(text.strip_edges()))
-	_update_done_button()
-
-
-## Swaps the option rows whenever the typed url resolves to another plugin.
-func _set_plugin(plugin: GDScript) -> void:
-	if plugin == _plugin:
-		return
-	_plugin = plugin
-
+## Rebuilds the tab's option rows from what the plugin declares.
+func _build_options() -> void:
 	_option_controls.clear()
 	for child in options_container.get_children():
 		child.queue_free()
-
-	if _plugin == null:
-		return
 
 	for option: PluginOption in _plugin.options():
 		options_container.add_child(_build_option_row(option))
@@ -86,14 +98,18 @@ func _build_option_row(option: PluginOption) -> Control:
 
 
 func _collect_params() -> Dictionary:
-	var params: Dictionary = Plugins.default_params(_plugin) if _plugin else {}
+	var params: Dictionary = Plugins.default_params(_plugin)
 	for id: StringName in _option_controls:
 		params[id] = _option_controls[id].button_pressed
 	return params
 
 
+func _on_url_text_changed(_text: String) -> void:
+	_update_done_button()
+
+
 func _update_done_button() -> void:
-	done_button.disabled = _source != SOURCE_URL or _plugin == null
+	done_button.disabled = _plugin == null or not _plugin.can_handle(url_input.text.strip_edges())
 
 
 func _on_folder_button_pressed() -> void: folder_dialog.popup_centered()
@@ -112,11 +128,9 @@ func _on_image_dialog_files_selected(paths: PackedStringArray) -> void:
 
 func _on_done_button_pressed() -> void:
 	var url: String = url_input.text.strip_edges()
-	var fetcher: EaselFetcherPlugin = Plugins.create_for_url(url)
-	if fetcher == null:
-		return
-
 	var params: Dictionary = _collect_params()
+	var fetcher: EaselFetcherPlugin = _plugin.new()
+
 	_set_fetching(true)
 	add_child(fetcher)
 
@@ -131,14 +145,14 @@ func _on_done_button_pressed() -> void:
 	for result: PackFetchResult in results:
 		if not result.ok():
 			message_label.visible = true
-			message_label.text = result.error
-			return
+			message_label.text = result.error + " (skipping)"
+			continue
 		packs.append(PackResource.create_from_fetch(result, _plugin.plugin_id(), params))
 
 	menu._add_packs(packs)
 
 	url_input.text = ""
-	_on_url_text_changed("")
+	_update_done_button()
 	modal.close()
 
 

@@ -349,8 +349,7 @@ func _parse_api_response(result: HTTPResult) -> Dictionary:
 func _extract_pins(pin: Dictionary) -> Dictionary:
 	var url: String = pin.get("images", {}).get("orig", {}).get("url", "")
 	var pname = pin.get("seo_alt_text", "No name")
-	var extension: String = url.get_extension()
-	if not extension in Constants.SUPPORTED_EXTENSIONS:
+	if url.is_empty():
 		return {}
 	return {
 		"path": url,

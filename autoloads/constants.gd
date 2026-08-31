@@ -9,4 +9,3 @@ enum Source {
 }
 
 const PREFERENCES_PATH = "user://preferences.cfg"
-const SUPPORTED_EXTENSIONS := ["png", "jpeg", "jpg", "tiff"]

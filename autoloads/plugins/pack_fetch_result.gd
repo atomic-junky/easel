@@ -1,7 +1,5 @@
 class_name PackFetchResult extends RefCounted
 
-## What a fetcher plugin hands back to the UI.
-
 var pack_name: String = "Unknown"
 var url: String = ""
 var images: Array[Dictionary] = []

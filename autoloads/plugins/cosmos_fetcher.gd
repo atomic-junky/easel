@@ -36,7 +36,15 @@ func on_fetch(url: String, _params: Dictionary) -> Array[PackFetchResult]:
 	if cluster_data == null:
 		printerr("ClusterData is null.")
 		return [PackFetchResult.failure("Failed to find cluster.")]
+	
+	var result: Array[PackFetchResult] = []
+	result.append(await get_cluster_result(cluster_data, url))
+	result.append_array(await get_sub_cluster_result(cluster_data, url))
+	
+	return result
 
+
+func get_cluster_result(cluster_data: ClusterData, url: String) -> PackFetchResult:
 	var elements: Array[ElementData] = []
 	elements.append_array(await get_cluster_elements(cluster_data.id, cluster_data.number_of_elements))
 
@@ -49,9 +57,17 @@ func on_fetch(url: String, _params: Dictionary) -> Array[PackFetchResult]:
 			images.append(image)
 
 	if images.is_empty():
-		return [PackFetchResult.failure("No usable image in this cluster.")]
+		return PackFetchResult.failure("No usable image in this cluster.")
 
-	return [PackFetchResult.success(cluster_data.name, url, images)]
+	return PackFetchResult.success(cluster_data.name, url, images)
+
+
+func get_sub_cluster_result(cluster_data: ClusterData, url: String) -> Array[PackFetchResult]:
+	var result: Array[PackFetchResult] = []
+	for sub: ClusterData in cluster_data.sub_clusters:
+		result.append(await get_cluster_result(sub, url))
+	
+	return result
 
 
 func build_body(operation_name: String, query: String, variables: Dictionary) -> String:
@@ -174,10 +190,25 @@ class ClusterData:
 		result.name = cluster.get("name")
 		result.description = cluster.get("description") if cluster.get("description") != null else ""
 		result.slug = cluster.get("slug")
-		result.owner_id = cluster.get("ownerId")
+		result.owner_id = cluster.get("ownerID", 0)
 		result.number_of_elements = cluster.get("numberOfElements")
 		
-		result.sub_clusters = cluster.get("subClusters", {}).get("items", [])
+		for item: Dictionary in cluster.get("subClusters", {}).get("items", []):
+			result.sub_clusters.append(ClusterData.from_subcluster_item(item))
+		print(result.sub_clusters)
+		
+		return result
+	
+	static func from_subcluster_item(data: Dictionary) -> ClusterData:
+		var result: ClusterData = ClusterData.new()
+		result._raw = data
+		
+		result.id = data.get("id")
+		result.name = data.get("name")
+		result.description = ""
+		result.slug = data.get("slug")
+		result.owner_id = data.get("owner", {}).get("id", 0)
+		result.number_of_elements = data.get("numberOfElements")
 		
 		return result
 
@@ -186,6 +217,7 @@ class ElementData:
 	var id: int
 	var media_url: String
 	var media_type_name: String
+	var thumbnail_url: String = ""
 	var source: String = ""
 	var share_url: String
 	
@@ -200,16 +232,31 @@ class ElementData:
 		result.id = data.get("id")
 		result.media_url = media.get("url")
 		result.media_type_name = media.get("__typename")
+		result.thumbnail_url = _sub_string(media, "thumbnail", "url")
+		if result.thumbnail_url.is_empty():
+			result.thumbnail_url = _sub_string(media, "video", "thumbnailUrl")
 		result.share_url = data.get("shareUrl")
 		if data.get("source") != null:
 			result.source = data.get("source", {}).get("url", "")
-
+		
 		return result
 
-	## Pack image entry, or {} when the media cannot be loaded by the app.
+	static func _sub_string(dict: Dictionary, key: String, sub_key: String) -> String:
+		var sub: Variant = dict.get(key)
+		return str(sub.get(sub_key, "")) if sub is Dictionary else ""
+
+
 	func as_image() -> Dictionary:
-		if media_url.is_empty():
+		var path: String = ""
+		match media_type_name:
+			"StaticImage", "AnimatedImage":
+				path = media_url if not media_url.is_empty() else thumbnail_url
+			"Video":
+				path = thumbnail_url
+			_:
+				printerr("Unsuported media type %s." % media_type_name)
+				path = media_url
+
+		if path.is_empty():
 			return {}
-		if not media_type_name in ["StaticImage"]:
-			return {}
-		return {"path": media_url, "name": source if not source.is_empty() else str(id)}
+		return {"path": path, "name": source if not source.is_empty() else str(id)}
